@@ -7,7 +7,7 @@ export default class Keyboard {
 		32: 'kick',
 		88: 'kick'
 	};
-	
+
 	keyDown = {
 		up: false,
 		down: false,
@@ -15,32 +15,37 @@ export default class Keyboard {
 		right: false,
 		kick: false
 	};
-	
-	constructor() {
-		document.onkeydown = e => {
+
+	constructor(handler) {
+		this.handler = handler;
+
+		document.addEventListener('keydown', e => {
 			this.setKey(e, true);
-		};
-		
-		document.onkeyup = e => {
+		});
+
+		document.addEventListener('keyup', e => {
 			this.setKey(e, false);
-		};
+		});
 	}
-	
+
 	setKey(e, state) {
-		if (typeof this.keyDown[this.codeToKey(e.keyCode)] != 'undefined') {
-			e.preventDefault();
-			this.keyDown[this.codeToKey(e.keyCode)] = state;
+		let key = this.codeToKey(e.keyCode);
+		e.preventDefault();
+
+		if (typeof this.keyDown[key] != 'undefined' && this.keyDown[key] !== state) {
+			this.keyDown[key] = state;
+			this.handler(key, state);
 		}
 	}
-	
+
 	codeToKey(code) {
 		return this.keyCodes[code];
 	}
-	
+
 	isDown(key) {
 		return this.keyDown[key];
 	}
-	
+
 	isUp(key) {
 		return !this.isDown(key);
 	}
