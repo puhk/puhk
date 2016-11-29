@@ -31,7 +31,6 @@ let msgHandlers = {
         let predictedState = this.game.simulator.findStateFromFrame(msg.state.frame);
 
         if (predictedState) {
-            console.log('copy events');
             msg.state.events = predictedState.events;
         }
 
@@ -39,7 +38,7 @@ let msgHandlers = {
         this.lastSyncFrame = msg.state.frame;
 
         if (currentFrame > msg.state.frame) {
-            this.game.simulator.skip(currentFrame);
+            this.game.simulator.fastForward(currentFrame);
         }
     },
 
@@ -54,7 +53,7 @@ let msgHandlers = {
 
             this.game.simulator.rewind(msg.frame);
             this.game.simulator.addEvent(event);
-            this.game.simulator.skip(currentFrame);
+            this.game.simulator.fastForward(currentFrame);
         }
     }
 };

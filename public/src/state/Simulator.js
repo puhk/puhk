@@ -21,15 +21,15 @@ export default class Simulator {
         }
     }
 
-    rewind(frame) {
-        let index = _.findIndex(this.states, {frame});
-        this.states.splice(0, index);
-    }
-
-    skip(frame) {
+    fastForward(frame) {
         while (this.currentFrame < frame) {
             this.advance();
         }
+    }
+
+    rewind(frame) {
+        let index = _.findIndex(this.states, {frame});
+        this.states.splice(0, index);
     }
 
     resetState(state) {
@@ -39,6 +39,11 @@ export default class Simulator {
 
         this.states.length = 0;
         this.states.unshift(state);
+    }
+
+    clear() {
+        this.states.length = 0;
+        this.futureEvents.length = 0;
     }
 
     addEvent(event, frame) {

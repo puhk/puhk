@@ -81,7 +81,7 @@ class Client {
                     this.game.stopLoop();
                     this.game.simulator.rewind(msg.frame);
                     this.game.simulator.addEvent(event);
-                    this.game.simulator.skip(currentFrame);
+                    this.game.simulator.fastForward(currentFrame);
                     this.game.startLoop();
                 }
 

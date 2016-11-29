@@ -10,8 +10,9 @@ let server = app.listen(9000, () => {
 	console.log('listening');
 });
 
-app.use('/p2p', ExpressPeerServer(server));
+let peer = ExpressPeerServer(server);
+app.use('/p2p', peer);
 
-server.on('connection', function(id) {
-	console.log('connected');
+peer.on('connection', function(id) {
+	console.log('connected', id);
 });

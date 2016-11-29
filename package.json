@@ -22,7 +22,7 @@
       "json": "github:systemjs/plugin-json@^0.1.2",
       "lodash": "npm:lodash@^3.10.1",
       "mainloop.js": "npm:mainloop.js@^1.0.3",
-      "maxkueng/victor": "github:maxkueng/victor@^0.2.6",
+      "maxkueng/victor": "github:maxkueng/victor@^1.0",
       "peerjs": "npm:peerjs@^0.3.14"
     },
     "devDependencies": {

@@ -1,43 +1,56 @@
-import Vec from 'maxkueng/victor';
 import MainLoop from 'mainloop.js';
+import Vec from 'maxkueng/victor';
 
 import Engine from './Engine';
-import Renderer  from './Renderer';
 import Keyboard from './Keyboard';
 import Stadium from './Stadium';
 import Simulator from './state/Simulator';
 import State from './state/State';
 import {KeypressEvent} from './state/Events';
 import Disc from './entities/Disc';
+import Segment from './entities/Segment';
 import classic from './stadiums/classic.json!json';
 
 let fpsCounter = document.getElementById('fpsCounter');
 
 export default class Game {
+    renderer = null;
+
+    teams = [];
+    scores = [];
     me = null;
     playing = false;
 
-    constructor() {
+    constructor(renderer) {
         this.engine = new Engine(this);
         this.simulator = new Simulator(this.engine);
+        this.renderer = renderer;
     }
 
     createInitialState() {
         this.me = this.createPlayer('noj', -1);
+
+        let stadium = new Stadium(classic);
+        this.createTeams(stadium);
+
         let playerDisc = this.createPlayerDisc(this.me);
         playerDisc.isMe = true;
 
-        let ball = new Disc(new Vec(50, 50), 10, {
-        	color: '#fff',
-        	damping: 0.99
-        });
-
-        let stadium = Stadium.parse(classic);
-
-        let state = new State;
+        let state = State.createFromStadium(stadium);
         state.addPlayers(this.me);
-        state.addDiscs(playerDisc, ball);
+        state.addDiscs(playerDisc);
+
         this.simulator.states.unshift(state);
+    }
+
+    createTeams(stadium) {
+        this.teams = stadium.teams.map(obj => {
+            return {
+                name: obj.name,
+                color: obj.color,
+                players: []
+            };
+        });
     }
 
     createPlayer(nick, clientId) {
@@ -46,8 +59,8 @@ export default class Game {
 
     createPlayerDisc(player) {
         let disc = new Disc(new Vec(0, 0), 15, {
-        	color: '#e56e56',
-        	mass: 2
+        	color: this.teams[0].color,
+        	invMass: 0.5
         });
 
         disc.playerId = player.clientId;
@@ -56,12 +69,17 @@ export default class Game {
     }
 
     start() {
-        if (this.playing) {
+        if (this.playing || !this.network) {
             return;
         }
 
-        this.renderer = new Renderer(900, 500);
-        this.renderer.canvas.focus();
+        this.simulator.clear();
+        this.createInitialState();
+
+        if (this.renderer) {
+            this.renderer.init();
+            this.renderer.canvas.focus();
+        }
 
         this.keyboard = new Keyboard((key, state) => {
             let event = new KeypressEvent({key, state, clientId: this.me.clientId});
@@ -78,9 +96,12 @@ export default class Game {
             return;
         }
 
-        this.stopLoop();
-        this.renderer = null;
+        MainLoop.stop();
         this.playing = false;
+
+        if (this.renderer) {
+            this.renderer.destroy();
+        }
     }
 
     startLoop() {
@@ -88,18 +109,16 @@ export default class Game {
             this.simulator.advance();
         });
 
-        MainLoop.setDraw(() => {
-            this.renderer.draw(this.simulator.currentState);
-        });
+        if (this.renderer) {
+            MainLoop.setDraw(() => {
+                this.renderer.draw(this.simulator.currentState);
+            });
+        }
 
         MainLoop.setEnd(fps => {
             fpsCounter.textContent = parseInt(fps, 10) + ' FPS';
         });
 
         MainLoop.start();
-    }
-
-    stopLoop() {
-        MainLoop.stop();
     }
 }
