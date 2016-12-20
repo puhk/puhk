@@ -11,17 +11,18 @@ export default class Stadium {
     goals = [];
     planes = [];
     segments = [];
+    teams = [];
 
     constructor(json) {
         this.teams = json.teams;
 
         this.backgrounds = json.backgrounds.map(obj => {
-            let background = new Background(Vec.fromArray([obj.x, obj.y]), obj.width, obj.height, obj.type);
+            let background = new Background(Vec.fromArray(obj.pos), obj.width, obj.height, obj.type);
             background.load();
             return background;
         });
 
-        this.discs = json.discs.map(obj => {
+        /*this.discs = json.discs.map(obj => {
             let pos = Vec.fromArray(obj.pos);
 
             let disc = new Disc(pos, obj.radius, {
@@ -32,7 +33,9 @@ export default class Stadium {
 
             disc.isBall = obj.ball;
             return disc;
-        });
+        });*/
+
+        this.discs = json.discs.map(obj => Disc.parse(obj));
 
         this.segments = json.segments.map(obj => {
             let start = Vec.fromArray(obj.p0);
@@ -51,7 +54,21 @@ export default class Stadium {
             let start = Vec.fromArray(obj.p0);
             let end = Vec.fromArray(obj.p1);
 
-            return new Goal(start, end);
+            return new Goal(start, end, obj.team);
         });
+    }
+
+    pack() {
+        return {
+            backgrounds: this.backgrounds.map(background => background.pack()),
+            discs: this.discs.map(disc => disc.pack()),
+            goals: this.goals.map(goal => goal.pack()),
+            segments: this.segments.map(segment => segment.pack()),
+            teams: this.teams
+        };
+    }
+
+    getTeam(name) {
+        return this.teams.find(team => team.name == name);
     }
 }

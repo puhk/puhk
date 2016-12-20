@@ -19,4 +19,12 @@ export default class Segment {
         ctx.closePath();
         ctx.stroke();
     }
+
+    pack() {
+        return {
+            p0: this.p0.toArray(),
+            p1: this.p1.toArray(),
+            bounce: this.bounce
+        };
+    }
 }

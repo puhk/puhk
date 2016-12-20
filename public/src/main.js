@@ -14,9 +14,10 @@ let clientLink = document.getElementById('startClient');
 hostLink.addEventListener('click', () => {
 	let network = new NetworkHost(game);
 
-	/*network.peer.on('open', () => {
-		game.start();
-	});*/
+	network.peer.on('open', () => {
+		game.createInitialState();
+		// game.start();
+	});
 });
 
 clientLink.addEventListener('click', () => {

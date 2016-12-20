@@ -2,12 +2,12 @@
     "name": "classic",
 
     "teams": [
-        {"name": "red", "color": "#e56e56"},
-        {"name": "blue", "color": "blue"}
+        {"name": "red", "color": "#e56e56", "kickOffPos": [-250, 0]},
+        {"name": "blue", "color": "blue", "kickOffPos": [250, 0]}
     ],
 
     "backgrounds": [
-        {"x": -370, "y": -170, "width": 740, "height": 340, "type": "grass"}
+        {"pos": [-370, -170], "width": 740, "height": 340, "type": "grass"}
     ],
 
     "segments": [

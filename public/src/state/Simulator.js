@@ -19,11 +19,18 @@ export default class Simulator {
         if (this.states.length > this.maxStatesToRemember) {
             this.states.splice(this.maxStatesToRemember, this.states.length);
         }
+
+        return newState;
     }
 
     fastForward(frame) {
+        console.log('fastForward', this.currentFrame, frame);
         while (this.currentFrame < frame) {
+            console.log(this.futureEvents,  _.find(this.futureEvents, {frame: this.currentFrame + 1}), this.currentFrame + 1);
+
             this.advance();
+
+            console.log(this.futureEvents);
         }
     }
 
@@ -33,9 +40,11 @@ export default class Simulator {
     }
 
     resetState(state) {
-        this.states.forEach(state => {
-            this.futureEvents = this.futureEvents.concat(state.events);
-        });
+        if (this.currentState && state.frame < this.currentFrame) {
+            this.states.forEach(state => {
+                this.futureEvents = this.futureEvents.concat(state.events);
+            });
+        }
 
         this.states.length = 0;
         this.states.unshift(state);

@@ -25,26 +25,27 @@ export default class Engine {
 		let kickingAccel = 0.07;
 
 		this.state.discs.forEach((disc, i) => {
-	        if (typeof disc.playerId !== 'undefined') {
-				let keys = _.find(this.state.players, {clientId: disc.playerId}).keys;
-				disc.kicking = keys.kick;
+			let player = _.find(this.state.players, {discId: disc.id});
+
+	        if (player) {
+				disc.kicking = player.keys.kick;
 
 				let accel = disc.kicking ? kickingAccel : normalAccel;
 				let move = new Vec(0, 0);
 
-				if (keys.left) {
+				if (player.keys.left) {
 	    			move.x -= 1;
 	    		}
 
-	    		if (keys.right) {
+	    		if (player.keys.right) {
 	    			move.x += 1;
 	    		}
 
-	    		if (keys.up) {
+	    		if (player.keys.up) {
 	    			move.y -= 1;
 	    		}
 
-	    		if (keys.down) {
+	    		if (player.keys.down) {
 	    			move.y += 1;
 	    		}
 
@@ -71,7 +72,7 @@ export default class Engine {
 			});
 
 			this.state.stadium.segments.forEach(segment => {
-				if (typeof disc.playerId != 'undefined') {
+				if (_.find(this.state.players, {discId: disc.id})) {
 					return;
 				}
 
@@ -81,7 +82,7 @@ export default class Engine {
 			if (disc.isBall) {
 				this.state.stadium.goals.forEach(goal => {
 					if (this.checkGoal(disc, goal)) {
-						console.log('goal!');
+						this.game.goalScored(goal, this.state);
 					}
 				});
 
@@ -93,12 +94,12 @@ export default class Engine {
 	handleCircleCollision(disc, disc2) {
 		let distSq = disc.position.distanceSq(disc2.position);
 
-		if (disc2.isBall && typeof disc.playerId != 'undefined' && disc.position.distance(disc2.position) <= disc.radius + disc2.radius + 4) {
-			let keys = _.find(this.state.players, {clientId: disc.playerId}).keys;
+		if (disc2.isBall && disc.position.distance(disc2.position) <= disc.radius + disc2.radius + 4) {
+			let player = _.find(this.state.players, {discId: disc.id});
 
-			if (keys.kick) {
+			if (player && player.keys.kick) {
 				this.kick(disc, disc2);
-				keys.kick = false;
+				player.keys.kick = false;
 				disc.kicking = false;
 			}
 		}

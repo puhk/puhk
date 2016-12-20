@@ -6,10 +6,12 @@ export default class Disc extends Base {
 	bounce = 0.5;
 	kickStrength = 5;
 
-	constructor(position, radius = 10, {color = '#fff', damping = 0.96, invMass = 1} = {}) {
+	static nextDiscId = 0;
+
+	constructor(position, radius = 10, {id = null, color = '#fff', damping = 0.96, invMass = 1} = {}) {
 		super(position);
 
-		this.id = Math.random().toString(36).substring(7);
+		this.id = id !== null ? id : Disc.nextDiscId++;
 		this.velocity = new Vec(0, 0);
 		this.radius = radius;
 		this.color = color;
@@ -23,6 +25,7 @@ export default class Disc extends Base {
 
 	clone() {
 		let clone = new Disc(this.position.clone(), this.radius, {
+			id: this.id,
 			color: this.color,
 			damping: this.damping,
 			invMass: this.invMass
@@ -34,6 +37,36 @@ export default class Disc extends Base {
 		clone.isBall = this.isBall;
 
 		return clone;
+	}
+
+	pack() {
+		return {
+			id: this.id,
+			pos: this.position.toArray(),
+			velocity: this.velocity.toArray(),
+			radius: this.radius,
+			color: this.color,
+			damping: this.damping,
+			invMass: this.invMass,
+			ball: this.isBall
+		};
+	}
+
+	static parse(obj) {
+		let disc = new Disc(Vec.fromArray(obj.pos), obj.radius, {
+			id: obj.id,
+			color: obj.color,
+			damping: obj.damping,
+			invMass: obj.invMass
+		});
+
+		if (obj.velocity) {
+			disc.velocity = Vec.fromArray(obj.velocity);
+		}
+
+		disc.isBall = obj.ball;
+
+		return disc;
 	}
 
 	draw(ctx) {

@@ -26,4 +26,13 @@ export default class Background {
         ctx.fillStyle = pattern;
         ctx.fillRect(this.pos.x, this.pos.y, this.width, this.height);
     }
+
+    pack() {
+        return {
+            pos: this.pos.toArray(),
+            width: this.width,
+            height: this.height,
+            type: this.type
+        };
+    }
 }

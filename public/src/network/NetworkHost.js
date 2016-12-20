@@ -18,7 +18,7 @@ export default class NetworkHost {
         this.peer = new Peer('host', {host: 'localhost', path: '/p2p'});
         this.peer.on('connection', this.handleConnection.bind(this));
 
-        this.nextSync = setInterval(this.sendSync.bind(this), this.syncInterval);
+        // this.nextSync = setInterval(this.sendSync.bind(this), this.syncInterval);
     }
 
     handleConnection(conn) {
@@ -27,16 +27,16 @@ export default class NetworkHost {
             conn.client = client;
             this.clients.push(client);
 
-            let event = new ClientAddedEvent({id: client.id, nick: 'sock'});
+            let event = new ClientAddedEvent(this.game.me.clientId, {clientId: client.id, nick: 'sock'});
             this.game.simulator.addEvent(event);
 
             conn.send({
                 type: 'init',
                 id: client.id,
-                state: this.game.simulator.currentState
+                state: this.game.simulator.currentState.pack()
             });
 
-            this.sendMsg(event.format(), client);
+            this.sendMsg(event.pack(), client);
         });
     }
 
@@ -49,9 +49,13 @@ export default class NetworkHost {
     }
 
     sendSync() {
+        if (!this.game.playing) {
+            return;
+        }
+
         let msg = {
             type: 'sync',
-            state: this.game.simulator.currentState
+            state: this.game.simulator.currentState.pack()
         };
 
         this.sendMsg(msg);
@@ -70,7 +74,12 @@ class Client {
     handleMsg(msg) {
         switch (msg.type) {
             case 'event':
-                let event = new Events[msg.eventType + 'Event'](msg.data);
+                let event = Events[msg.eventType + 'Event'].parse(msg.sender, msg.data);
+                event.frame = msg.frame;
+                
+                if (event instanceof Events.KeypressEvent) {
+                    event.data.clientId = this.id;
+                }
 
                 if (msg.frame >= this.game.simulator.currentFrame) {
                     this.game.simulator.addEvent(event, msg.frame);

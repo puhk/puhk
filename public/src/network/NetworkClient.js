@@ -1,14 +1,27 @@
 import _ from 'lodash';
 import Peer from 'peerjs';
+
 import * as Events from '../state/Events';
 import State from '../state/State';
+import Disc from '../entities/Disc';
 
 let msgHandlers = {
     init(msg) {
-        this.game.simulator.resetState(State.parse(msg.state));
-        this.game.simulator.advance();
+        let state = State.parse(msg.state);
 
-        this.game.me = _.find(this.game.simulator.currentState.players, {clientId: msg.id});
+        Disc.nextDiscId = _.max(state.discs, disc => disc.id).id + 1;
+
+        this.game.simulator.resetState(state);
+        let newState = this.game.simulator.advance();
+
+        let player = newState.getPlayerById(msg.id);
+        let myDisc = newState.getPlayerDisc(player);
+        
+        if (myDisc) {
+            myDisc.isMe = true;
+        }
+
+        this.game.me = player;
         this.game.start();
     },
 
@@ -30,11 +43,12 @@ let msgHandlers = {
 
         let predictedState = this.game.simulator.findStateFromFrame(msg.state.frame);
 
-        if (predictedState) {
-            msg.state.events = predictedState.events;
-        }
+        /*if (predictedState) {
+            msg.state.events = msg.state.events.concat(predictedState.events.map(event => event.pack()));
+        }*/
 
-        this.game.simulator.resetState(State.parse(msg.state));
+        let syncState = State.parse(msg.state);
+        this.game.simulator.resetState(syncState);
         this.lastSyncFrame = msg.state.frame;
 
         if (currentFrame > msg.state.frame) {
@@ -43,7 +57,8 @@ let msgHandlers = {
     },
 
     event(msg) {
-        let event = new Events[msg.eventType + 'Event'](msg.data);
+        let event = Events[msg.eventType + 'Event'].parse(msg.sender, msg.data);
+        event.frame = msg.frame;
 
         if (msg.frame >= this.game.simulator.currentFrame) {
             this.game.simulator.addEvent(event, msg.frame);
@@ -75,8 +90,12 @@ export default class NetworkClient {
     }
 
     connectTo(host) {
-        this.hostConn = this.peer.connect('host', {serialization: 'json'});
+        this.hostConn = this.peer.connect('host');
         this.hostConn.on('data', this.handleMsg.bind(this));
+
+        this.hostConn.on('close', () => {
+            this.game.stop();
+        });
     }
 
     handleMsg(msg) {
