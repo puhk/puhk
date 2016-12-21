@@ -1,6 +1,6 @@
 import Peer from 'peerjs';
-import * as Events from '../state/Events';
-import {ClientAddedEvent} from '../state/Events';
+import * as Events from '../state/Events/Events';
+import ClientAddedEvent from '../state/Events/ClientAdded';
 
 export default class NetworkHost {
     peer = null;
@@ -27,7 +27,7 @@ export default class NetworkHost {
             conn.client = client;
             this.clients.push(client);
 
-            let event = new ClientAddedEvent(this.game.me.clientId, {clientId: client.id, nick: 'sock'});
+            let event = new ClientAddedEvent(this.game.myId, {clientId: client.id, nick: 'sock'});
             this.game.simulator.addEvent(event);
 
             conn.send({
@@ -74,10 +74,10 @@ class Client {
     handleMsg(msg) {
         switch (msg.type) {
             case 'event':
-                let event = Events[msg.eventType + 'Event'].parse(msg.sender, msg.data);
+                let event = Events[msg.eventType].parse(msg.sender, msg.data);
                 event.frame = msg.frame;
                 
-                if (event instanceof Events.KeypressEvent) {
+                if (event instanceof Events.Keypress) {
                     event.data.clientId = this.id;
                 }
 

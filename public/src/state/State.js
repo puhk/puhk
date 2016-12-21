@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import Vec from 'maxkueng/victor';
 
-import * as Events from './Events';
+import * as Events from './Events/Events';
 import Stadium from '../stadium';
 import Disc from '../entities/Disc';
 import Player from '../entities/Player';
@@ -16,6 +16,7 @@ export default class State {
     scoreLimit = 3;
 	scores = {};
 	timeLimit = 1;
+	playing = false;
 
 	addPlayers(...players) {
 		this.players = this.players.concat(players);
@@ -29,8 +30,12 @@ export default class State {
         return this.players.filter(player => player.team == team.name);
     }
 
-	addDiscs(...discs) {
+	addDiscs(discs) {
 		this.discs = this.discs.concat(discs);
+	}
+
+	addDisc(disc) {
+		this.discs.push(disc);
 	}
 
 	getPlayerDisc(player) {
@@ -44,6 +49,7 @@ export default class State {
 		clone.scoreLimit = this.scoreLimit;
 		clone.scores = _.clone(this.scores);
 		clone.timeLimit = this.timeLimit;
+		clone.playing = this.playing;
 
 		clone.players = this.players.map(player => player.clone());
 		clone.discs = this.discs.map(disc => disc.clone());
@@ -60,7 +66,8 @@ export default class State {
 			stadium: this.stadium.pack(),
 			scoreLimit: this.scoreLimit,
 			scores: this.scores,
-			timeLimit: this.timeLimit
+			timeLimit: this.timeLimit,
+			playing: this.playing
 		};
 
 		return state;
@@ -73,12 +80,13 @@ export default class State {
 		state.scoreLimit = json.scoreLimit;
 		state.scores = json.scores;
 		state.timeLimit = json.timeLimit;
+		state.playing = json.playing;
 
 		state.players = json.players.map(obj => Player.parse(obj));
 		state.discs = json.discs.map(obj => Disc.parse(obj));
 
 		state.events = json.events.map(e => {
-			let event = Events[e.eventType + 'Event'].parse(e.sender, e.data);
+			let event = Events[e.eventType].parse(e.sender, e.data);
 			event.frame = e.frame;
 			return event;
 		});

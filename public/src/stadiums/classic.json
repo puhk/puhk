@@ -6,6 +6,15 @@
         {"name": "blue", "color": "blue", "kickOffPos": [250, 0]}
     ],
 
+    "player": {
+        "acceleration": 0.1,
+        "damping": 0.96,
+        "kickingAcceleration": 0.07,
+        "kickStrength": 4,
+        "invMass": 0.5,
+        "radius": 15
+    },
+
     "backgrounds": [
         {"pos": [-370, -170], "width": 740, "height": 340, "type": "grass"}
     ],
@@ -30,8 +39,8 @@
     ],
 
     "goals": [
-        {"p0": [-370, -64], "p1": [-370, 64], "team": "red"},
-        {"p0": [370, -64], "p1": [370, 64], "team": "blue"}
+        {"p0": [-370, -64], "p1": [-370, 64], "teamScored": "blue"},
+        {"p0": [370, -64], "p1": [370, 64], "teamScored": "red"}
     ],
 
     "discs": [

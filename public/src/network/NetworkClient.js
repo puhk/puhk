@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import Peer from 'peerjs';
 
-import * as Events from '../state/Events';
+import * as Events from '../state/Events/Events';
 import State from '../state/State';
 import Disc from '../entities/Disc';
 
@@ -21,8 +21,8 @@ let msgHandlers = {
             myDisc.isMe = true;
         }
 
-        this.game.me = player;
-        this.game.start();
+        this.game.myId = player.clientId;
+        this.game.init();
     },
 
     sync(msg) {
@@ -57,7 +57,7 @@ let msgHandlers = {
     },
 
     event(msg) {
-        let event = Events[msg.eventType + 'Event'].parse(msg.sender, msg.data);
+        let event = Events[msg.eventType].parse(msg.sender, msg.data);
         event.frame = msg.frame;
 
         if (msg.frame >= this.game.simulator.currentFrame) {
@@ -94,7 +94,7 @@ export default class NetworkClient {
         this.hostConn.on('data', this.handleMsg.bind(this));
 
         this.hostConn.on('close', () => {
-            this.game.stop();
+            this.game.destroy();
         });
     }
 

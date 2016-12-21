@@ -21,8 +21,7 @@ export default class Engine {
 	}
 
 	update() {
-		let normalAccel = 0.1;
-		let kickingAccel = 0.07;
+		let stadium = this.state.stadium;
 
 		this.state.discs.forEach((disc, i) => {
 			let player = _.find(this.state.players, {discId: disc.id});
@@ -30,7 +29,7 @@ export default class Engine {
 	        if (player) {
 				disc.kicking = player.keys.kick;
 
-				let accel = disc.kicking ? kickingAccel : normalAccel;
+				let accel = disc.kicking ? stadium.playerPhysics.kickingAcceleration : stadium.playerPhysics.acceleration;
 				let move = new Vec(0, 0);
 
 				if (player.keys.left) {

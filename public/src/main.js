@@ -16,7 +16,7 @@ hostLink.addEventListener('click', () => {
 
 	network.peer.on('open', () => {
 		game.createInitialState();
-		// game.start();
+		game.init();
 	});
 });
 
