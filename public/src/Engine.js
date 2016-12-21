@@ -88,6 +88,8 @@ export default class Engine {
 				this.prevBallPositions[disc.id] = disc.position.clone();
 			}
 		});
+
+		this.game.update(this.state);
 	}
 
 	handleCircleCollision(disc, disc2) {

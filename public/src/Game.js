@@ -38,11 +38,6 @@ export default class Game {
             return;
         }
 
-        if (this.renderer) {
-            this.renderer.init();
-            this.renderer.canvas.focus();
-        }
-
         this.keyboard = new Keyboard((key, state) => {
             let event = new Keypress(this.myId, {key, state, clientId: this.myId});
             this.simulator.addEvent(event);
@@ -59,13 +54,16 @@ export default class Game {
             return;
         }
 
-        if (this.renderer) {
-            this.renderer.destroy();
-        }
-
         this.stopLoop();
         this.keyboard = null;
         this.inited = false;
+    }
+
+    initRenderer() {
+        if (this.renderer) {
+            this.renderer.init();
+            this.renderer.canvas.focus();
+        }
     }
 
     start() {
@@ -75,15 +73,27 @@ export default class Game {
             return;
         }
 
+        this.initRenderer();
         this.createPlayerDiscs();
         this.kickOffState(state);
         state.playing = true;
     }
 
-    stop() {
-        if (!this.simulator.currentState.playing) {
+    stop(state) {
+        if (!state.playing) {
             return;
         }
+
+        if (this.renderer) {
+            this.renderer.destroy();
+        }
+
+        state.playing = false;
+
+        state.players.filter(player => player.team)
+            .forEach(player => {
+                state.removeDisc(state.getPlayerDisc(player));
+            });
     }
 
     createInitialState() {
@@ -111,6 +121,10 @@ export default class Game {
      * @returns {Disc}
      */
     createPlayerDisc(player) {
+        if (player.team === null) {
+            return;
+        }
+
         let stadium = this.simulator.currentState.stadium;
 
         let disc = new Disc(new Vec(0, 0), stadium.playerPhysics.radius, {
@@ -149,6 +163,8 @@ export default class Game {
     }
 
     kickOffState(state) {
+        state.matchState = State.STATE_KICKOFF;
+
         this.setKickOffPositions(state);
 
         state.discs.filter(disc => disc.isBall)
@@ -171,15 +187,61 @@ export default class Game {
     goalScored(goal, state) {
         let team = state.stadium.getTeam(goal.teamScored);
 
-        if (!team) {
+        if (state.matchState != State.STATE_INPLAY || !team) {
             return;
         }
 
         ++state.scores[team.name];
-        this.kickOffState(state);
+        state.matchState = State.STATE_GOALSCORED;
+        state.matchStateTimer = 150;
+    }
 
-        if (state.scores[team.name] == state.scoreLimit) {
-            this.stop();
+    update(state) {
+        switch (state.matchState) {
+            case State.STATE_KICKOFF:
+                state.discs.filter(disc => disc.isBall)
+                    .forEach(ball => {
+                        if (ball.velocity.x > 0 || ball.velocity.y > 0) {
+                            state.matchState = State.STATE_INPLAY;
+                        }
+                    });
+
+                break;
+            
+            case State.STATE_INPLAY:
+                // increase match timer
+                break;
+            
+            case State.STATE_GOALSCORED:
+                --state.matchStateTimer;
+
+                if (state.matchStateTimer > 0) {
+                    return;
+                }
+
+                for (let team of state.stadium.teams) {
+                    let score = state.scores[team.name];
+
+                    if (score >= state.scoreLimit) {
+                        state.matchState = State.STATE_ENDGAME;
+                        state.matchStateTimer = 300;
+                        return;
+                    }
+                }
+
+                state.matchState = State.STATE_KICKOFF;
+                this.kickOffState(state);
+
+                break;
+            
+            case State.STATE_ENDGAME:
+                --state.matchStateTimer;
+
+                if (state.matchStateTimer == 0) {
+                    this.stop(state);
+                }
+
+                break;
         }
     }
 

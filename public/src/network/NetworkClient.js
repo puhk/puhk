@@ -23,6 +23,7 @@ let msgHandlers = {
 
         this.game.myId = player.clientId;
         this.game.init();
+        this.game.initRenderer();
     },
 
     sync(msg) {

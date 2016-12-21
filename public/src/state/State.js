@@ -8,6 +8,11 @@ import Player from '../entities/Player';
 import Segment from '../entities/Segment';
 
 export default class State {
+	static STATE_KICKOFF = 0;
+	static STATE_INPLAY = 1;
+	static STATE_GOALSCORED = 2;
+	static STATE_ENDGAME = 3;
+
 	discs = [];
 	events = [];
 	frame = 0;
@@ -17,6 +22,9 @@ export default class State {
 	scores = {};
 	timeLimit = 1;
 	playing = false;
+
+	matchState = State.STATE_KICKOFF;
+	matchStateTimer = 0;
 
 	addPlayers(...players) {
 		this.players = this.players.concat(players);
@@ -54,6 +62,8 @@ export default class State {
 		clone.scores = _.clone(this.scores);
 		clone.timeLimit = this.timeLimit;
 		clone.playing = this.playing;
+		clone.matchState = this.matchState;
+		clone.matchStateTimer = this.matchStateTimer;
 
 		clone.players = this.players.map(player => player.clone());
 		clone.discs = this.discs.map(disc => disc.clone());
@@ -71,7 +81,9 @@ export default class State {
 			scoreLimit: this.scoreLimit,
 			scores: this.scores,
 			timeLimit: this.timeLimit,
-			playing: this.playing
+			playing: this.playing,
+			matchState: this.matchState,
+			matchStateTimer: this.matchStateTimer
 		};
 
 		return state;
@@ -85,6 +97,8 @@ export default class State {
 		state.scores = json.scores;
 		state.timeLimit = json.timeLimit;
 		state.playing = json.playing;
+		state.matchState = json.matchState;
+		state.matchStateTimer = json.matchStateTimer;
 
 		state.players = json.players.map(obj => Player.parse(obj));
 		state.discs = json.discs.map(obj => Disc.parse(obj));
