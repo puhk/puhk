@@ -1,6 +1,6 @@
 import Peer from 'peerjs';
-import * as Events from '../state/Events/Events';
-import ClientAddedEvent from '../state/Events/ClientAdded';
+import * as Events from '../state/events/Events';
+import ClientAddedEvent from '../state/events/ClientAdded';
 
 export default class NetworkHost {
     peer = null;

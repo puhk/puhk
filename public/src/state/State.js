@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import Vec from 'maxkueng/victor';
 
-import * as Events from './Events/Events';
+import * as Events from './events/Events';
 import Stadium from '../stadium';
 import Disc from '../entities/Disc';
 import Player from '../entities/Player';
@@ -36,6 +36,10 @@ export default class State {
 
 	addDisc(disc) {
 		this.discs.push(disc);
+	}
+
+	removeDisc(disc) {
+		this.discs.splice(this.discs.indexOf(disc), 1);
 	}
 
 	getPlayerDisc(player) {

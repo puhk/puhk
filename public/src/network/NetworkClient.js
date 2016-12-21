@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import Peer from 'peerjs';
 
-import * as Events from '../state/Events/Events';
+import * as Events from '../state/events/Events';
 import State from '../state/State';
 import Disc from '../entities/Disc';
 

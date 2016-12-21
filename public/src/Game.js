@@ -8,7 +8,7 @@ import Renderer from './Renderer';
 
 import Simulator from './state/Simulator';
 import State from './state/State';
-import {ClientAdded, Keypress} from './state/Events/Events';
+import {ChangeTeam, ClientAdded, Keypress} from './state/events/Events';
 
 import Disc from './entities/Disc';
 import Player from './entities/Player';
@@ -120,6 +120,7 @@ export default class Game {
         });
 
         disc.kickStrength = stadium.playerPhysics.kickStrength;
+        disc.isMe = player.clientId == this.myId;
         return disc;
     }
     
@@ -141,10 +142,11 @@ export default class Game {
         state.addDiscs(discs);
     }
 
-    /*movePlayerToTeam(player, team) {
-        let event = new ChangeTeam(player, team);
+    movePlayerToTeam(clientId, team) {
+        let event = new ChangeTeam(this.myId, {clientId, team});
         this.simulator.addEvent(event);
-    }*/
+        this.network.sendMsg(event.pack());
+    }
 
     kickOffState(state) {
         this.setKickOffPositions(state);
