@@ -17,11 +17,13 @@ export default class State {
 	events = [];
 	frame = 0;
 	players = [];
-	
-    scoreLimit = 3;
-	scores = {};
-	timeLimit = 1;
 	playing = false;
+	
+    scores = {};
+	scoreLimit = 3;
+
+	timer = 0;
+	timeLimit = 3;
 
 	matchState = State.STATE_KICKOFF;
 	matchStateTimer = 0;
@@ -60,6 +62,7 @@ export default class State {
 		clone.stadium = this.stadium;
 		clone.scoreLimit = this.scoreLimit;
 		clone.scores = _.clone(this.scores);
+		clone.timer = this.timer;
 		clone.timeLimit = this.timeLimit;
 		clone.playing = this.playing;
 		clone.matchState = this.matchState;
@@ -80,6 +83,7 @@ export default class State {
 			stadium: this.stadium.pack(),
 			scoreLimit: this.scoreLimit,
 			scores: this.scores,
+			timer: this.timer,
 			timeLimit: this.timeLimit,
 			playing: this.playing,
 			matchState: this.matchState,
@@ -95,6 +99,7 @@ export default class State {
 		state.stadium = new Stadium(json.stadium);
 		state.scoreLimit = json.scoreLimit;
 		state.scores = json.scores;
+		state.timer = json.timer;
 		state.timeLimit = json.timeLimit;
 		state.playing = json.playing;
 		state.matchState = json.matchState;

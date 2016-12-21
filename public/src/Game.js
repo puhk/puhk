@@ -18,6 +18,7 @@ import classic from './stadiums/classic.json!json';
 
 let fpsCounter = document.getElementById('fpsCounter');
 let scoreDiv = document.getElementById('scores');
+let timeDiv = document.getElementById('timer');
 
 export default class Game {
     inited = false;
@@ -196,6 +197,14 @@ export default class Game {
         state.matchStateTimer = 150;
     }
 
+    scoresEqual(state) {
+        let scores = state.stadium.teams.map(team => {
+            return state.scores[team.name];
+        });
+
+        return scores.every(score => score == scores[0]);
+    }
+
     update(state) {
         switch (state.matchState) {
             case State.STATE_KICKOFF:
@@ -209,7 +218,13 @@ export default class Game {
                 break;
             
             case State.STATE_INPLAY:
-                // increase match timer
+                state.timer += 1 / 60;
+
+                if (state.timer >= state.timeLimit * 60 && !this.scoresEqual(state)) {
+                    state.matchState = State.STATE_ENDGAME;
+                    state.matchStateTimer = 300;
+                }
+
                 break;
             
             case State.STATE_GOALSCORED:
@@ -261,13 +276,13 @@ export default class Game {
         MainLoop.setEnd(fps => {
             fpsCounter.textContent = parseInt(fps, 10) + ' FPS';
 
-            let state =  this.simulator.currentState;
+            let state = this.simulator.currentState;
 
-            let text = state.stadium.teams.map(team => {
+            scoreDiv.innerHTML = state.stadium.teams.map(team => {
                 return `${team.name}: ${state.scores[team.name]}`;
-            });
+            }).join(' ');
 
-            scoreDiv.innerHTML = text.join(' ');
+            timeDiv.innerHTML = Math.floor(state.timer / 60) + ':' + Math.round(state.timer % 60);
         });
     }
 
