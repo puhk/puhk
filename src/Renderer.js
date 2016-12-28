@@ -9,11 +9,11 @@ export default class Renderer {
     width = 0;
     height = 0;
 
-	constructor(width: number, height: number, parent: Element) {
+    constructor(width: number, height: number, parent: Element) {
         this.width = width;
         this.height = height;
         this.parent = parent;
-	}
+    }
 
     init() {
         this.canvas = this.createCanvas();
@@ -32,16 +32,16 @@ export default class Renderer {
         this.canvas.remove();
     }
 
-	createCanvas() {
-		let canvas = document.createElement('canvas');
-		canvas.width = this.width;
-		canvas.height = this.height;
+    createCanvas() {
+        let canvas = document.createElement('canvas');
+        canvas.width = this.width;
+        canvas.height = this.height;
         // canvas.oncontextmenu = (e: Event) => false;
 
-		this.parent.appendChild(canvas);
+        this.parent.appendChild(canvas);
 
-		return canvas;
-	}
+        return canvas;
+    }
 
     center() {
         this.ctx.translate(this.width / 2, this.height / 2);
@@ -53,12 +53,12 @@ export default class Renderer {
         this.center();
     }
 
-	draw(state: State) {
+    draw(state: State) {
         let area = [-this.width / 2, -this.height / 2, this.width, this.height];
 
         this.ctx.clearRect(...area);
         this.ctx.fillStyle = '#718c5a';
-		this.ctx.fillRect(...area);
+        this.ctx.fillRect(...area);
 
         state.stadium.backgrounds.forEach(background => {
             background.draw(this.ctx);
@@ -73,7 +73,7 @@ export default class Renderer {
         });
 
         state.discs.forEach(disc => {
-			disc.draw(this.ctx);
-		});
-	}
+            disc.draw(this.ctx);
+        });
+    }
 }

@@ -133,7 +133,7 @@ export default class Game {
         let disc = new Disc(new Vec(0, 0), stadium.playerPhysics.radius, {
             color: team.color,
             damping: stadium.playerPhysics.damping,
-        	invMass: stadium.playerPhysics.invMass
+            invMass: stadium.playerPhysics.invMass
         });
 
         disc.kickStrength = stadium.playerPhysics.kickStrength;
