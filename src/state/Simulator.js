@@ -1,0 +1,101 @@
+// @flow
+
+import _ from 'lodash';
+
+import type State from './State';
+import type Engine from '../Engine';
+import type {Events} from './events/Events';
+
+export default class Simulator {
+    engine: Engine;
+    maxStatesToRemember = 120;
+    futureEvents: Events[] = [];
+    states: State[] = [];
+
+    constructor(engine: Engine) {
+        this.engine = engine;
+    }
+
+    advance(): State {
+        let newState = this.currentState.clone();
+        newState.events = _.remove(this.futureEvents, {frame: ++newState.frame});
+
+        this.engine.run(newState, this.currentState.events);
+        this.states.unshift(newState);
+
+        if (this.states.length > this.maxStatesToRemember) {
+            this.states.splice(this.maxStatesToRemember, this.states.length);
+        }
+
+        return newState;
+    }
+
+    fastForward(frame: number) {
+        console.log('fastForward', this.currentFrame, frame);
+        while (this.currentFrame < frame) {
+            console.log(this.futureEvents,  _.find(this.futureEvents, {frame: this.currentFrame + 1}), this.currentFrame + 1);
+
+            this.advance();
+
+            console.log(this.futureEvents);
+        }
+    }
+
+    rewind(frame: number) {
+        let index = _.findIndex(this.states, {frame});
+        this.states.splice(0, index);
+    }
+
+    resetState(state: State) {
+        if (this.currentState && state.frame < this.currentFrame) {
+            this.states.forEach(state => {
+                this.futureEvents = this.futureEvents.concat(state.events);
+            });
+        }
+
+        this.states.length = 0;
+        this.states.unshift(state);
+    }
+
+    clear() {
+        this.states.length = 0;
+        this.futureEvents.length = 0;
+    }
+
+    addEvent(event: Events, frame?: number) {
+        if (!frame || frame === this.currentFrame) {
+            event.frame = this.currentFrame;
+            this.currentState.events.push(event);
+            return;
+        }
+
+        if (frame > this.currentFrame) {
+            event.frame = frame;
+            this.futureEvents.push(event);
+            return;
+        }
+
+        throw new Error('Trying to add event to past frame');
+    }
+
+    findStateFromFrame(frame: number): ?State {
+        return this.states.find(state => state.frame == frame);
+    }
+
+    hasFrameInHistory(frame: number) {
+        let state = this.findStateFromFrame(frame);
+        return typeof state !== 'undefined';
+    }
+
+    get currentState(): State {
+        return this.states[0];
+    }
+
+    get currentFrame(): number {
+        return this.currentState.frame;
+    }
+
+    get oldestFrame(): number {
+        return this.states[this.states.length - 1].frame;
+    }
+}
