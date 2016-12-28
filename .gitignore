@@ -1,4 +1,2 @@
-yarn.lock
 node_modules/
-public/jspm_packages/
 .vscode/
