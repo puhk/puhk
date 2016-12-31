@@ -1,4 +1,5 @@
 // @flow
 
-export {default as Game} from './Game';
+export {default as GameCreator} from './GameCreator';
 export {default as Renderer} from './Renderer';
+export {default as Background} from './entities/Background';

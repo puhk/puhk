@@ -1,6 +1,6 @@
 // @flow
 
-import Peer from 'peer';
+import Peer from 'peerjs';
 
 import Base from './Base';
 import * as Events from '../state/events/Events';

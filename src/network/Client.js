@@ -1,7 +1,7 @@
 // @flow
 
 import _ from 'lodash';
-import Peer from 'peer';
+import Peer from 'peerjs';
 
 import type Game from '../Game';
 import Base from './Base';

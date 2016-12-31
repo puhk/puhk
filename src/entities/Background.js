@@ -2,13 +2,16 @@
 
 import Vec from 'victor';
 
-export class Background {
+export default class Background {
+    static images: {grass: ?HTMLImageElement} = {
+        grass: null
+    };
+    
     pos: Vec;
     width: number;
     height: number;
-    type: Types;
     loaded = false;
-    img: Image;
+    type: Types;
 
     constructor(pos: Vec, width: number, height: number, type: Types) {
         this.pos = pos;
@@ -18,20 +21,29 @@ export class Background {
     }
 
     load() {
-        this.img = new Image;
-        this.img.src = `images/backgrounds/${this.type}.png`;
+        let image = Background.images[this.type];
+        
+        if (!(image instanceof HTMLImageElement)) {
+            return;
+        }
+        
+        if (image.complete) {
+            this.loaded = true;
+        }
 
-        this.img.onload = () => {
+        image.onload = () => {
             this.loaded = true;
         };
     }
 
     draw(ctx: CanvasRenderingContext2D) {
-        if (!this.loaded) {
+        let image = Background.images[this.type];
+        
+        if (!(image instanceof HTMLImageElement) || !this.loaded) {
             return;
         }
         
-        let pattern = ctx.createPattern(this.img, 'repeat');
+        let pattern = ctx.createPattern(image, 'repeat');
         ctx.fillStyle = pattern;
         ctx.fillRect(this.pos.x, this.pos.y, this.width, this.height);
     }

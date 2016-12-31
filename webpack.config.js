@@ -8,7 +8,9 @@ module.exports = {
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'bundle.js',
-    publicPath: '/dist/'
+    publicPath: '/dist/',
+    library: 'nojball-game',
+    libraryTarget: 'umd'
   },
   plugins: [
     new webpack.optimize.UglifyJsPlugin({

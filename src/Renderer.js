@@ -3,27 +3,32 @@
 import State from './state/State';
 
 export default class Renderer {
-    parent: Element;
+    parent: HTMLElement;
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
     width = 0;
     height = 0;
 
-    constructor(width: number, height: number, parent: Element) {
+    constructor(width: number, height: number) {
         this.width = width;
         this.height = height;
+    }
+
+    renderTo(parent: HTMLElement) {
         this.parent = parent;
     }
 
     init() {
-        this.canvas = this.createCanvas();
-        
-        let ctx = this.canvas.getContext('2d');
+        let canvas = this.createCanvas();
+        let ctx = canvas.getContext('2d');
 
         if (ctx == null) {
             throw new Error;
         }
 
+        canvas.focus();
+
+        this.canvas = canvas;
         this.ctx = ctx;
         this.center();
     }

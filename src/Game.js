@@ -22,21 +22,17 @@ import classic from './stadiums/classic.json';
 import type NetworkHost from './network/Host';
 import type NetworkClient from './network/Client';
 
-let fpsCounter = document.getElementById('fpsCounter');
-let scoreDiv = document.getElementById('scores');
-let timeDiv = document.getElementById('timer');
-
 export default class Game {
     engine: Engine;
     keyboard: Keyboard;
     network: NetworkHost | NetworkClient;
-    renderer: Renderer;
+    renderer: ?Renderer;
     simulator: Simulator;
 
     inited = false;
     myId = -1;
 
-    constructor(renderer: Renderer) {
+    constructor(renderer?: Renderer) {
         this.engine = new Engine(this);
         this.simulator = new Simulator(this.engine);
         this.renderer = renderer;
@@ -68,9 +64,8 @@ export default class Game {
     }
 
     initRenderer() {
-        if (this.renderer) {
+        if (this.renderer instanceof Renderer) {
             this.renderer.init();
-            this.renderer.canvas.focus();
         }
     }
 
@@ -275,24 +270,10 @@ export default class Game {
             this.simulator.advance();
         });
 
-        if (this.renderer) {
-            MainLoop.setDraw(() => {
-                if (this.simulator.currentState.playing) {
-                    this.renderer.draw(this.simulator.currentState);
-                }
-            });
-        }
-
-        MainLoop.setEnd(fps => {
-            fpsCounter.textContent = parseInt(fps, 10) + ' FPS';
-
-            let state = this.simulator.currentState;
-
-            scoreDiv.innerHTML = state.stadium.teams.map(team => {
-                return `${team.name}: ${state.scores[team.name]}`;
-            }).join(' ');
-
-            timeDiv.innerHTML = Math.floor(state.timer / 60) + ':' + Math.round(state.timer % 60);
+        MainLoop.setDraw(() => {
+            if (this.renderer && this.simulator.currentState.playing) {
+                this.renderer.draw(this.simulator.currentState);
+            }
         });
     }
 

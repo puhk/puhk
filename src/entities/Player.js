@@ -9,7 +9,13 @@ export default class Player {
     nick: string;
     team: string;
     discId: ?number;
-    keys: keys;
+    keys: keys = {
+        up: false,
+        down: false,
+        left: false,
+        right: false,
+        kick: false
+    };
     
     constructor(clientId: number, nick: string, team: string) {
         this.clientId = clientId;

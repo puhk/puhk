@@ -2,7 +2,7 @@
 
 import Vec from 'victor';
 
-import {Background} from './entities/Background';
+import Background from './entities/Background';
 import Disc from './entities/Disc';
 import Goal from './entities/Goal';
 import Segment from './entities/Segment';
