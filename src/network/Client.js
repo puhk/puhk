@@ -5,7 +5,7 @@ import Peer from 'peerjs';
 
 import type Game from '../Game';
 import Base from './Base';
-import * as Events from '../state/events/Events';
+import * as Events from '../state/events';
 import State from '../state/State';
 import Disc from '../entities/Disc';
 

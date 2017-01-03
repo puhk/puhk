@@ -4,12 +4,12 @@ import _ from 'lodash';
 
 import type State from './State';
 import type Engine from '../Engine';
-import type {Events} from './events/Events';
+import type Event from './events/Event';
 
 export default class Simulator {
     engine: Engine;
     maxStatesToRemember = 120;
-    futureEvents: Events[] = [];
+    futureEvents: Event[] = [];
     states: State[] = [];
 
     constructor(engine: Engine) {
@@ -62,7 +62,7 @@ export default class Simulator {
         this.futureEvents.length = 0;
     }
 
-    addEvent(event: Events, frame?: number) {
+    addEvent(event: Event, frame?: number) {
         if (!frame || frame === this.currentFrame) {
             event.frame = this.currentFrame;
             this.currentState.events.push(event);

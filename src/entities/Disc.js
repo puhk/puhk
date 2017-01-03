@@ -3,13 +3,6 @@
 import Vec from 'victor';
 import Base from './Base';
 
-type opts = {
-    id?: number,
-    color?: string,
-    damping?: number,
-    invMass?: number
-};
-
 export default class Disc extends Base {
     id = 0;
     bounce = 0.5;
@@ -117,4 +110,11 @@ export type JsonDisc = {
     damping: number,
     invMass: number,
     radius: number
+};
+
+type opts = {
+    id?: number,
+    color?: string,
+    damping?: number,
+    invMass?: number
 };

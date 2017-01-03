@@ -3,13 +3,13 @@
 import _ from 'lodash';
 import Vec from 'victor';
 
-import * as Events from './events/Events';
+import * as Events from './events';
 import Stadium from '../Stadium';
 import Disc from '../entities/Disc';
 import Player from '../entities/Player';
 import Segment from '../entities/Segment';
 
-import type {Events as EventTypes} from './events/Events';
+import type Event from './events/Event';
 import type {JsonStadium, JsonTeam} from '../Stadium';
 import type {JsonDisc} from '../entities/Disc';
 import type {JsonPlayer} from '../entities/Player';
@@ -21,10 +21,10 @@ export default class State {
     static STATE_ENDGAME = 3;
 
     discs: Disc[] = [];
-    events: EventTypes[] = [];
+    events: Event[] = [];
     frame = 0;
     players: Player[] = [];
-    playing = false;
+    playing: boolean = false;
     stadium: Stadium;
     
     scores = {};

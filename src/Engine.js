@@ -6,11 +6,10 @@ import Disc from './entities/Disc';
 
 import type Game from './Game';
 import type Goal from './entities/Goal';
+import type Line from './entities/Line';
 import type Segment from './entities/Segment';
 import type State from './state/State';
-
-import type Line from './entities/Line';
-import type {Events} from './state/events/Events';
+import type Event from './state/events/Event';
 
 export default class Engine {
     game: Game;
@@ -21,13 +20,13 @@ export default class Engine {
         this.game = game;
     }
 
-    run(state: State, events: Events[]) {
+    run(state: State, events: Event[]) {
         this.state = state;
         this.applyEvents(events);
         this.update();
     }
 
-    applyEvents(events: Events[]) {
+    applyEvents(events: Event[]) {
         events.forEach(event => event.apply(this.state, this.game));
     }
 

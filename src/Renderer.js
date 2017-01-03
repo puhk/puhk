@@ -3,7 +3,7 @@
 import State from './state/State';
 
 export default class Renderer {
-    parent: HTMLElement;
+    parent: ?HTMLElement;
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
     width = 0;
@@ -14,10 +14,6 @@ export default class Renderer {
         this.height = height;
     }
 
-    renderTo(parent: HTMLElement) {
-        this.parent = parent;
-    }
-
     init() {
         let canvas = this.createCanvas();
         let ctx = canvas.getContext('2d');
@@ -26,14 +22,36 @@ export default class Renderer {
             throw new Error;
         }
 
-        canvas.focus();
-
         this.canvas = canvas;
         this.ctx = ctx;
         this.center();
+
+        if (this.parent) {
+            this.render();
+        }
     }
 
-    destroy() {
+    setParent(parent: HTMLElement) {
+        this.parent = parent;
+
+        if (this.canvas) {
+            this.render();
+        }
+    }
+
+    render() {
+        let parent = this.parent;
+        
+        if (!this.canvas || !parent) {
+            return;
+        }
+
+        this.remove();
+        parent.appendChild(this.canvas);
+        this.canvas.focus();
+    }
+
+    remove() {
         this.canvas.remove();
     }
 
@@ -42,8 +60,6 @@ export default class Renderer {
         canvas.width = this.width;
         canvas.height = this.height;
         // canvas.oncontextmenu = (e: Event) => false;
-
-        this.parent.appendChild(canvas);
 
         return canvas;
     }

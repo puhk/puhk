@@ -3,7 +3,7 @@
 import Peer from 'peerjs';
 
 import Base from './Base';
-import * as Events from '../state/events/Events';
+import * as Events from '../state/events';
 import ClientAddedEvent from '../state/events/ClientAdded';
 
 import type {syncMsg, initMsg, eventMsg, messages} from './Base';

@@ -1,5 +1,6 @@
 [ignore]
 .*/dist/.*
+.*/node_modules/aurelia-event-aggregator/.*
 
 [include]
 
@@ -7,3 +8,4 @@
 
 [options]
 unsafe.enable_getters_and_setters=true
+esproposal.export_star_as=enable

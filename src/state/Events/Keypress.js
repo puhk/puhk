@@ -1,12 +1,14 @@
 // @flow
 
 import Event from './Event';
-import State from '../State';
+
+import type State from '../State';
+import type Game from '../../Game';
 
 export default class Keypress extends Event {
     type = 'Keypress';
 
-    apply(state: State) {
+    apply(state: State, game: Game) {
         let player = state.players.find(player => player.clientId == this.data.clientId);
 
         if (!player) {

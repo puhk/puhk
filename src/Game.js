@@ -2,6 +2,7 @@
 
 import MainLoop from 'mainloop.js';
 import Vec from 'victor';
+import {EventAggregator} from 'aurelia-event-aggregator';
 
 import Engine from './Engine';
 import Keyboard from './Keyboard';
@@ -10,7 +11,7 @@ import Renderer from './Renderer';
 
 import Simulator from './state/Simulator';
 import State from './state/State';
-import {ChangeTeam, ClientAdded, Keypress} from './state/events/Events';
+import {ChangeTeam, ClientAdded, Keypress, StartGame, StopGame} from './state/events';
 
 import Disc from './entities/Disc';
 import Goal from './entities/Goal';
@@ -21,6 +22,7 @@ import classic from './stadiums/classic.json';
 
 import type NetworkHost from './network/Host';
 import type NetworkClient from './network/Client';
+import type Event from './state/events/Event';
 
 export default class Game {
     engine: Engine;
@@ -28,6 +30,7 @@ export default class Game {
     network: NetworkHost | NetworkClient;
     renderer: ?Renderer;
     simulator: Simulator;
+    eventAggregator: EventAggregator;
 
     inited = false;
     myId = -1;
@@ -36,11 +39,11 @@ export default class Game {
         this.engine = new Engine(this);
         this.simulator = new Simulator(this.engine);
         this.renderer = renderer;
+        this.eventAggregator = new EventAggregator;
 
         this.keyboard = new Keyboard((key, state) => {
             let event = new Keypress(this.myId, {key, state, clientId: this.myId});
-            this.simulator.addEvent(event);
-            this.network.sendMsg(event.toMessage());
+            this.addEvent(event);
         });
     }
 
@@ -69,38 +72,20 @@ export default class Game {
         }
     }
 
-    start() {
-        let state = this.simulator.currentState;
-        
-        if (state.playing) {
-            return;
-        }
+    addEvent(event: Event, send?: boolean) {
+        this.simulator.addEvent(event);
 
-        this.initRenderer();
-        this.createPlayerDiscs(state);
-        this.kickOffState(state);
-        state.playing = true;
+        if (send) {
+            this.network.sendMsg(event.toMessage());
+        }
+    }
+
+    start() {
+        this.addEvent(new StartGame(this.myId));
     }
 
     stop(state: State) {
-        if (!state.playing) {
-            return;
-        }
-
-        if (this.renderer) {
-            this.renderer.destroy();
-        }
-
-        state.playing = false;
-
-        state.players.filter(player => player.team)
-            .forEach(player => {
-                let disc = state.getPlayerDisc(player);
-
-                if (disc) {
-                    state.removeDisc(disc);
-                }
-            });
+        this.addEvent(new StopGame(this.myId));
     }
 
     createInitialState() {
@@ -159,9 +144,7 @@ export default class Game {
     }
 
     movePlayerToTeam(clientId: number, team: Object) {
-        let event = new ChangeTeam(this.myId, {clientId, team});
-        this.simulator.addEvent(event);
-        this.network.sendMsg(event.pack());
+        this.addEvent(new ChangeTeam(this.myId, {clientId, team}))
     }
 
     kickOffState(state: State) {
