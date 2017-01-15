@@ -72,7 +72,7 @@ export default class Team extends React.Component<void, TeamProps, TeamState> {
     }
 
     componentWillUnmount() {
-        for (let subscriber of this.eventSubscribers) {
+        for (const subscriber of this.eventSubscribers) {
             subscriber.dispose();
         }
     }
@@ -83,9 +83,11 @@ export default class Team extends React.Component<void, TeamProps, TeamState> {
                 <span className="color-block" style={{backgroundColor: this.props.team.color}}></span>
                 <a href="#" onDoubleClick={e => this.switchTeam()}>{this.props.team.name}</a>
 
-                {!this.props.specs && <span className="score">{this.state.score}</span>}
+                {!this.props.specs &&
+                    <span className="score">{this.state.score}</span>
+                }
 
-                {this.state.players.length || this.props.team.name == 'red' ?
+                {(this.state.players.length || this.props.team.name == 'red') &&
                     <ul>
                         {this.state.players.map(player =>
                             <li key={player.clientId}>
@@ -93,14 +95,15 @@ export default class Team extends React.Component<void, TeamProps, TeamState> {
                                 <span>{player.nick}</span>
                             </li>
                         )}
-                        {this.props.team.name == 'red' ?
+
+                        {this.props.team.name == 'red' &&
                             <li>
                                 <img src={'https://cdn2.iconfinder.com/data/icons/flags/flags/48/united-kingdom-great-britain.png'} />
                                 <span>socrates</span>
                             </li>
-                        : ''}
+                        }
                     </ul>
-                : ''}
+                }
             </li>
         );
     }

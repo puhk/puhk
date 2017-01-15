@@ -13,7 +13,7 @@ export default class Pitch extends React.Component<void, PitchProps, void> {
         super(props);
 
         this.resizeObserver = new ResizeObserver((entries, observer) => {
-            for (let entry of entries) {
+            for (const entry of entries) {
                 const {width, height} = entry.contentRect;
 
                 this.props.renderer

@@ -54,10 +54,7 @@ export default class TopBar extends React.Component<void, Props, TopBarState> {
                     ))}
                 </ul>
 
-                <div className="room-name">
-                    Nojs Room
-                </div>
-
+                <div className="room-name">Nojs Room</div>
                 <div className="timer">{timer}</div>
             </div>
         );

@@ -34,7 +34,9 @@ export default class Game extends React.Component<void, GameProps, GameState> {
     }
 
     componentWillUnmount() {
-        this.eventSubscribers.forEach(event => event.dispose());
+        for (const subscriber of this.eventSubscribers) {
+            subscriber.dispose();
+        }
     }
     
     render() {

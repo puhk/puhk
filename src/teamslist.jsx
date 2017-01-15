@@ -17,7 +17,7 @@ export default class TeamsList extends React.Component {
     }
 
     render() {
-        let specTeam = {
+        const specTeam = {
             name: 'Spectators',
             color: '#ccc'
         };
