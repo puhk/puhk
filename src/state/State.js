@@ -36,6 +36,12 @@ export default class State {
     matchState = State.STATE_KICKOFF;
     matchStateTimer = 0;
 
+    initScores() {
+        this.stadium.teams.forEach(team => {
+            this.scores[team.name] = 0;
+        });
+    }
+
     addPlayers(...players: Player[]) {
         this.players = this.players.concat(players);
     }
@@ -128,10 +134,7 @@ export default class State {
 
         state.stadium = stadium;
         state.discs = stadium.discs.map(disc => disc.clone());
-
-        stadium.teams.forEach(team => {
-            state.scores[team.name] = 0;
-        });
+        state.initScores();
 
         return state;
     }

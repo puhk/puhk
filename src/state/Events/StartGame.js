@@ -13,6 +13,7 @@ export default class StartGame extends Event {
             return;
         }
 
+        state.initScores();
         state.playing = true;
         state.timer = 0;
 
