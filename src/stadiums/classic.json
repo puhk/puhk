@@ -3,7 +3,7 @@
 
     "teams": [
         {"name": "red", "color": "#e56e56", "kickOffPos": [-250, 0]},
-        {"name": "blue", "color": "blue", "kickOffPos": [250, 0]}
+        {"name": "blue", "color": "#5689e5", "kickOffPos": [250, 0]}
     ],
 
     "player": {

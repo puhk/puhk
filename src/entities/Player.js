@@ -7,7 +7,7 @@ import type {keys} from '../Keyboard';
 export default class Player {
     clientId: number;
     nick: string;
-    team: string;
+    team: ?string;
     discId: ?number;
     keys: keys = {
         up: false,
@@ -17,16 +17,16 @@ export default class Player {
         kick: false
     };
     
-    constructor(clientId: number, nick: string, team: string) {
+    constructor(clientId: number, nick: string) {
         this.clientId = clientId;
         this.nick = nick;
-        this.team = team;
     }
 
     clone() {
-        let player = new Player(this.clientId, this.nick, this.team);
+        let player = new Player(this.clientId, this.nick);
         player.discId = this.discId;
         player.keys = _.clone(this.keys);
+        player.team = this.team;
         return player;
     }
 
@@ -51,7 +51,7 @@ export default class Player {
 export type JsonPlayer = {
     clientId: number,
     nick: string,
-    team: string,
+    team: ?string,
     discId: ?number,
     keys: keys
 };

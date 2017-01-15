@@ -10,7 +10,6 @@ export default class Background {
     pos: Vec;
     width: number;
     height: number;
-    loaded = false;
     type: Types;
 
     constructor(pos: Vec, width: number, height: number, type: Types) {
@@ -20,26 +19,10 @@ export default class Background {
         this.type = type;
     }
 
-    load() {
-        let image = Background.images[this.type];
-        
-        if (!(image instanceof HTMLImageElement)) {
-            return;
-        }
-        
-        if (image.complete) {
-            this.loaded = true;
-        }
-
-        image.onload = () => {
-            this.loaded = true;
-        };
-    }
-
     draw(ctx: CanvasRenderingContext2D) {
         let image = Background.images[this.type];
-        
-        if (!(image instanceof HTMLImageElement) || !this.loaded) {
+
+        if (!(image instanceof HTMLImageElement) || !image.complete) {
             return;
         }
         
@@ -58,9 +41,7 @@ export default class Background {
     }
 
     static parse(obj: JsonBackground): Background {
-        let background = new Background(Vec.fromArray(obj.pos), obj.width, obj.height, obj.type);
-        background.load();
-        return background;
+        return new Background(Vec.fromArray(obj.pos), obj.width, obj.height, obj.type);
     }
 }
 

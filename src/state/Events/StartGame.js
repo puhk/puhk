@@ -13,10 +13,12 @@ export default class StartGame extends Event {
             return;
         }
 
+        state.playing = true;
+        state.timer = 0;
+
         game.initRenderer();
         game.createPlayerDiscs(state);
         game.kickOffState(state);
-        state.playing = true;
 
         game.eventAggregator.publish(this);
     }

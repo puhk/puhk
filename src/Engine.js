@@ -16,7 +16,7 @@ export default class Engine {
     state: State;
     prevBallPositions = {};
 
-    constructor(game: Game) {
+    setGame(game: Game) {
         this.game = game;
     }
 

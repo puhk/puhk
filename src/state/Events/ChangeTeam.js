@@ -1,13 +1,14 @@
 // @flow
 
 import Event from './Event';
-import Player from '../../entities/Player';
 
 import type State from '../State';
 import type Game from '../../Game';
+import type Player from '../../entities/Player';
 
 export default class ChangeTeam extends Event {
     type = 'ChangeTeam';
+    player: Player;
 
     apply(state: State, game: Game) {
         let player = state.getPlayerById(this.data.clientId);
@@ -16,7 +17,8 @@ export default class ChangeTeam extends Event {
             return;
         }
 
-        let currentDisc = state.getPlayerDisc(player);
+        this.player = player;
+        let currentDisc = state.getPlayerDisc(this.player);
         let team = state.stadium.getTeam(this.data.team);
 
         // check team exists if not specs
@@ -25,27 +27,29 @@ export default class ChangeTeam extends Event {
         }
 
         // player already on team?
-        if (player.team === this.data.team) {
+        if (this.player.team === this.data.team) {
             return;
         }
 
-        player.team = this.data.team;
+        this.player.team = this.data.team;
 
         if (currentDisc) {
             state.removeDisc(currentDisc);
         }
         
+        // moved to specs
         if (this.data.team === null) {
-            player.discId = null;
-            return;
+            this.player.discId = null;
+        } else {
+            let disc = game.createPlayerDisc(this.player);
+
+            if (disc) {
+                this.player.discId = disc.id;
+                state.addDisc(disc);
+            }
         }
 
-        let disc = game.createPlayerDisc(player);
-
-        if (disc) {
-            player.discId = disc.id;
-            state.addDisc(disc);
-        }
+        game.eventAggregator.publish(this);
     }
 
     getData() {

@@ -1,8 +1,8 @@
 // @flow
 
 import _ from 'lodash';
+import State from './State';
 
-import type State from './State';
 import type Engine from '../Engine';
 import type Event from './events/Event';
 
@@ -87,8 +87,12 @@ export default class Simulator {
         return typeof state !== 'undefined';
     }
 
+    addState(state: State) {
+        this.states.unshift(state);
+    }
+
     get currentState(): State {
-        return this.states[0];
+        return this.states[0] || new State;
     }
 
     get currentFrame(): number {

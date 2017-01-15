@@ -1,3 +1,17 @@
 // @flow
 
 export * from '../src';
+
+import type Game from '../src/Game';
+import type {JsonTeam} from '../src/Stadium';
+import type State from '../src/state/State';
+import type Goal from '../src/entities/Goal';
+import type Player from '../src/entities/Player';
+
+export type {
+    Game,
+    JsonTeam,
+    State,
+    Goal,
+    Player
+};

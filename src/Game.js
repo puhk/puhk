@@ -4,28 +4,22 @@ import MainLoop from 'mainloop.js';
 import Vec from 'victor';
 import {EventAggregator} from 'aurelia-event-aggregator';
 
-import Engine from './Engine';
 import Keyboard from './Keyboard';
-import Stadium from './Stadium';
 import Renderer from './Renderer';
-
-import Simulator from './state/Simulator';
 import State from './state/State';
-import {ChangeTeam, ClientAdded, Keypress, StartGame, StopGame} from './state/events';
+
+import {ChangeTeam, Keypress, PlayerJoined, StartGame, StopGame} from './state/events';
 
 import Disc from './entities/Disc';
-import Goal from './entities/Goal';
 import Player from './entities/Player';
-import Segment from './entities/Segment';
-
-import classic from './stadiums/classic.json';
 
 import type NetworkHost from './network/Host';
 import type NetworkClient from './network/Client';
+import type Simulator from './state/Simulator';
 import type Event from './state/events/Event';
+import type Goal from './entities/Goal';
 
 export default class Game {
-    engine: Engine;
     keyboard: Keyboard;
     network: NetworkHost | NetworkClient;
     renderer: ?Renderer;
@@ -35,9 +29,8 @@ export default class Game {
     inited = false;
     myId = -1;
 
-    constructor(renderer?: Renderer) {
-        this.engine = new Engine(this);
-        this.simulator = new Simulator(this.engine);
+    constructor(simulator: Simulator, renderer?: Renderer) {
+        this.simulator = simulator;
         this.renderer = renderer;
         this.eventAggregator = new EventAggregator;
 
@@ -68,7 +61,7 @@ export default class Game {
 
     initRenderer() {
         if (this.renderer instanceof Renderer) {
-            this.renderer.init();
+            this.renderer.render();
         }
     }
 
@@ -80,29 +73,24 @@ export default class Game {
         }
     }
 
-    start() {
-        this.addEvent(new StartGame(this.myId));
+    initLocalPlayer() {
+        let event = new PlayerJoined(this.myId, {
+            clientId: this.myId,
+            nick: 'noj'
+        });
+        
+        this.addEvent(event, false);
     }
 
-    stop(state: State) {
-        this.addEvent(new StopGame(this.myId));
-    }
-
-    createInitialState() {
-        let stadium = new Stadium(classic);
-
-        let state = State.createFromStadium(stadium);
-        this.simulator.states.unshift(state);
-
-        let me = this.createPlayer(this.myId, 'noj', stadium.teams[0]);
-        state.addPlayers(me);
-    }
-
-    createPlayer(clientId: number, nick: string, team: Object) {
-        return new Player(clientId, nick, team.name);
+    createPlayer(clientId: number, nick: string) {
+        return new Player(clientId, nick);
     }
 
     createPlayerDisc(player: Player): ?Disc {
+        if (!player.team) {
+            return;
+        }
+
         let stadium = this.simulator.currentState.stadium;
         let team = stadium.getTeam(player.team);
         
@@ -143,11 +131,11 @@ export default class Game {
         state.addDiscs(discs);
     }
 
-    movePlayerToTeam(clientId: number, team: Object) {
-        this.addEvent(new ChangeTeam(this.myId, {clientId, team}))
-    }
-
     kickOffState(state: State) {
+        if (!state.playing) {
+            return;
+        }
+
         state.matchState = State.STATE_KICKOFF;
 
         this.setKickOffPositions(state);
@@ -160,6 +148,10 @@ export default class Game {
     }
 
     setKickOffPositions(state: State) {
+        if (!state.playing) {
+            return;
+        }
+
         state.players.forEach(player => {
             let disc = state.getPlayerDisc(player);
             let team = state.stadium.getTeam(player.team);
@@ -183,6 +175,8 @@ export default class Game {
         ++state.scores[team.name];
         state.matchState = State.STATE_GOALSCORED;
         state.matchStateTimer = 150;
+
+        this.eventAggregator.publish('goalScored', {goal, state});
     }
 
     scoresEqual(state: State) {
@@ -198,7 +192,7 @@ export default class Game {
             case State.STATE_KICKOFF:
                 state.discs.filter(disc => disc.isBall)
                     .forEach(ball => {
-                        if (ball.velocity.x > 0 || ball.velocity.y > 0) {
+                        if (ball.velocity.x != 0 || ball.velocity.y != 0) {
                             state.matchState = State.STATE_INPLAY;
                         }
                     });
@@ -222,6 +216,12 @@ export default class Game {
                     return;
                 }
 
+                if (state.timer >= state.timeLimit * 60 && !this.scoresEqual(state)) {
+                    state.matchState = State.STATE_ENDGAME;
+                    state.matchStateTimer = 300;
+                    return;
+                }
+
                 for (let team of state.stadium.teams) {
                     let score = state.scores[team.name];
 
@@ -240,8 +240,8 @@ export default class Game {
             case State.STATE_ENDGAME:
                 --state.matchStateTimer;
 
-                if (state.matchStateTimer == 0) {
-                    this.stop(state);
+                if (state.matchStateTimer <= 0) {
+                    this.stop();
                 }
 
                 break;
@@ -266,5 +266,45 @@ export default class Game {
 
     stopLoop() {
         MainLoop.stop();
+    }
+
+    /** API */
+
+    start() {
+        this.addEvent(new StartGame(this.myId));
+    }
+
+    stop() {
+        this.addEvent(new StopGame(this.myId));
+    }
+
+    isPlaying() {
+        return this.simulator.currentState.playing;
+    }
+
+    getTeams() {
+        return this.simulator.currentState.stadium.getTeams();
+    }
+
+    getTeamPlayers(name: string) {
+        let state = this.simulator.currentState;
+        let team = state.stadium.getTeam(name);
+        return team && state.getTeamPlayers(team);
+    }
+
+    getTimer() {
+        return this.simulator.currentState.timer;
+    }
+
+    getScore(team: string) {
+        return this.simulator.currentState.scores[team];
+    }
+
+    getScores() {
+        return this.simulator.currentState.scores;
+    }
+
+    movePlayerToTeam(clientId: number, team: ?string) {
+        this.addEvent(new ChangeTeam(this.myId, {clientId, team}))
     }
 }

@@ -42,8 +42,12 @@ export default class Stadium {
         };
     }
 
-    getTeam(name: string): ?JsonTeam {
+    getTeam(name: ?string): ?JsonTeam {
         return this.teams.find(team => team.name == name);
+    }
+
+    getTeams() {
+        return this.teams;
     }
 }
 
@@ -59,7 +63,7 @@ export type JsonStadium = {
 export type JsonTeam = {
     name: string,
     color: string,
-    kickOffPos: [number, number]
+    kickOffPos?: [number, number]
 };
 
 type JsonPlayerPhysics = {

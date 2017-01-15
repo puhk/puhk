@@ -1,7 +1,7 @@
 // @flow
 
 export default class Keyboard {
-    handler: (key: string, state: boolean) => void;
+    handler: handler;
     
     keyCodes = {
         '37': 'left',
@@ -20,7 +20,7 @@ export default class Keyboard {
         kick: false
     };
 
-    constructor(handler: (key: string, state: boolean) => void) {
+    constructor(handler: handler) {
         this.handler = handler;
 
         document.addEventListener('keydown', (e: KeyboardEvent) => {
@@ -46,11 +46,11 @@ export default class Keyboard {
         return this.keyCodes[code];
     }
 
-    isDown(key: string): boolean {
+    isDown(key: $Keys<keys>): boolean {
         return this.keyDown[key];
     }
 
-    isUp(key: string): boolean {
+    isUp(key: $Keys<keys>): boolean {
         return !this.isDown(key);
     }
 }
@@ -62,3 +62,5 @@ export type keys = {
     right: boolean,
     kick: boolean
 };
+
+type handler = (key: string, state: boolean) => void;
