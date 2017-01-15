@@ -1,3 +1,177 @@
 body {
+    font-family: 'Open Sans';
+    font-size: 1rem;
     margin: 0;
+}
+
+#gameMount {
+    height: 100vh;
+}
+
+.game-container {
+    display: flex;
+    height: 100%;
+
+    .sidebar {
+        background-color: #111518;
+        color: #fff;
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 10px;
+
+        .teams-list {
+            font-size: 0.9rem;
+            margin: 0;
+            list-style: none;
+            padding: 0;
+
+            > li {
+                border-bottom: 1px solid #000;
+                border-top: 1px solid #1f2528;
+                padding: 8px 2px;
+
+                &:first-child {
+                    border-top: 0;
+                }
+
+                &:last-child {
+                    border-bottom: 0;
+                }
+
+                a {
+                    color: #fff;
+                    font-weight: bold;
+                    text-decoration: none;
+                }
+
+                .score {
+                    float: right;
+                    font-weight: bold;
+                }
+
+                ul {
+                    background: #181d20;
+                    font-size: 0.8rem;
+                    margin-top: 8px;
+                    list-style: none;
+                    padding-left: 0px;
+
+                    li {
+                        margin-bottom: 0;
+                        padding: 4px 6px;
+                    }
+
+                    img {
+                        display: inline-block;
+                        margin-right: 5px;
+                        vertical-align: middle;
+                        width: 16px;
+                    }
+                }
+            }
+        }
+        
+        .stop-game {
+            background: #234f71;
+            border: 0;
+            border-radius: 3px;
+            color: white;
+            outline: none;
+            padding: 5px;
+        }
+    }
+
+    .main-area {
+        flex: 5;
+        position: relative;
+
+        > div {
+            height: 100%;
+        }
+
+        .top-bar {
+            background: rgba(0, 0, 0, 0.25);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            // font-size: 0.9rem;
+            padding: 10px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+
+            > * {
+                flex: 1;
+            }
+
+            .scores {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+
+                li {
+                    // display: inline-block;
+                    display: inline-flex;
+                    margin-right: 10px;
+                    vertical-align: middle;
+
+                    .color-block {
+                        box-shadow: 1px 1px 1px 0px #000;
+                        height: 20px;
+                        order: 0;
+                        width: 20px;
+                    }
+
+                    .score {
+                        order: 1;
+                    }
+                }
+
+                &.teams-2 li:nth-child(2) {
+                    &::before {
+                        content: '-';
+                        margin-right: 10px;
+                    }
+
+                    .color-block {
+                        margin-left: 5px;
+                        margin-right: 0;
+                        order: 1;
+                    }
+
+                    .score {
+                        order: 0;
+                    }
+                }
+            }
+
+            .room-name {
+                text-align: center;
+            }
+
+            .timer {
+                text-align: right;
+            }
+        }
+
+        .pitch {
+            height: 100%;
+            
+            canvas {
+                display: block;
+            }
+        }
+    }
+
+    .color-block {
+        border-radius: 2px;
+        display: inline-block;
+        margin-right: 5px;
+        height: 15px;
+        width: 15px;
+        vertical-align: middle;
+    }
 }

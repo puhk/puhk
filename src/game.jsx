@@ -1,40 +1,70 @@
-import React from 'react';
-import {GameCreator, Renderer, Events, Background} from 'nojball-game';
+// @flow
 
-import View from './view';
+import React from 'react';
+import {Events} from 'nojball-game';
+
+import Pitch from './pitch';
+import Sidebar from './sidebar';
+import TopBar from './topbar';
+
 import grassImage from '../images/grass.png';
 
-export default class Game extends React.Component {
-    eventSubscribers = {};
+import type {Game as GameType, Renderer} from 'nojball-game';
 
-    constructor(props) {
+export default class Game extends React.Component<void, GameProps, GameState> {
+    eventSubscribers = [];
+    state: GameState = {
+        playing: false
+    };
+
+    constructor(props: GameProps) {
         super(props);
 
-        this.state = {
-            playing: this.props.game.simulator.currentState && this.props.game.simulator.currentState.playing
-        };
-    }
+        this.state.playing = this.props.game.isPlaying();
 
-    componentDidMount() {
-        let startGame = this.props.game.eventAggregator.subscribe(Events.StartGame, (msg) => {
+        const startGame = this.props.game.eventAggregator.subscribe(Events.StartGame, (msg) => {
             this.setState({playing: true});
         });
 
-        let stopGame = this.props.game.eventAggregator.subscribe(Events.StopGame, (msg) => {
+        const stopGame = this.props.game.eventAggregator.subscribe(Events.StopGame, (msg) => {
             this.setState({playing: false});
         });
 
-        this.eventSubscribers = {startGame, stopGame};
+        this.eventSubscribers = [startGame, stopGame];
     }
 
     componentWillUnmount() {
-        this.eventSubscribers.startGame.dispose();
-        this.eventSubscribers.stopGame.dispose();
+        this.eventSubscribers.forEach(event => event.dispose());
     }
     
     render() {
-        return <div>
-            {this.state.playing ? <View renderer={this.props.renderer} /> : ''}
-        </div>;
+        let mainArea;
+
+        if (this.state.playing) {
+            mainArea = (
+                <div>
+                    <TopBar game={this.props.game} />
+                    <Pitch renderer={this.props.renderer} />
+                </div>
+            );
+        } else {
+            mainArea = <div className="menu" />
+        }
+
+        return (
+            <div className="game-container">
+                <div className="main-area">{mainArea}</div>
+                <Sidebar game={this.props.game} />
+            </div>
+        );
     }
 }
+
+type GameProps = {
+    game: GameType,
+    renderer: Renderer
+};
+
+type GameState = {
+    playing: boolean
+};
