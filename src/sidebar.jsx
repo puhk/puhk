@@ -13,9 +13,9 @@ export default class Sidebar extends React.Component {
             <div className="sidebar">
                 <TeamsList {...this.props} />
 
-                {game.isPlaying() ?
-                    <button onClick={e => game.stop()} className="stop-game">Stop Game</button> :
-                    ''}
+                {game.isPlaying() &&
+                    <button onClick={e => game.stop()} className="stop-game">Stop Game</button>
+                }
             </div>
         );
     }
