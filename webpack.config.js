@@ -21,14 +21,19 @@ module.exports = {
     })
   ],
   module: {
-    loaders: [{
+    rules: [{
       test: /.js$/,
-      loader: 'babel-loader',
       include: path.join(__dirname, 'src'),
-      exclude: /node_modules/
-    }, {
-      test: /.json$/,
-      loader: 'json-loader'
+      exclude: /node_modules/,
+      use: ['babel-loader']
     }]
+  },
+  externals: {
+    lodash: {
+      commonjs: 'lodash',
+      commonjs2: 'lodash',
+      amd: 'lodash',
+      root: '_'
+    }
   }
 };
