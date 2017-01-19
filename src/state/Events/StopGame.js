@@ -19,14 +19,13 @@ export default class StopGame extends Event {
 
         state.playing = false;
 
-        state.players.filter(player => player.team)
-            .forEach(player => {
-                let disc = state.getPlayerDisc(player);
+        for (let player of state.players) {
+            let disc = state.getPlayerDisc(player);
 
-                if (disc) {
-                    state.removeDisc(disc);
-                }
-            });
+            if (disc) {
+                state.removeDisc(disc);
+            }
+        }
 
         game.eventAggregator.publish(this);
     }

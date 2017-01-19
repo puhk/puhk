@@ -35,12 +35,10 @@ export default class ChangeTeam extends Event {
 
         if (currentDisc) {
             state.removeDisc(currentDisc);
-        }
-        
-        // moved to specs
-        if (this.data.team === null) {
             this.player.discId = null;
-        } else {
+        }
+
+        if (state.playing && this.data.team !== null) {
             let disc = game.createPlayerDisc(this.player);
 
             if (disc) {
