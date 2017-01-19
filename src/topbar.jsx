@@ -24,9 +24,19 @@ export default class TopBar extends React.Component<void, Props, TopBarState> {
             scores: game.getScores()
         };
 
-        this.timerInterval = setInterval(() => {
-            this.setState({timer: game.getTimer()});
-        }, 100);
+        const updateTimer = () => {
+            requestAnimationFrame(updateTimer);
+
+            const timer =  game.getTimer();
+            const currentSeconds = Math.floor(this.state.timer % 60);
+            const newSeconds = Math.floor(timer % 60);
+
+            if (Math.floor(timer) > Math.floor(this.state.timer)) {
+                this.setState({timer: game.getTimer()});
+            }
+        };
+
+        this.timerInterval = requestAnimationFrame(updateTimer);
 
         this.goalScoredSubscriber = game.eventAggregator.subscribe('goalScored', ({goal, state}: {goal: Goal, state: State}) => {
             this.setState({scores: state.scores});
@@ -34,10 +44,10 @@ export default class TopBar extends React.Component<void, Props, TopBarState> {
     }
 
     componentWillUnmount() {
-        clearInterval(this.timerInterval);
+        cancelAnimationFrame(this.timerInterval);
         this.goalScoredSubscriber.dispose();
     }
-    
+
     render() {
         const mins = Math.floor(this.state.timer / 60);
         const seconds = Math.floor(this.state.timer % 60);
@@ -46,12 +56,12 @@ export default class TopBar extends React.Component<void, Props, TopBarState> {
         return (
             <div className="top-bar">
                 <ul className={`scores teams-${this.state.teams.length}`}>
-                    {this.state.teams.map(team => (
+                    {this.state.teams.map(team =>
                         <li key={team.name}>
                             <span className="color-block" style={{backgroundColor: team.color}}></span>
                             <span className="score">{this.state.scores[team.name]}</span>
                         </li>
-                    ))}
+                    )}
                 </ul>
 
                 <div className="room-name">Nojs Room</div>
