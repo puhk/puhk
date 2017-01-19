@@ -15,7 +15,7 @@ import type Renderer from './Renderer';
 const createGame = (renderer?: Renderer) => {
     const engine = new Engine;
     const simulator = new Simulator(engine);
-    
+
     const game = new Game(simulator, renderer);
     engine.setGame(game);
 

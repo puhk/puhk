@@ -31,13 +31,8 @@ export default class Simulator {
     }
 
     fastForward(frame: number) {
-        console.log('fastForward', this.currentFrame, frame);
         while (this.currentFrame < frame) {
-            console.log(this.futureEvents,  _.find(this.futureEvents, {frame: this.currentFrame + 1}), this.currentFrame + 1);
-
             this.advance();
-
-            console.log(this.futureEvents);
         }
     }
 

@@ -50,6 +50,10 @@ export default class State {
         return this.players.find(player => player.clientId == id);
     }
 
+    getPlayerFromDisc(discId: number): ?Player {
+        return this.players.find(player => player.discId == discId);
+    }
+
     getTeamPlayers(team: JsonTeam) {
         return this.players.filter(player => player.team == team.name);
     }

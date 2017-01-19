@@ -1,6 +1,5 @@
 // @flow
 
-import _ from 'lodash';
 import Vec from 'victor';
 import Disc from './entities/Disc';
 
@@ -27,39 +26,43 @@ export default class Engine {
     }
 
     applyEvents(events: Event[]) {
-        events.forEach(event => event.apply(this.state, this.game));
+        for (let event of events) {
+            event.apply(this.state, this.game);
+        }
     }
 
     update() {
         let stadium = this.state.stadium;
 
         this.state.discs.forEach((disc, i) => {
-            let player = _.find(this.state.players, {discId: disc.id});
+            if (!disc.isBall) {
+                let player = this.state.getPlayerFromDisc(disc.id);
 
-            if (player) {
-                disc.kicking = player.keys.kick;
+                if (player) {
+                    disc.kicking = player.keys.kick;
 
-                let accel = disc.kicking ? stadium.playerPhysics.kickingAcceleration : stadium.playerPhysics.acceleration;
-                let move = new Vec(0, 0);
+                    let accel = disc.kicking ? stadium.playerPhysics.kickingAcceleration : stadium.playerPhysics.acceleration;
+                    let move = new Vec(0, 0);
 
-                if (player.keys.left) {
-                    move.x -= 1;
-                }
+                    if (player.keys.left) {
+                        move.x -= 1;
+                    }
 
-                if (player.keys.right) {
-                    move.x += 1;
-                }
+                    if (player.keys.right) {
+                        move.x += 1;
+                    }
 
-                if (player.keys.up) {
-                    move.y -= 1;
-                }
+                    if (player.keys.up) {
+                        move.y -= 1;
+                    }
 
-                if (player.keys.down) {
-                    move.y += 1;
-                }
+                    if (player.keys.down) {
+                        move.y += 1;
+                    }
 
-                if (move.x != 0 || move.y != 0) {
-                    disc.velocity.add(move.normalize().multiplyScalar(accel));
+                    if (move.x != 0 || move.y != 0) {
+                        disc.velocity.add(move.normalize().multiplyScalar(accel));
+                    }
                 }
             }
 
@@ -81,7 +84,8 @@ export default class Engine {
             });
 
             this.state.stadium.segments.forEach(segment => {
-                if (_.find(this.state.players, {discId: disc.id})) {
+                // quick hack until collision masks to prevent player/segment collision
+                if (this.state.getPlayerFromDisc(disc.id)) {
                     return;
                 }
 
@@ -106,7 +110,7 @@ export default class Engine {
         let distSq = disc.position.distanceSq(disc2.position);
 
         if (disc2.isBall && disc.position.distance(disc2.position) <= disc.radius + disc2.radius + 4) {
-            let player = _.find(this.state.players, {discId: disc.id});
+            let player = this.state.getPlayerFromDisc(disc.id);
 
             if (player && player.keys.kick) {
                 this.kick(disc, disc2);
