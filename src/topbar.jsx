@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 import type {Game, JsonTeam, Goal, State} from 'nojball-game';
 
@@ -16,16 +17,19 @@ export default class TopBar extends React.Component<void, Props, TopBarState> {
 
     constructor(props: Props) {
         super(props);
-        const {game} = props;
 
         this.state = {
-            teams: game.getTeams(),
-            timer: game.getTimer(),
-            scores: game.getScores()
+            teams: props.game.getTeams(),
+            timer: props.game.getTimer(),
+            scores: props.game.getScores()
         };
+    }
+
+    componentDidMount() {
+        const {game} = this.props;
 
         const updateTimer = () => {
-            requestAnimationFrame(updateTimer);
+            this.timerInterval = requestAnimationFrame(updateTimer);
 
             const timer =  game.getTimer();
             const currentSeconds = Math.floor(this.state.timer % 60);
