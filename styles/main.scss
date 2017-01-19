@@ -72,15 +72,22 @@ body {
                 }
             }
         }
-        
-        .stop-game {
-            background: #234f71;
+
+        button {
             border: 0;
             border-radius: 3px;
             color: white;
             cursor: pointer;
             outline: none;
             padding: 5px;
+
+            &.start-game {
+                background: #234f71;
+            }
+
+            &.stop-game {
+                background: #a52424;
+            }
         }
     }
 
@@ -160,7 +167,7 @@ body {
 
         .pitch {
             height: 100%;
-            
+
             canvas {
                 display: block;
             }

@@ -12,8 +12,9 @@ export default (props: SidebarProps) => {
         <div className="sidebar">
             <TeamsList {...props} />
 
-            {game.isPlaying() &&
-                <button onClick={e => game.stop()} className="stop-game">Stop Game</button>
+            {game.isPlaying() ?
+                <button onClick={e => game.stop()} className="stop-game">Stop Game</button> :
+                <button onClick={e => game.start()} className="start-game">Start Game</button>
             }
         </div>
     );
