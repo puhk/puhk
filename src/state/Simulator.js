@@ -20,8 +20,9 @@ export default class Simulator {
         let newState = this.currentState.clone();
         newState.events = _.remove(this.futureEvents, {frame: ++newState.frame});
 
-        this.engine.run(newState, this.currentState.events);
+        let events = this.currentState.events;
         this.states.unshift(newState);
+        this.engine.run(newState, events);
 
         if (this.states.length > this.maxStatesToRemember) {
             this.states.splice(this.maxStatesToRemember, this.states.length);
