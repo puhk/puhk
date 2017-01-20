@@ -12,26 +12,23 @@ export default class Team extends React.Component<void, TeamProps, TeamState> {
         score: 0
     };
 
-    constructor(props: TeamProps) {
-        super(props);
+    componentDidMount() {
         const {game, team, specs} = this.props;
 
         this.initChangeTeamListener();
 
         if (specs) {
             this.initPlayerJoinedListener();
-        } else {
-            this.state.players = game.getTeamPlayers(team.name);
-            this.state.score = game.getScore(team.name);
+            return;
         }
 
-        const subscriber = this.props.game.eventAggregator.subscribe('goalScored', ({goal, state}: {goal: Goal, state: State}) => {
-            if (goal.teamScored == team.name) {
-                this.setState({score: this.state.score + 1});
-            }
+        this.setState({
+            players: game.getTeamPlayers(team.name),
+            score: game.getScore(team.name)
         });
 
-        this.eventSubscribers.push(subscriber);
+        this.initStartGameListener();
+        this.initGoalScoredSubscriber();
     }
 
     initChangeTeamListener() {
@@ -63,6 +60,24 @@ export default class Team extends React.Component<void, TeamProps, TeamState> {
         };
 
         const subscriber = this.props.game.eventAggregator.subscribe(Events.PlayerJoined, handler);
+        this.eventSubscribers.push(subscriber);
+    }
+
+    initStartGameListener() {
+        const startGameSubscriber = this.props.game.eventAggregator.subscribe(Events.StartGame, () => {
+            this.setState({score: 0});
+        });
+
+        this.eventSubscribers.push(startGameSubscriber);
+    }
+
+    initGoalScoredSubscriber() {
+        const subscriber = this.props.game.eventAggregator.subscribe('goalScored', ({goal, state}: {goal: Goal, state: State}) => {
+            if (goal.teamScored == this.props.team.name) {
+                this.setState({score: this.state.score + 1});
+            }
+        });
+
         this.eventSubscribers.push(subscriber);
     }
 

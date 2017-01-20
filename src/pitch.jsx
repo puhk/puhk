@@ -8,7 +8,7 @@ import type {Renderer} from 'nojball-game';
 export default class Pitch extends React.Component<void, PitchProps, void> {
     element: HTMLElement;
     resizeObserver: ResizeObserver;
-    
+
     constructor(props: PitchProps) {
         super(props);
 
@@ -16,7 +16,7 @@ export default class Pitch extends React.Component<void, PitchProps, void> {
             for (const entry of entries) {
                 const {width, height} = entry.contentRect;
 
-                this.props.renderer
+                props.renderer
                     .setWidth(width)
                     .setHeight(height)
                     .center();
@@ -30,7 +30,7 @@ export default class Pitch extends React.Component<void, PitchProps, void> {
             .setWidth(this.element.offsetWidth)
             .setHeight(this.element.offsetHeight)
             .render();
-        
+
         this.resizeObserver.observe(this.element);
     }
 
