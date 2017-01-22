@@ -6,6 +6,7 @@ import {Events} from 'nojball-game';
 import Pitch from './pitch';
 import Sidebar from './sidebar';
 import TopBar from './topbar';
+import Chat from './chat';
 
 import grassImage from '../images/grass.png';
 
@@ -38,24 +39,22 @@ export default class Game extends React.Component<void, GameProps, GameState> {
             subscriber.dispose();
         }
     }
-    
+
     render() {
-        let mainArea;
-
-        if (this.state.playing) {
-            mainArea = (
-                <div>
-                    <TopBar game={this.props.game} />
-                    <Pitch renderer={this.props.renderer} />
-                </div>
-            );
-        } else {
-            mainArea = <div className="menu" />
-        }
-
         return (
             <div className="game-container">
-                <div className="main-area">{mainArea}</div>
+                <div className="main-area">
+                    {this.state.playing &&
+                        <TopBar game={this.props.game} />
+                    }
+
+                    <Pitch renderer={this.props.renderer} />
+
+                    {!this.state.playing &&
+                        <div className="menu" />
+                    }
+                </div>
+
                 <Sidebar game={this.props.game} />
             </div>
         );

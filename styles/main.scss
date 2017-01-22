@@ -95,10 +95,6 @@ body {
         flex: 5;
         position: relative;
 
-        > div {
-            height: 100%;
-        }
-
         .top-bar {
             background: rgba(0, 0, 0, 0.25);
             border-bottom: 1px solid #4a4a4a;
@@ -171,6 +167,17 @@ body {
             canvas {
                 display: block;
             }
+        }
+
+        .menu {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 5px;
+            height: 76%;
+            left: 50%;
+            margin-left: -35%;
+            position: absolute;
+            top: 12%;
+            width: 70%;
         }
     }
 

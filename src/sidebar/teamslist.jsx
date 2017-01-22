@@ -24,9 +24,9 @@ export default class TeamsList extends React.Component {
 
         return (
             <ul className="teams-list">
-                { this.state.teams.map(team =>
+                {this.state.teams.map(team =>
                     <Team game={this.props.game} team={team} key={team.name} />
-                ) }
+                )}
 
                 <Team game={this.props.game} team={specTeam} specs={true} />
             </ul>

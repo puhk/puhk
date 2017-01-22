@@ -32,7 +32,7 @@ export default class Team extends React.Component<void, TeamProps, TeamState> {
     }
 
     initChangeTeamListener() {
-        const handler = event => {
+        const handler = (event: Events.ChangeTeam) => {
             const {player} = event;
 
             if (player.team == this.props.team.name || (this.props.specs && !player.team)) {
@@ -53,7 +53,7 @@ export default class Team extends React.Component<void, TeamProps, TeamState> {
     }
 
     initPlayerJoinedListener() {
-        const handler = event => {
+        const handler = (event: Events.PlayerJoined) => {
             this.setState({
                 players: this.state.players.concat(event.player)
             });
@@ -64,26 +64,28 @@ export default class Team extends React.Component<void, TeamProps, TeamState> {
     }
 
     initStartGameListener() {
-        const startGameSubscriber = this.props.game.eventAggregator.subscribe(Events.StartGame, () => {
+        const handler = (event: Events.StartGame) => {
             this.setState({score: 0});
-        });
+        };
 
-        this.eventSubscribers.push(startGameSubscriber);
+        const subscriber = this.props.game.eventAggregator.subscribe(Events.StartGame, handler);
+        this.eventSubscribers.push(subscriber);
     }
 
     initGoalScoredSubscriber() {
-        const subscriber = this.props.game.eventAggregator.subscribe('goalScored', ({goal, state}: {goal: Goal, state: State}) => {
+        const handler = ({goal, state}: {goal: Goal, state: State}) => {
             if (goal.teamScored == this.props.team.name) {
                 this.setState({score: this.state.score + 1});
             }
-        });
+        };
 
+        const subscriber = this.props.game.eventAggregator.subscribe('goalScored', handler);
         this.eventSubscribers.push(subscriber);
     }
 
     switchTeam() {
         const team = this.props.specs ? null : this.props.team.name;
-        this.props.game.movePlayerToTeam(this.props.game.myId, team);
+        this.props.game.movePlayerToTeam(this.props.game.me.id, team);
     }
 
     componentWillUnmount() {
@@ -95,8 +97,10 @@ export default class Team extends React.Component<void, TeamProps, TeamState> {
     render() {
         return (
             <li>
-                <span className="color-block" style={{backgroundColor: this.props.team.color}}></span>
-                <a href="#" onDoubleClick={e => this.switchTeam()}>{this.props.team.name}</a>
+                <a href="#" onDoubleClick={e => this.switchTeam()}>
+                    <span className="color-block" style={{backgroundColor: this.props.team.color}}></span>
+                    <span>{this.props.team.name}</span>
+                </a>
 
                 {!this.props.specs &&
                     <span className="score">{this.state.score}</span>
@@ -107,16 +111,9 @@ export default class Team extends React.Component<void, TeamProps, TeamState> {
                         {this.state.players.map(player =>
                             <li key={player.clientId}>
                                 <img src={'https://cdn2.iconfinder.com/data/icons/flags/flags/48/united-kingdom-great-britain.png'} />
-                                <span>{player.nick}</span>
+                                <span>{player.name}</span>
                             </li>
                         )}
-
-                        {this.props.team.name == 'red' &&
-                            <li>
-                                <img src={'https://cdn2.iconfinder.com/data/icons/flags/flags/48/united-kingdom-great-britain.png'} />
-                                <span>socrates</span>
-                            </li>
-                        }
                     </ul>
                 }
             </li>
