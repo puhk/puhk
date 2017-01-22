@@ -22,7 +22,10 @@ export default class Engine {
     run(state: State, events: Event[]) {
         this.state = state;
         this.applyEvents(events);
-        this.update();
+
+        if (state.playing) {
+            this.update();
+        }
     }
 
     applyEvents(events: Event[]) {

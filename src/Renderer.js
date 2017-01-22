@@ -47,7 +47,7 @@ export default class Renderer {
 
     render() {
         let parent = this.parent;
-        
+
         if (!parent || parent == this.canvas.parentElement) {
             return;
         }
@@ -81,10 +81,6 @@ export default class Renderer {
     }
 
     draw(state: State) {
-        if (!state.playing) {
-            return;
-        }
-
         let area = [-this.canvas.width / 2, -this.canvas.height / 2, this.canvas.width, this.canvas.height];
 
         this.ctx.clearRect(...area);

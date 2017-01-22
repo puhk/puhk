@@ -9,7 +9,7 @@ import Disc from '../entities/Disc';
 import Player from '../entities/Player';
 import Segment from '../entities/Segment';
 
-import type Event from './events/Event';
+import type Event, {JsonEvent} from './events/Event';
 import type {JsonStadium, JsonTeam} from '../Stadium';
 import type {JsonDisc} from '../entities/Disc';
 import type {JsonPlayer} from '../entities/Player';
@@ -26,7 +26,7 @@ export default class State {
     players: Player[] = [];
     playing: boolean = false;
     stadium: Stadium;
-    
+
     scores = {};
     scoreLimit = 3;
 
@@ -157,7 +157,7 @@ export type JsonState = {
     stadium: JsonStadium,
     discs: JsonDisc[],
     players: JsonPlayer[],
-    events: Object[]
+    events: JsonEvent[]
 };
 
 type States = 0 | 1 | 2 | 3;

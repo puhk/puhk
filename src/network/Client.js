@@ -22,12 +22,12 @@ let msgHandlers = {
 
         let player = newState.getPlayerById(msg.id);
         let myDisc = newState.getPlayerDisc(player);
-        
+
         if (myDisc) {
             myDisc.isMe = true;
         }
 
-        this.game.myId = player.clientId;
+        this.game.me.id = player.clientId;
         this.game.init();
         this.game.initRenderer();
     },
@@ -85,7 +85,7 @@ export default class Client extends Base {
     game: Game;
     peer: Peer;
     hostConn: any;
-    nick = 'sock';
+    name = 'sock';
     lastSyncFrame = 0;
 
     constructor(game: Game) {

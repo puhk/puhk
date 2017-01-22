@@ -35,7 +35,7 @@ export default class Host extends Base {
             conn.client = client;
             this.clients.push(client);
 
-            let event = new PlayerJoinedEvent(this.game.myId, {clientId: client.id, nick: 'sock'});
+            let event = new PlayerJoinedEvent(this.game.me.id, {clientId: client.id, name: 'sock'});
             this.game.simulator.addEvent(event);
 
             conn.send({
@@ -74,7 +74,7 @@ let msgHandlers = {
     event(msg: eventMsg) {
         let event = Events[msg.event.eventType].parse(msg.event.sender, msg.event.data);
         event.frame = msg.event.frame;
-        
+
         if (event instanceof Events.Keypress) {
             event.data.clientId = this.id;
         }

@@ -27,7 +27,12 @@ export default class Game {
     eventAggregator: EventAggregator;
 
     inited = false;
-    myId = -1;
+
+    me: LocalPlayerInfo = {
+        id: -1,
+        name: '',
+        avatar: ''
+    };
 
     constructor(simulator: Simulator, renderer?: Renderer) {
         this.simulator = simulator;
@@ -35,9 +40,18 @@ export default class Game {
         this.eventAggregator = new EventAggregator;
 
         this.keyboard = new Keyboard((key, state) => {
-            let event = new Keypress(this.myId, {key, state, clientId: this.myId});
+            let event = new Keypress(this.me.id, {key, state, clientId: this.me.id});
             this.addEvent(event);
         });
+    }
+
+    setLocalPlayer(playerInfo: PlayerInfo) {
+        if (this.inited) {
+            throw new Error('Game already init');
+        }
+
+        this.me.name = playerInfo.name;
+        this.me.avatar = playerInfo.avatar;
     }
 
     init() {
@@ -74,16 +88,16 @@ export default class Game {
     }
 
     initLocalPlayer() {
-        let event = new PlayerJoined(this.myId, {
-            clientId: this.myId,
-            nick: 'noj'
+        let event = new PlayerJoined(this.me.id, {
+            clientId: this.me.id,
+            name: 'noj'
         });
-        
+
         this.addEvent(event, false);
     }
 
-    createPlayer(clientId: number, nick: string) {
-        return new Player(clientId, nick);
+    createPlayer(clientId: number, name: string) {
+        return new Player(clientId, name);
     }
 
     createPlayerDisc(player: Player): ?Disc {
@@ -93,7 +107,7 @@ export default class Game {
 
         let stadium = this.simulator.currentState.stadium;
         let team = stadium.getTeam(player.team);
-        
+
         if (player.team === null || !team) {
             return;
         }
@@ -105,10 +119,10 @@ export default class Game {
         });
 
         disc.kickStrength = stadium.playerPhysics.kickStrength;
-        disc.isMe = player.clientId == this.myId;
+        disc.isMe = player.clientId == this.me.id;
         return disc;
     }
-    
+
     createPlayerDiscs(state: State) {
         let discs: Disc[] = [];
 
@@ -121,13 +135,13 @@ export default class Game {
 
             player.discId = disc.id;
 
-            if (player.clientId == this.myId) {
+            if (player.clientId == this.me.id) {
                 disc.isMe = true;
             }
 
             discs.push(disc);
         }
-        
+
         state.addDiscs(discs);
     }
 
@@ -198,7 +212,7 @@ export default class Game {
                     });
 
                 break;
-            
+
             case State.STATE_INPLAY:
                 state.timer += 1 / 60;
 
@@ -208,7 +222,7 @@ export default class Game {
                 }
 
                 break;
-            
+
             case State.STATE_GOALSCORED:
                 --state.matchStateTimer;
 
@@ -236,7 +250,7 @@ export default class Game {
                 this.kickOffState(state);
 
                 break;
-            
+
             case State.STATE_ENDGAME:
                 --state.matchStateTimer;
 
@@ -254,7 +268,7 @@ export default class Game {
         });
 
         MainLoop.setDraw(() => {
-            if (this.renderer && this.simulator.currentState.playing) {
+            if (this.renderer) {
                 this.renderer.draw(this.simulator.currentState);
             }
         });
@@ -271,11 +285,11 @@ export default class Game {
     /** API */
 
     start() {
-        this.addEvent(new StartGame(this.myId));
+        this.addEvent(new StartGame(this.me.id));
     }
 
     stop() {
-        this.addEvent(new StopGame(this.myId));
+        this.addEvent(new StopGame(this.me.id));
     }
 
     isPlaying() {
@@ -305,6 +319,15 @@ export default class Game {
     }
 
     movePlayerToTeam(clientId: number, team: ?string) {
-        this.addEvent(new ChangeTeam(this.myId, {clientId, team}))
+        this.addEvent(new ChangeTeam(this.me.id, {clientId, team}))
     }
 }
+
+type PlayerInfo = {
+    name: string,
+    avatar: string
+};
+
+type LocalPlayerInfo = PlayerInfo & {
+    id: number
+};

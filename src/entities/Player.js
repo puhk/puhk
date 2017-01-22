@@ -6,7 +6,7 @@ import type {keys} from '../Keyboard';
 
 export default class Player {
     clientId: number;
-    nick: string;
+    name: string;
     team: ?string;
     discId: ?number;
     keys: keys = {
@@ -16,14 +16,14 @@ export default class Player {
         right: false,
         kick: false
     };
-    
-    constructor(clientId: number, nick: string) {
+
+    constructor(clientId: number, name: string) {
         this.clientId = clientId;
-        this.nick = nick;
+        this.name = name;
     }
 
     clone() {
-        let player = new Player(this.clientId, this.nick);
+        let player = new Player(this.clientId, this.name);
         player.discId = this.discId;
         player.keys = _.clone(this.keys);
         player.team = this.team;
@@ -33,7 +33,7 @@ export default class Player {
     pack(): JsonPlayer {
         return {
             clientId: this.clientId,
-            nick: this.nick,
+            name: this.name,
             team: this.team,
             keys: this.keys,
             discId: this.discId
@@ -41,7 +41,7 @@ export default class Player {
     }
 
     static parse(obj: JsonPlayer) {
-        let player = new Player(obj.clientId, obj.nick, obj.team);
+        let player = new Player(obj.clientId, obj.name, obj.team);
         player.discId = obj.discId;
         player.keys = obj.keys;
         return player;
@@ -50,7 +50,7 @@ export default class Player {
 
 export type JsonPlayer = {
     clientId: number,
-    nick: string,
+    name: string,
     team: ?string,
     discId: ?number,
     keys: keys

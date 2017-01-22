@@ -11,7 +11,7 @@ export default class PlayerJoined extends Event {
     player: Player;
 
     apply(state: State, game: Game) {
-        this.player = game.createPlayer(this.data.clientId, this.data.nick);
+        this.player = game.createPlayer(this.data.clientId, this.data.name);
         state.addPlayers(this.player);
 
         game.eventAggregator.publish(this);

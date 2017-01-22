@@ -13,10 +13,6 @@ export default class StopGame extends Event {
             return;
         }
 
-        if (game.renderer) {
-            game.renderer.remove();
-        }
-
         state.playing = false;
 
         for (let player of state.players) {
