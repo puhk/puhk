@@ -1,3 +1,5 @@
+@import 'chat';
+
 body {
     font-family: 'Open Sans';
     font-size: 1rem;
@@ -9,6 +11,10 @@ body {
 }
 
 .game-container {
+    * {
+        box-sizing: border-box;
+    }
+
     display: flex;
     height: 100%;
 
@@ -93,6 +99,7 @@ body {
 
     .main-area {
         flex: 5;
+        flex-direction: column;
         position: relative;
 
         .top-bar {
@@ -106,6 +113,7 @@ body {
             top: 0;
             right: 0;
             left: 0;
+            z-index: 2;
 
             > * {
                 flex: 1;
@@ -162,10 +170,25 @@ body {
         }
 
         .pitch {
-            height: 100%;
+            height: 75%;
+            position: relative;
+            outline: none;
 
             canvas {
                 display: block;
+                position: absolute;
+            }
+        }
+
+        .chat-container {
+            background: #718c5a;
+            height: 25%;
+            padding: 1%;
+
+            .chat {
+                height: 100%;
+                margin: 0 auto;
+                width: 75%;
             }
         }
 

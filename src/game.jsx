@@ -20,18 +20,22 @@ export default class Game extends React.Component<void, GameProps, GameState> {
 
     constructor(props: GameProps) {
         super(props);
+        const {game} = props;
 
-        this.state.playing = this.props.game.isPlaying();
+        this.state.playing = game.isPlaying();
 
-        const startGame = this.props.game.eventAggregator.subscribe(Events.StartGame, (msg) => {
+        const startGameHandler = () => {
             this.setState({playing: true});
-        });
+        };
 
-        const stopGame = this.props.game.eventAggregator.subscribe(Events.StopGame, (msg) => {
+        const stopGameHandler = () => {
             this.setState({playing: false});
-        });
+        };
 
-        this.eventSubscribers = [startGame, stopGame];
+        this.eventSubscribers = [
+            game.eventAggregator.subscribe(Events.StartGame, startGameHandler),
+            game.eventAggregator.subscribe(Events.StopGame, stopGameHandler)
+        ];
     }
 
     componentWillUnmount() {
@@ -41,21 +45,27 @@ export default class Game extends React.Component<void, GameProps, GameState> {
     }
 
     render() {
+        const {game} = this.props;
+
         return (
             <div className="game-container">
                 <div className="main-area">
                     {this.state.playing &&
-                        <TopBar game={this.props.game} />
+                        <TopBar game={game} />
                     }
 
-                    <Pitch renderer={this.props.renderer} />
+                    <Pitch game={game} renderer={this.props.renderer} />
+
+                    <div className="chat-container">
+                        <Chat game={game} />
+                    </div>
 
                     {!this.state.playing &&
                         <div className="menu" />
                     }
                 </div>
 
-                <Sidebar game={this.props.game} />
+                <Sidebar game={game} />
             </div>
         );
     }
