@@ -6,9 +6,17 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 
 import Keyboard from './Keyboard';
 import Renderer from './Renderer';
+
 import State from './state/State';
 
-import {ChangeTeam, Keypress, PlayerJoined, StartGame, StopGame} from './state/events';
+import {
+    ChangeTeam,
+    Keypress,
+    PlayerChat,
+    PlayerJoined,
+    StartGame,
+    StopGame
+} from './state/events';
 
 import Disc from './entities/Disc';
 import Player from './entities/Player';
@@ -20,7 +28,7 @@ import type Event from './state/events/Event';
 import type Goal from './entities/Goal';
 
 export default class Game {
-    keyboard: Keyboard;
+    keyboard: ?Keyboard;
     network: NetworkHost | NetworkClient;
     renderer: ?Renderer;
     simulator: Simulator;
@@ -38,11 +46,6 @@ export default class Game {
         this.simulator = simulator;
         this.renderer = renderer;
         this.eventAggregator = new EventAggregator;
-
-        this.keyboard = new Keyboard((key, state) => {
-            let event = new Keypress(this.me.id, {key, state, clientId: this.me.id});
-            this.addEvent(event);
-        });
     }
 
     setLocalPlayer(playerInfo: PlayerInfo) {
@@ -71,6 +74,19 @@ export default class Game {
 
         this.stopLoop();
         this.inited = false;
+    }
+
+    initKeyboard(element: HTMLElement) {
+        if (!this.keyboard) {
+            const handler = (key, state) => {
+                let event = new Keypress(this.me.id, {key, state, clientId: this.me.id});
+                this.addEvent(event);
+            };
+
+            this.keyboard = new Keyboard(handler);
+        }
+
+        this.keyboard.bindTo(element);
     }
 
     initRenderer() {
@@ -296,6 +312,10 @@ export default class Game {
         return this.simulator.currentState.playing;
     }
 
+    getPlayerById(id: number) {
+        return this.simulator.currentState.getPlayerById(id);
+    }
+
     getTeams() {
         return this.simulator.currentState.stadium.getTeams();
     }
@@ -320,6 +340,14 @@ export default class Game {
 
     movePlayerToTeam(clientId: number, team: ?string) {
         this.addEvent(new ChangeTeam(this.me.id, {clientId, team}))
+    }
+
+    getChatMessages() {
+        return this.simulator.currentState.chatMessages;
+    }
+
+    sendChatMessage(message: string) {
+        this.addEvent(new PlayerChat(this.me.id, {message}));
     }
 }
 

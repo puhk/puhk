@@ -1,15 +1,8 @@
 // @flow
 
-import ChangeTeam from './ChangeTeam';
-import PlayerJoined from './PlayerJoined';
-import Keypress from './Keypress';
-import StartGame from './StartGame';
-import StopGame from './StopGame';
-
-export {
-    ChangeTeam,
-    PlayerJoined,
-    Keypress,
-    StartGame,
-    StopGame
-};
+export {default as ChangeTeam} from './ChangeTeam';
+export {default as PlayerChat} from './PlayerChat';
+export {default as PlayerJoined} from './PlayerJoined';
+export {default as Keypress} from './Keypress';
+export {default as StartGame} from './StartGame';
+export {default as StopGame} from './StopGame';

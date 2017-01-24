@@ -1,7 +1,5 @@
 // @flow
 
-import _ from 'lodash';
-
 import type {keys} from '../Keyboard';
 
 export default class Player {
@@ -25,7 +23,7 @@ export default class Player {
     clone() {
         let player = new Player(this.clientId, this.name);
         player.discId = this.discId;
-        player.keys = _.clone(this.keys);
+        player.keys = Object.assign({}, this.keys);
         player.team = this.team;
         return player;
     }

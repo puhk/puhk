@@ -1,10 +1,8 @@
 // @flow
 
-import _ from 'lodash';
-import Vec from 'victor';
-
 import * as Events from './events';
 import Stadium from '../Stadium';
+import ChatMessage from '../entities/ChatMessage';
 import Disc from '../entities/Disc';
 import Player from '../entities/Player';
 import Segment from '../entities/Segment';
@@ -20,21 +18,22 @@ export default class State {
     static STATE_GOALSCORED = 2;
     static STATE_ENDGAME = 3;
 
+    frame = 0;
+    playing = false;
+
     discs: Disc[] = [];
     events: Event[] = [];
-    frame = 0;
     players: Player[] = [];
-    playing: boolean = false;
     stadium: Stadium;
 
-    scores = {};
-    scoreLimit = 3;
-
-    timer = 0;
-    timeLimit = 3;
-
+    chatMessages: ChatMessage[] = [];
+    maxChatMessages = 50;
     matchState = State.STATE_KICKOFF;
     matchStateTimer = 0;
+    scores = {};
+    scoreLimit = 3;
+    timer = 0;
+    timeLimit = 3;
 
     initScores() {
         this.stadium.teams.forEach(team => {
@@ -74,18 +73,27 @@ export default class State {
         return this.discs.find(disc => disc.id == player.discId);
     }
 
+    addChatMessage(chatMessage: ChatMessage) {
+        this.chatMessages.push(chatMessage);
+
+        if (this.chatMessages.length > this.maxChatMessages) {
+            this.chatMessages.splice(0, this.chatMessages.length - this.maxChatMessages);
+        }
+    }
+
     clone(): State {
         let clone = new State;
         clone.frame = this.frame;
         clone.stadium = this.stadium;
         clone.scoreLimit = this.scoreLimit;
-        clone.scores = _.clone(this.scores);
+        clone.scores = Object.assign({}, this.scores);
         clone.timer = this.timer;
         clone.timeLimit = this.timeLimit;
         clone.playing = this.playing;
         clone.matchState = this.matchState;
         clone.matchStateTimer = this.matchStateTimer;
 
+        clone.chatMessages = [...this.chatMessages];
         clone.players = this.players.map(player => player.clone());
         clone.discs = this.discs.map(disc => disc.clone());
 
