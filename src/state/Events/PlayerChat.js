@@ -7,9 +7,14 @@ import type State from '../State';
 import type Game from '../../Game';
 
 export default class PlayerChat extends Event {
-    data: data;
+    data: EventData;
     message: ?ChatMessage;
     type = 'PlayerChat';
+
+    constructor(sender: number, data: EventData) {
+        super(sender);
+        this.data = data;
+    }
 
     apply(state: State, game: Game) {
         this.message = new ChatMessage(this.sender, this.data.message);
@@ -18,15 +23,11 @@ export default class PlayerChat extends Event {
         game.eventAggregator.publish(this);
     }
 
-    getData() {
-        return this.data;
-    }
-
-    static parse(sender, data) {
+    static parse(sender, data: EventData) {
         return new PlayerChat(sender, data);
     }
 }
 
-type data = {
+type EventData = {
     message: string
 };

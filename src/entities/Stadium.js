@@ -2,15 +2,15 @@
 
 import Vec from 'victor';
 
-import Background from './entities/Background';
-import Disc from './entities/Disc';
-import Goal from './entities/Goal';
-import Segment from './entities/Segment';
+import Background from './Background';
+import Disc from './Disc';
+import Goal from './Goal';
+import Segment from './Segment';
 
-import type {JsonBackground} from './entities/Background';
-import type {JsonDisc} from './entities/Disc';
-import type {JsonGoal} from './entities/Goal';
-import type {JsonSegment} from './entities/Segment';
+import type {JsonBackground} from './Background';
+import type {JsonDisc} from './Disc';
+import type {JsonGoal} from './Goal';
+import type {JsonSegment} from './Segment';
 
 export default class Stadium {
     backgrounds: Background[] = [];
@@ -21,14 +21,12 @@ export default class Stadium {
     teams: JsonTeam[];
     playerPhysics: JsonPlayerPhysics;
 
-    constructor(json: JsonStadium) {
-        this.teams = json.teams;
-        this.playerPhysics = json.player;
+    getTeam(name: ?string): ?JsonTeam {
+        return this.teams.find(team => team.name == name);
+    }
 
-        this.backgrounds = json.backgrounds.map(obj => Background.parse(obj));
-        this.discs = json.discs.map(obj => Disc.parse(obj));
-        this.goals = json.goals.map(obj => Goal.parse(obj));
-        this.segments = json.segments.map(obj => Segment.parse(obj));
+    getTeams() {
+        return this.teams;
     }
 
     pack(): JsonStadium {
@@ -42,12 +40,17 @@ export default class Stadium {
         };
     }
 
-    getTeam(name: ?string): ?JsonTeam {
-        return this.teams.find(team => team.name == name);
-    }
+    static parse(json: JsonStadium) {
+        let stadium = new Stadium;
+        stadium.teams = json.teams;
+        stadium.playerPhysics = json.player;
 
-    getTeams() {
-        return this.teams;
+        stadium.backgrounds = json.backgrounds.map(obj => Background.parse(obj));
+        stadium.discs = json.discs.map(obj => Disc.parse(obj));
+        stadium.goals = json.goals.map(obj => Goal.parse(obj));
+        stadium.segments = json.segments.map(obj => Segment.parse(obj));
+
+        return stadium;
     }
 }
 

@@ -6,21 +6,15 @@ import type {eventMsg} from '../../network/Base';
 
 export default class Event {
     sender: number;
-    data: any;
     type: string;
     frame: number;
 
-    constructor(sender: number, data?: any) {
+    constructor(sender: number) {
         this.sender = sender;
-        this.data = data;
     }
 
     apply(state: State, game: Game) {
-        
-    }
 
-    getData(): any {
-        return '';
     }
 
     pack(): JsonEvent {
@@ -30,6 +24,10 @@ export default class Event {
             sender: this.sender,
             data: this.getData()
         };
+    }
+
+    getData() {
+        return null;
     }
 
     toMessage(): eventMsg {

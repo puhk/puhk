@@ -25,4 +25,8 @@ export default class StopGame extends Event {
 
         game.eventAggregator.publish(this);
     }
+
+    static parse(sender: number) {
+        return new StopGame(sender);
+    }
 }

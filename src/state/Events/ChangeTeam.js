@@ -7,8 +7,14 @@ import type Game from '../../Game';
 import type Player from '../../entities/Player';
 
 export default class ChangeTeam extends Event {
+    data: EventData;
     type = 'ChangeTeam';
     player: Player;
+
+    constructor(sender: number, data: EventData) {
+        super(sender);
+        this.data = data;
+    }
 
     apply(state: State, game: Game) {
         let player = state.getPlayerById(this.data.clientId);
@@ -50,11 +56,12 @@ export default class ChangeTeam extends Event {
         game.eventAggregator.publish(this);
     }
 
-    getData() {
-        return this.data;
-    }
-
-    static parse(sender: number, data: any) {
+    static parse(sender: number, data: EventData) {
         return new ChangeTeam(sender, data);
     }
 }
+
+type EventData = {
+    clientId: number,
+    team: ?string
+};

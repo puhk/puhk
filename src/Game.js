@@ -10,6 +10,7 @@ import Renderer from './Renderer';
 import State from './state/State';
 
 import {
+    ChangeStadium,
     ChangeTeam,
     Keypress,
     PlayerChat,
@@ -26,6 +27,7 @@ import type NetworkClient from './network/Client';
 import type Simulator from './state/Simulator';
 import type Event from './state/events/Event';
 import type Goal from './entities/Goal';
+import type Stadium from './entities/Stadium';
 
 export default class Game {
     keyboard: ?Keyboard;
@@ -348,6 +350,10 @@ export default class Game {
 
     sendChatMessage(message: string) {
         this.addEvent(new PlayerChat(this.me.id, {message}));
+    }
+
+    changeStadium(stadium: Stadium) {
+        this.addEvent(new ChangeStadium(this.me.id, {stadium}));
     }
 }
 

@@ -23,4 +23,8 @@ export default class StartGame extends Event {
 
         game.eventAggregator.publish(this);
     }
+
+    static parse(sender: number) {
+        return new StartGame(sender);
+    }
 }

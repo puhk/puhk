@@ -1,14 +1,14 @@
 // @flow
 
 import * as Events from './events';
-import Stadium from '../Stadium';
+import Stadium from '../entities/Stadium';
 import ChatMessage from '../entities/ChatMessage';
 import Disc from '../entities/Disc';
 import Player from '../entities/Player';
 import Segment from '../entities/Segment';
 
 import type Event, {JsonEvent} from './events/Event';
-import type {JsonStadium, JsonTeam} from '../Stadium';
+import type {JsonStadium, JsonTeam} from '../entities/Stadium';
 import type {JsonDisc} from '../entities/Disc';
 import type {JsonPlayer} from '../entities/Player';
 
@@ -85,8 +85,8 @@ export default class State {
         let clone = new State;
         clone.frame = this.frame;
         clone.stadium = this.stadium;
-        clone.scoreLimit = this.scoreLimit;
         clone.scores = Object.assign({}, this.scores);
+        clone.scoreLimit = this.scoreLimit;
         clone.timer = this.timer;
         clone.timeLimit = this.timeLimit;
         clone.playing = this.playing;
@@ -107,8 +107,8 @@ export default class State {
             events: this.events.map(event => event.pack()),
             players: this.players.map(player => player.pack()),
             stadium: this.stadium.pack(),
-            scoreLimit: this.scoreLimit,
             scores: this.scores,
+            scoreLimit: this.scoreLimit,
             timer: this.timer,
             timeLimit: this.timeLimit,
             playing: this.playing,
@@ -120,9 +120,9 @@ export default class State {
     static parse(json: JsonState) {
         let state = new State;
         state.frame = json.frame;
-        state.stadium = new Stadium(json.stadium);
-        state.scoreLimit = json.scoreLimit;
+        state.stadium = Stadium.parse(json.stadium);
         state.scores = json.scores;
+        state.scoreLimit = json.scoreLimit;
         state.timer = json.timer;
         state.timeLimit = json.timeLimit;
         state.playing = json.playing;
@@ -154,7 +154,7 @@ export default class State {
 
 export type JsonState = {
     frame: number,
-    scores: Object,
+    scores: {[team: string]: number},
     scoreLimit: number,
     timer: number,
     timeLimit: number,

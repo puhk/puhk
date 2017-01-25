@@ -2,7 +2,7 @@
 
 import Game from './Game';
 import Engine from './Engine';
-import Stadium from './Stadium';
+import Stadium from './entities/Stadium';
 import Host from './network/Host';
 import Client from './network/Client';
 import Simulator from './state/Simulator';
@@ -19,7 +19,7 @@ const createGame = (renderer?: Renderer) => {
     const game = new Game(simulator, renderer);
     engine.setGame(game);
 
-    const state = State.createFromStadium(new Stadium(classic));
+    const state = State.createFromStadium(Stadium.parse(classic));
     simulator.addState(state);
 
     return game;

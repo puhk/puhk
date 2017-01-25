@@ -3,11 +3,12 @@
 export * from '../src';
 
 import type Game from '../src/Game';
-import type {JsonTeam} from '../src/Stadium';
+import type {JsonTeam} from '../src/entities/Stadium';
 import type State from '../src/state/State';
 import type ChatMessage from '../src/entities/ChatMessage';
 import type Goal from '../src/entities/Goal';
 import type Player from '../src/entities/Player';
+import type Stadium from '../src/entities/Stadium';
 
 export type {
     Game,
@@ -15,5 +16,6 @@ export type {
     State,
     ChatMessage,
     Goal,
-    Player
+    Player,
+    Stadium
 };
