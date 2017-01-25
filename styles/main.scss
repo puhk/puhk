@@ -169,14 +169,31 @@ body {
             }
         }
 
-        .pitch {
+        .content {
             height: 75%;
             position: relative;
-            outline: none;
 
-            canvas {
-                display: block;
+            .pitch {
+                height: 100%;
+                position: relative;
+                outline: none;
+
+                canvas {
+                    display: block;
+                    position: absolute;
+                }
+            }
+
+            .menu {
+                background: rgba(0, 0, 0, 0.6);
+                border-radius: 5px;
+                height: calc(100% - 20px);
+                left: 50%;
+                margin-left: -37.5%;
+                margin-top: 10px;
                 position: absolute;
+                top: 0%;
+                width: 75%;
             }
         }
 
@@ -190,17 +207,6 @@ body {
                 margin: 0 auto;
                 width: 75%;
             }
-        }
-
-        .menu {
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 5px;
-            height: 76%;
-            left: 50%;
-            margin-left: -35%;
-            position: absolute;
-            top: 12%;
-            width: 70%;
         }
     }
 

@@ -54,15 +54,17 @@ export default class Game extends React.Component<void, GameProps, GameState> {
                         <TopBar game={game} />
                     }
 
-                    <Pitch game={game} renderer={this.props.renderer} />
+                    <div className="content">
+                        <Pitch game={game} renderer={this.props.renderer} />
+
+                        {!this.state.playing &&
+                            <div className="menu" />
+                        }
+                    </div>
 
                     <div className="chat-container">
                         <Chat game={game} />
                     </div>
-
-                    {!this.state.playing &&
-                        <div className="menu" />
-                    }
                 </div>
 
                 <Sidebar game={game} />
