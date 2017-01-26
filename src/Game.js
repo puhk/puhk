@@ -204,7 +204,7 @@ export default class Game {
             return;
         }
 
-        ++state.scores[team.name];
+        state.scores.set(team.name, state.scores.get(team.name) + 1);
         state.matchState = State.STATE_GOALSCORED;
         state.matchStateTimer = 150;
 
@@ -213,7 +213,7 @@ export default class Game {
 
     scoresEqual(state: State) {
         let scores = state.stadium.teams.map(team => {
-            return state.scores[team.name];
+            return state.scores.get(team.name);
         });
 
         return scores.every(score => score == scores[0]);
@@ -255,9 +255,9 @@ export default class Game {
                 }
 
                 for (let team of state.stadium.teams) {
-                    let score = state.scores[team.name];
+                    let score = state.scores.get(team.name);
 
-                    if (score >= state.scoreLimit) {
+                    if (score && score >= state.scoreLimit) {
                         state.matchState = State.STATE_ENDGAME;
                         state.matchStateTimer = 300;
                         return;
@@ -333,7 +333,7 @@ export default class Game {
     }
 
     getScore(team: string) {
-        return this.simulator.currentState.scores[team];
+        return this.simulator.currentState.scores.get(team);
     }
 
     getScores() {

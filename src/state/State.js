@@ -30,14 +30,14 @@ export default class State {
     maxChatMessages = 50;
     matchState = State.STATE_KICKOFF;
     matchStateTimer = 0;
-    scores = {};
+    scores: Map<string, number> = new Map;
     scoreLimit = 3;
     timer = 0;
     timeLimit = 3;
 
     initScores() {
         this.stadium.teams.forEach(team => {
-            this.scores[team.name] = 0;
+            this.scores.set(team.name, 0);
         });
     }
 
@@ -85,7 +85,7 @@ export default class State {
         let clone = new State;
         clone.frame = this.frame;
         clone.stadium = this.stadium;
-        clone.scores = Object.assign({}, this.scores);
+        clone.scores = new Map(this.scores);
         clone.scoreLimit = this.scoreLimit;
         clone.timer = this.timer;
         clone.timeLimit = this.timeLimit;
@@ -107,7 +107,7 @@ export default class State {
             events: this.events.map(event => event.pack()),
             players: this.players.map(player => player.pack()),
             stadium: this.stadium.pack(),
-            scores: this.scores,
+            scores: Array.from(this.scores),
             scoreLimit: this.scoreLimit,
             timer: this.timer,
             timeLimit: this.timeLimit,
@@ -121,7 +121,7 @@ export default class State {
         let state = new State;
         state.frame = json.frame;
         state.stadium = Stadium.parse(json.stadium);
-        state.scores = json.scores;
+        state.scores = new Map(json.scores);
         state.scoreLimit = json.scoreLimit;
         state.timer = json.timer;
         state.timeLimit = json.timeLimit;
@@ -154,7 +154,7 @@ export default class State {
 
 export type JsonState = {
     frame: number,
-    scores: {[team: string]: number},
+    scores: [string, number][],
     scoreLimit: number,
     timer: number,
     timeLimit: number,
