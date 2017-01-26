@@ -108,7 +108,7 @@ export default class Game {
     initLocalPlayer() {
         let event = new PlayerJoined(this.me.id, {
             clientId: this.me.id,
-            name: 'noj'
+            name: this.me.name
         });
 
         this.addEvent(event, false);
