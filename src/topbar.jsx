@@ -7,7 +7,7 @@ import type {Game, JsonTeam, Goal, State} from 'nojball-game';
 
 export default class TopBar extends React.Component<void, Props, TopBarState> {
     state: TopBarState = {
-        scores: {},
+        scores: new Map,
         teams: [],
         timer: 0
     };
@@ -63,7 +63,7 @@ export default class TopBar extends React.Component<void, Props, TopBarState> {
                     {this.state.teams.map(team =>
                         <li key={team.name}>
                             <span className="color-block" style={{backgroundColor: team.color}}></span>
-                            <span className="score">{this.state.scores[team.name]}</span>
+                            <span className="score">{this.state.scores.get(team.name)}</span>
                         </li>
                     )}
                 </ul>
@@ -80,7 +80,7 @@ type Props = {
 };
 
 type TopBarState = {
-    scores: Object,
+    scores: Map<string, number>,
     teams: JsonTeam[],
     timer: number
 };
