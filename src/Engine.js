@@ -7,8 +7,8 @@ import type Game from './Game';
 import type Goal from './entities/Goal';
 import type Line from './entities/Line';
 import type Segment from './entities/Segment';
+import type Event from './state/Event';
 import type State from './state/State';
-import type Event from './state/events/Event';
 
 export default class Engine {
     game: Game;

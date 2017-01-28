@@ -1,6 +1,6 @@
 // @flow
 
-import Event from './Event';
+import Event from '../Event';
 
 import type State from '../State';
 import type Game from '../../Game';

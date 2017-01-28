@@ -13,6 +13,7 @@ import {
     ChangeStadium,
     ChangeTeam,
     Keypress,
+    PlayerAvatar,
     PlayerChat,
     PlayerJoined,
     StartGame,
@@ -24,8 +25,8 @@ import Player from './entities/Player';
 
 import type NetworkHost from './network/Host';
 import type NetworkClient from './network/Client';
+import type Event from './state/Event';
 import type Simulator from './state/Simulator';
-import type Event from './state/events/Event';
 import type Goal from './entities/Goal';
 import type Stadium from './entities/Stadium';
 
@@ -108,7 +109,8 @@ export default class Game {
     initLocalPlayer() {
         let event = new PlayerJoined(this.me.id, {
             clientId: this.me.id,
-            name: this.me.name
+            name: this.me.name,
+            avatar: this.me.avatar
         });
 
         this.addEvent(event, false);
@@ -138,6 +140,8 @@ export default class Game {
 
         disc.kickStrength = stadium.playerPhysics.kickStrength;
         disc.isMe = player.clientId == this.me.id;
+        disc.text = player.avatar;
+
         return disc;
     }
 
@@ -152,11 +156,6 @@ export default class Game {
             }
 
             player.discId = disc.id;
-
-            if (player.clientId == this.me.id) {
-                disc.isMe = true;
-            }
-
             discs.push(disc);
         }
 
@@ -354,6 +353,10 @@ export default class Game {
 
     changeStadium(stadium: Stadium) {
         this.addEvent(new ChangeStadium(this.me.id, {stadium}));
+    }
+
+    changeAvatar(avatar: string) {
+        this.addEvent(new PlayerAvatar(this.me.id, {avatar}));
     }
 }
 

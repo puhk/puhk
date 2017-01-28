@@ -1,6 +1,6 @@
 // @flow
 
-import Event from './Event';
+import Event from '../Event';
 
 import type State from '../State';
 import type Game from '../../Game';
@@ -18,6 +18,8 @@ export default class PlayerJoined extends Event {
 
     apply(state: State, game: Game) {
         this.player = game.createPlayer(this.data.clientId, this.data.name);
+        this.player.setAvatar(this.data.avatar);
+
         state.addPlayers(this.player);
 
         game.eventAggregator.publish(this);
@@ -30,5 +32,6 @@ export default class PlayerJoined extends Event {
 
 type EventData = {
     clientId: number,
-    name: string
+    name: string,
+    avatar: string
 };

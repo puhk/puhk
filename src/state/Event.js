@@ -1,8 +1,8 @@
 // @flow
 
-import type State from '../State';
-import type Game from '../../Game';
-import type {eventMsg} from '../../network/Base';
+import type State from './State';
+import type Game from '../Game';
+import type {eventMsg} from '../network/Base';
 
 export default class Event {
     sender: number;

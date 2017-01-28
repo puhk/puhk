@@ -35,7 +35,12 @@ export default class Host extends Base {
             conn.client = client;
             this.clients.push(client);
 
-            let event = new PlayerJoinedEvent(this.game.me.id, {clientId: client.id, name: 'sock'});
+            let event = new PlayerJoinedEvent(this.game.me.id, {
+                clientId: client.id,
+                name: 'sock',
+                avatar: ':)'
+            });
+
             this.game.simulator.addEvent(event);
 
             conn.send({

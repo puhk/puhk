@@ -3,8 +3,8 @@
 import _ from 'lodash';
 import State from './State';
 
+import type Event from './Event';
 import type Engine from '../Engine';
-import type Event from './events/Event';
 
 export default class Simulator {
     engine: Engine;

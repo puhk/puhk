@@ -1,7 +1,7 @@
 // @flow
 
+import type {JsonEvent} from '../state/Event';
 import type {JsonState} from '../state/State';
-import type {JsonEvent} from '../state/events/Event';
 
 export default class Base {}
 

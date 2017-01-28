@@ -7,7 +7,7 @@ import Disc from '../entities/Disc';
 import Player from '../entities/Player';
 import Segment from '../entities/Segment';
 
-import type Event, {JsonEvent} from './events/Event';
+import type Event, {JsonEvent} from './Event';
 import type {JsonStadium, JsonTeam} from '../entities/Stadium';
 import type {JsonDisc} from '../entities/Disc';
 import type {JsonPlayer} from '../entities/Player';

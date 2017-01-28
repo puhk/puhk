@@ -13,6 +13,7 @@ export default class Disc extends Base {
     invMass = 0.5;
     isMe = false;
     isBall = false;
+    text = '';
     radius: number;
     velocity: Vec;
 
@@ -45,6 +46,7 @@ export default class Disc extends Base {
         clone.velocity = this.velocity.clone();
         clone.isMe = this.isMe;
         clone.isBall = this.isBall;
+        clone.text = this.text;
 
         return clone;
     }
@@ -58,11 +60,12 @@ export default class Disc extends Base {
             color: this.color,
             damping: this.damping,
             invMass: this.invMass,
-            ball: this.isBall
+            ball: this.isBall,
+            text: this.text
         };
     }
 
-    static parse(obj): Disc {
+    static parse(obj: JsonDisc): Disc {
         let disc = new Disc(Vec.fromArray(obj.pos), obj.radius, {
             id: obj.id,
             color: obj.color,
@@ -75,13 +78,16 @@ export default class Disc extends Base {
         }
 
         disc.isBall = obj.ball;
+        disc.text = obj.text;
 
         return disc;
     }
 
     draw(ctx: CanvasRenderingContext2D) {
+        const {x, y} = this.position;
+
         ctx.beginPath();
-        ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
+        ctx.arc(x, y, this.radius, 0, 2 * Math.PI);
         ctx.fillStyle = this.color;
         ctx.lineWidth = 2;
         ctx.strokeStyle = this.kicking ? '#fff' : '#000';
@@ -91,16 +97,26 @@ export default class Disc extends Base {
 
         if (this.isMe) {
             ctx.beginPath();
-            ctx.arc(this.position.x, this.position.y, this.radius + 10, 0, 2 * Math.PI);
+            ctx.arc(x, y, this.radius + 10, 0, 2 * Math.PI);
             ctx.lineWidth = 3;
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
             ctx.closePath();
             ctx.stroke();
         }
+
+        if (this.text) {
+            ctx.beginPath();
+            ctx.fillStyle = '#fff';
+            ctx.font = '16px \'Open Sans\'';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(this.text, x, y);
+        }
     }
 }
 
 export type JsonDisc = {
+    id: number,
     pos: {
         x: number,
         y: number
@@ -109,7 +125,8 @@ export type JsonDisc = {
     color: string,
     damping: number,
     invMass: number,
-    radius: number
+    radius: number,
+    text: string
 };
 
 type opts = {

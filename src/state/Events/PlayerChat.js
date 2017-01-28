@@ -1,6 +1,6 @@
 // @flow
 
-import Event from './Event';
+import Event from '../Event';
 import ChatMessage from '../../entities/ChatMessage';
 
 import type State from '../State';
