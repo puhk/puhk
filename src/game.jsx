@@ -16,7 +16,8 @@ import type {Game as GameType, Renderer} from 'nojball-game';
 export default class Game extends React.Component<void, GameProps, GameState> {
     eventSubscribers = [];
     state: GameState = {
-        playing: false
+        playing: false,
+        showMenu: false
     };
 
     constructor(props: GameProps) {
@@ -26,7 +27,10 @@ export default class Game extends React.Component<void, GameProps, GameState> {
         this.state.playing = game.isPlaying();
 
         const startGameHandler = () => {
-            this.setState({playing: true});
+            this.setState({
+                playing: true,
+                showMenu: false
+            });
         };
 
         const stopGameHandler = () => {
@@ -45,6 +49,12 @@ export default class Game extends React.Component<void, GameProps, GameState> {
         }
     }
 
+    toggleMenu() {
+        this.setState({
+            showMenu: !this.state.showMenu
+        });
+    }
+
     render() {
         const {game} = this.props;
 
@@ -58,7 +68,7 @@ export default class Game extends React.Component<void, GameProps, GameState> {
                     <div className="content">
                         <Pitch game={game} renderer={this.props.renderer} />
 
-                        {!this.state.playing &&
+                        {(this.state.showMenu || !this.state.playing) &&
                             <div className="menu-container">
                                 <Menu game={game} />
                             </div>
@@ -70,7 +80,7 @@ export default class Game extends React.Component<void, GameProps, GameState> {
                     </div>
                 </div>
 
-                <Sidebar game={game} />
+                <Sidebar game={game} toggleMenu={() => this.toggleMenu()} />
             </div>
         );
     }
@@ -82,5 +92,6 @@ type GameProps = {
 };
 
 type GameState = {
-    playing: boolean
+    playing: boolean,
+    showMenu: boolean
 };

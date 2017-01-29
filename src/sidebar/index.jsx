@@ -12,14 +12,21 @@ export default (props: SidebarProps) => {
         <div className="sidebar">
             <TeamsList {...props} />
 
-            {game.isPlaying() ?
-                <button onClick={e => game.stop()} className="stop-game">Stop Game</button> :
-                <button onClick={e => game.start()} className="start-game">Start Game</button>
-            }
+            <div>
+                {game.isPlaying() &&
+                    <button onClick={props.toggleMenu} className="toggle-menu">Toggle menu</button>
+                }
+
+                {game.isPlaying() ?
+                    <button onClick={e => game.stop()} className="stop-game">Stop game</button> :
+                    <button onClick={e => game.start()} className="start-game">Start game</button>
+                }
+            </div>
         </div>
     );
 };
 
 type SidebarProps = {
-    game: Game
+    game: Game,
+    toggleMenu: () => void
 };

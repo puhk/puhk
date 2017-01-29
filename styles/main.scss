@@ -1,6 +1,8 @@
 @import 'chat';
 @import 'menu';
 
+$bgColor: #718c5a;
+
 body {
     font-family: 'Open Sans';
     font-size: 1rem;
@@ -85,8 +87,18 @@ body {
             border-radius: 3px;
             color: white;
             cursor: pointer;
+            display: block;
             outline: none;
             padding: 5px;
+            width: 100%;
+
+            &:not(:last-child) {
+                margin-bottom: 5px;
+            }
+
+            &.toggle-menu {
+                background: #2a2d30;
+            }
 
             &.start-game {
                 background: #234f71;
@@ -99,22 +111,17 @@ body {
     }
 
     .main-area {
+        display: flex;
         flex: 5;
         flex-direction: column;
         position: relative;
 
         .top-bar {
-            background: rgba(0, 0, 0, 0.25);
+            background: darken($bgColor, 10%);
             border-bottom: 1px solid #4a4a4a;
             color: #fff;
             display: flex;
-            justify-content: space-between;
             padding: 10px;
-            position: absolute;
-            top: 0;
-            right: 0;
-            left: 0;
-            z-index: 2;
 
             > * {
                 flex: 1;
@@ -126,7 +133,6 @@ body {
                 padding: 0;
 
                 li {
-                    // display: inline-block;
                     display: inline-flex;
                     margin-right: 10px;
                     vertical-align: middle;
@@ -171,7 +177,7 @@ body {
         }
 
         .content {
-            height: 75%;
+            flex: 1;
             position: relative;
 
             .pitch {
@@ -196,8 +202,9 @@ body {
         }
 
         .chat-container {
-            background: #718c5a;
-            height: 25%;
+            background: $bgColor;
+            flex: 1;
+            max-height: 25%;
             padding: 1%;
 
             .chat {
