@@ -10,8 +10,10 @@ import Renderer from './Renderer';
 import State from './state/State';
 
 import {
+    ChangeScoreLimit,
     ChangeStadium,
     ChangeTeam,
+    ChangeTimeLimit,
     Keypress,
     PlayerAvatar,
     PlayerChat,
@@ -327,16 +329,32 @@ export default class Game {
         return team && state.getTeamPlayers(team);
     }
 
-    getTimer() {
-        return this.simulator.currentState.timer;
-    }
-
     getScore(team: string) {
         return this.simulator.currentState.scores.get(team);
     }
 
     getScores() {
         return this.simulator.currentState.scores;
+    }
+
+    getScoreLimit() {
+        return this.simulator.currentState.scoreLimit;
+    }
+
+    setScoreLimit(limit: number) {
+        this.addEvent(new ChangeScoreLimit(this.me.id, {limit}));
+    }
+
+    getTimer() {
+        return this.simulator.currentState.timer;
+    }
+
+    getTimeLimit() {
+        return this.simulator.currentState.timeLimit;
+    }
+
+    setTimeLimit(limit: number) {
+        this.addEvent(new ChangeTimeLimit(this.me.id, {limit}));
     }
 
     movePlayerToTeam(clientId: number, team: ?string) {
