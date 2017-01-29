@@ -1,0 +1,6 @@
+{
+  "recommendations": [
+    "flowtype.flow-for-vscode",
+    "EditorConfig.EditorConfig"
+  ]
+}
