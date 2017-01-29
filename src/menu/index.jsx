@@ -8,10 +8,12 @@ import type {Game, Stadium} from 'nojball-game';
 export default class Menu extends React.Component<void, MenuProps, MenuState> {
     state: MenuState = {
         currentStadium: null,
-        stadiums: []
+        stadiums: [],
+        scoreLimit: 0,
+        timeLimit: 0
     };
 
-    stadiumSubscriber: any;
+    subscribers = [];
 
     constructor(props: MenuProps) {
         super(props);
@@ -20,19 +22,36 @@ export default class Menu extends React.Component<void, MenuProps, MenuState> {
     }
 
     componentDidMount() {
+        const {game} = this.props;
+
         this.setState({
-            currentStadium: this.props.game.getStadium()
+            currentStadium: game.getStadium(),
+            scoreLimit: game.getScoreLimit(),
+            timeLimit: game.getTimeLimit()
         });
 
-        const handler = (event: Events.ChangeStadium) => {
+        this.createSubscriber(Events.ChangeStadium, (event: Events.ChangeStadium) => {
             this.setState({currentStadium: event.stadium});
-        };
+        });
 
-        this.stadiumSubscriber = this.props.game.eventAggregator.subscribe(Events.ChangeStadium, handler);
+        this.createSubscriber(Events.ChangeScoreLimit, (event: Events.ChangeScoreLimit) => {
+            this.setState({scoreLimit: event.data.limit});
+        });
+
+        this.createSubscriber(Events.ChangeTimeLimit, (event: Events.ChangeTimeLimit) => {
+            this.setState({timeLimit: event.data.limit});
+        });
     }
 
     componentWillUnmount() {
-        this.stadiumSubscriber.dispose();
+        for (const subscriber of this.subscribers) {
+            subscriber.dispose();
+        }
+    }
+
+    createSubscriber<T>(event: Class<T>, handler: (event: T) => void) {
+        const subscriber = this.props.game.eventAggregator.subscribe(event, handler);
+        this.subscribers.push(subscriber);
     }
 
     changeStadium(event: SyntheticInputEvent) {
@@ -41,6 +60,14 @@ export default class Menu extends React.Component<void, MenuProps, MenuState> {
         if (stadium) {
             this.props.game.changeStadium(stadium);
         }
+    }
+
+    changeScoreLimit(event: SyntheticInputEvent) {
+        this.props.game.setScoreLimit(parseInt(event.target.value));
+    }
+
+    changeTimeLimit(event: SyntheticInputEvent) {
+        this.props.game.setTimeLimit(parseInt(event.target.value));
     }
 
     render() {
@@ -77,14 +104,14 @@ export default class Menu extends React.Component<void, MenuProps, MenuState> {
                     <div className="input-group">
                         <label>
                             <span>Time limit</span>
-                            <input type="number" />
+                            <input type="number" min="0" onChange={e => this.changeTimeLimit(e)} value={this.state.timeLimit} />
                         </label>
                     </div>
 
                     <div className="input-group">
                         <label>
                             <span>Score limit</span>
-                            <input type="number" />
+                            <input type="number" min="0" onChange={e => this.changeScoreLimit(e)} value={this.state.scoreLimit} />
                         </label>
                     </div>
 
@@ -114,5 +141,7 @@ type MenuProps = {
 
 type MenuState = {
     currentStadium: ?Stadium,
-    stadiums: Stadium[]
+    stadiums: Stadium[],
+    scoreLimit: number,
+    timeLimit: number
 };
