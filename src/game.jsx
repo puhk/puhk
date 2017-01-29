@@ -3,10 +3,11 @@
 import React from 'react';
 import {Events} from 'nojball-game';
 
+import Chat from './chat';
+import Menu from './menu';
 import Pitch from './pitch';
 import Sidebar from './sidebar';
 import TopBar from './topbar';
-import Chat from './chat';
 
 import grassImage from '../images/grass.png';
 
@@ -58,7 +59,9 @@ export default class Game extends React.Component<void, GameProps, GameState> {
                         <Pitch game={game} renderer={this.props.renderer} />
 
                         {!this.state.playing &&
-                            <div className="menu" />
+                            <div className="menu-container">
+                                <Menu game={game} />
+                            </div>
                         }
                     </div>
 

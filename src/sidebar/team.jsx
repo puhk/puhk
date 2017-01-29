@@ -106,7 +106,7 @@ export default class Team extends React.Component<void, TeamProps, TeamState> {
                     <span className="score">{this.state.score}</span>
                 }
 
-                {(this.state.players.length || this.props.team.name == 'red') &&
+                {this.state.players.length > 0 &&
                     <ul>
                         {this.state.players.map(player =>
                             <li key={player.clientId}>
