@@ -92,7 +92,10 @@ export default class Menu extends React.Component<void, MenuProps, MenuState> {
                         <label>
                             <span>Stadium</span>
 
-                            <select onChange={e => this.changeStadium(e)} value={(this.state.currentStadium && this.state.currentStadium.name) || ''}>
+                            <select
+                                onChange={e => this.changeStadium(e)}
+                                value={(this.state.currentStadium && this.state.currentStadium.name) || ''}
+                                disabled={this.props.game.isPlaying()}>
                                 {this.state.stadiums.map(stadium =>
                                     <option value={stadium.name} key={stadium.name}>{stadium.name}</option>
                                 )}
