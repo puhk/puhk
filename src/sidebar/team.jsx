@@ -3,7 +3,9 @@
 import React from 'react';
 import {Events} from 'nojball-game';
 
-import type {Game, JsonTeam, State, Goal, Player} from 'nojball-game';
+import Player from './player';
+
+import type {Game, JsonTeam, State, Goal, Player as PlayerType} from 'nojball-game';
 
 export default class Team extends React.Component<void, TeamProps, TeamState> {
     eventSubscribers = [];
@@ -110,8 +112,7 @@ export default class Team extends React.Component<void, TeamProps, TeamState> {
                     <ul>
                         {this.state.players.map(player =>
                             <li key={player.clientId}>
-                                <img src={'https://cdn2.iconfinder.com/data/icons/flags/flags/48/united-kingdom-great-britain.png'} />
-                                <span>{player.name}</span>
+                                <Player game={this.props.game} player={player} />
                             </li>
                         )}
                     </ul>
@@ -128,6 +129,6 @@ type TeamProps = {
 };
 
 type TeamState = {
-    players: Player[],
+    players: PlayerType[],
     score: number
 };
