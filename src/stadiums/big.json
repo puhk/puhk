@@ -1,5 +1,5 @@
 {
-  "name": "big",
+  "name": "Big",
 
   "teams": [
     {"name": "red", "color": "#e56e56", "kickOffPos": [-250, 0]},

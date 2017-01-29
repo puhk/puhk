@@ -9,6 +9,7 @@ import type {JsonStadium} from '../../entities/Stadium';
 
 export default class ChangeStadium extends Event {
     data: EventData;
+    stadium: Stadium;
     type = 'ChangeStadium';
 
     constructor(sender: number, data: EventData) {
@@ -25,6 +26,7 @@ export default class ChangeStadium extends Event {
         state.discs = this.data.stadium.discs.map(disc => disc.clone());
         state.initScores();
 
+        this.stadium = this.data.stadium;
         game.eventAggregator.publish(this);
     }
 

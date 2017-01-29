@@ -13,6 +13,7 @@ import type {JsonGoal} from './Goal';
 import type {JsonSegment} from './Segment';
 
 export default class Stadium {
+    name: string;
     backgrounds: Background[] = [];
     discs: Disc[] = [];
     goals: Goal[] = [];
@@ -20,6 +21,10 @@ export default class Stadium {
     segments: Segment[] = [];
     teams: JsonTeam[];
     playerPhysics: JsonPlayerPhysics;
+
+    constructor(name: string) {
+        this.name = name;
+    }
 
     getTeam(name: ?string): ?JsonTeam {
         return this.teams.find(team => team.name == name);
@@ -31,6 +36,7 @@ export default class Stadium {
 
     pack(): JsonStadium {
         return {
+            name: this.name,
             backgrounds: this.backgrounds.map(background => background.pack()),
             discs: this.discs.map(disc => disc.pack()),
             goals: this.goals.map(goal => goal.pack()),
@@ -41,7 +47,7 @@ export default class Stadium {
     }
 
     static parse(json: JsonStadium) {
-        let stadium = new Stadium;
+        let stadium = new Stadium(json.name);
         stadium.teams = json.teams;
         stadium.playerPhysics = json.player;
 
@@ -55,6 +61,7 @@ export default class Stadium {
 }
 
 export type JsonStadium = {
+    name: string,
     backgrounds: JsonBackground[],
     discs: JsonDisc[],
     goals: JsonGoal[],

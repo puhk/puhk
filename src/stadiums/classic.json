@@ -1,5 +1,5 @@
 {
-  "name": "classic",
+  "name": "Classic",
 
   "teams": [
     {"name": "red", "color": "#e56e56", "kickOffPos": [-250, 0]},

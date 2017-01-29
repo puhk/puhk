@@ -44,7 +44,7 @@ export default class Engine {
                 if (player) {
                     disc.kicking = player.keys.kick;
 
-                    let accel = disc.kicking ? stadium.playerPhysics.kickingAcceleration : stadium.playerPhysics.acceleration;
+                    let accel = stadium.playerPhysics[disc.kicking ? 'kickingAcceleration' : 'acceleration'];
                     let move = new Vec(0, 0);
 
                     if (player.keys.left) {
@@ -229,7 +229,7 @@ export default class Engine {
         let prevDist = this.discDistanceToLine(new Disc(prevPos), goal);
 
         if (distBall === false || prevDist === false) {
-            return;
+            return false;
         }
 
         return (prevDist[0] > 0 && distBall[0] < 0) || (prevDist[0] < 0 && distBall[0] > 0);

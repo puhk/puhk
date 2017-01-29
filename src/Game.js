@@ -351,6 +351,10 @@ export default class Game {
         this.addEvent(new PlayerChat(this.me.id, {message}));
     }
 
+    getStadium() {
+        return this.simulator.currentState.stadium;
+    }
+
     changeStadium(stadium: Stadium) {
         this.addEvent(new ChangeStadium(this.me.id, {stadium}));
     }
