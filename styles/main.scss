@@ -122,6 +122,7 @@ body {
             color: #fff;
             display: flex;
             padding: 10px;
+            text-shadow: 1px 1px 0px #000;
 
             > * {
                 flex: 1;
@@ -168,11 +169,23 @@ body {
             }
 
             .room-name {
+                letter-spacing: 2px;
                 text-align: center;
             }
 
             .timer {
                 text-align: right;
+
+                .overtime {
+                    font-size: 0.6rem;
+                    letter-spacing: 1px;
+                    margin-right: 5px;
+                    text-transform: uppercase;
+                }
+
+                span.flash {
+                    animation: timer-flash linear 500ms alternate infinite;
+                }
             }
         }
 
@@ -222,5 +235,15 @@ body {
         height: 15px;
         width: 15px;
         vertical-align: middle;
+    }
+}
+
+@keyframes timer-flash {
+    from {
+        color: white;
+    }
+
+    to {
+        color: #e35252;
     }
 }

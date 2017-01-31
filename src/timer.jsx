@@ -4,7 +4,7 @@ import React from 'react';
 
 import type {Game} from 'nojball-game';
 
-export default class Timer extends React.Component {
+export default class Timer extends React.Component<void, TimerProps, TimerState> {
     state: TimerState = {
         timer: 0
     };
@@ -34,11 +34,25 @@ export default class Timer extends React.Component {
     }
 
     render() {
-        const mins = Math.floor(this.state.timer / 60);
-        const seconds = Math.floor(this.state.timer % 60);
-        const timer = `${mins < 10 ? '0' : ''}${mins}:${seconds < 10 ? '0' : ''}${seconds}`;
+        const {timer} = this.state;
+        const {game} = this.props;
 
-        return <div className="timer">{timer}</div>;
+        const mins = Math.floor(timer / 60);
+        const seconds = Math.floor(timer % 60);
+        const time = `${mins < 10 ? '0' : ''}${mins}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+        const timeLimit = game.getTimeLimit() * 60;
+        const overtime = timer > timeLimit && game.scoresEqual();
+        const flash = timer <= timeLimit && timer > timeLimit - 30;
+
+        return (
+            <div className="timer">
+                {overtime &&
+                    <span className="overtime">overtime</span>
+                }
+                <span className={`${flash ? 'flash' : ''}`}>{time}</span>
+            </div>
+        );
     }
 }
 
