@@ -5,6 +5,7 @@ import type Game from '../Game';
 import type {eventMsg} from '../network/Base';
 
 export default class Event {
+    data: any = null;
     sender: number;
     type: string;
     frame: number;
@@ -27,7 +28,7 @@ export default class Event {
     }
 
     getData() {
-        return null;
+        return this.data;
     }
 
     toMessage(): eventMsg {
