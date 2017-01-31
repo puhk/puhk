@@ -212,7 +212,9 @@ export default class Game {
         this.eventAggregator.publish('goalScored', {goal, state});
     }
 
-    scoresEqual(state: State) {
+    scoresEqual() {
+        let state = this.simulator.currentState;
+
         let scores = state.stadium.teams.map(team => {
             return state.scores.get(team.name);
         });
@@ -235,7 +237,7 @@ export default class Game {
             case State.STATE_INPLAY:
                 state.timer += 1 / 60;
 
-                if (state.timer >= state.timeLimit * 60 && !this.scoresEqual(state)) {
+                if (state.timer >= state.timeLimit * 60 && !this.scoresEqual()) {
                     state.matchState = State.STATE_ENDGAME;
                     state.matchStateTimer = 300;
                 }
@@ -249,7 +251,7 @@ export default class Game {
                     return;
                 }
 
-                if (state.timer >= state.timeLimit * 60 && !this.scoresEqual(state)) {
+                if (state.timer >= state.timeLimit * 60 && !this.scoresEqual()) {
                     state.matchState = State.STATE_ENDGAME;
                     state.matchStateTimer = 300;
                     return;
