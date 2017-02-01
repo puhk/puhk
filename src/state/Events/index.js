@@ -1,5 +1,6 @@
 // @flow
 
+export {default as ChangeRoomName} from './ChangeRoomName';
 export {default as ChangeScoreLimit} from './ChangeScoreLimit';
 export {default as ChangeStadium} from './ChangeStadium';
 export {default as ChangeTeam} from './ChangeTeam';

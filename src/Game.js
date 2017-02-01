@@ -10,6 +10,7 @@ import Renderer from './Renderer';
 import State from './state/State';
 
 import {
+    ChangeRoomName,
     ChangeScoreLimit,
     ChangeStadium,
     ChangeTeam,
@@ -315,6 +316,14 @@ export default class Game {
 
     isPlaying() {
         return this.simulator.currentState.playing;
+    }
+
+    getRoomName() {
+        return this.simulator.currentState.roomName;
+    }
+
+    setRoomName(name: string) {
+        this.addEvent(new ChangeRoomName(this.me.id, {name}))
     }
 
     getPlayerById(id: number) {

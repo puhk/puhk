@@ -19,6 +19,7 @@ export default class State {
     static STATE_ENDGAME = 3;
 
     frame = 0;
+    roomName = '';
     playing = false;
 
     discs: Disc[] = [];
@@ -84,6 +85,7 @@ export default class State {
     clone(): State {
         let clone = new State;
         clone.frame = this.frame;
+        clone.roomName = this.roomName;
         clone.stadium = this.stadium;
         clone.scores = new Map(this.scores);
         clone.scoreLimit = this.scoreLimit;
@@ -103,6 +105,7 @@ export default class State {
     pack(): JsonState {
         return {
             frame: this.frame,
+            roomName: this.roomName,
             discs: this.discs.map(disc => disc.pack()),
             events: this.events.map(event => event.pack()),
             players: this.players.map(player => player.pack()),
@@ -120,6 +123,7 @@ export default class State {
     static parse(json: JsonState) {
         let state = new State;
         state.frame = json.frame;
+        state.roomName = json.roomName;
         state.stadium = Stadium.parse(json.stadium);
         state.scores = new Map(json.scores);
         state.scoreLimit = json.scoreLimit;
@@ -154,6 +158,7 @@ export default class State {
 
 export type JsonState = {
     frame: number,
+    roomName: string,
     scores: [string, number][],
     scoreLimit: number,
     timer: number,
