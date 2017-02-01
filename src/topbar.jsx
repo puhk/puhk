@@ -47,7 +47,6 @@ export default class TopBar extends React.Component<void, Props, TopBarState> {
 
     initRoomNameSubscriber() {
         const handler = (event: Events.ChangeRoomName) => {
-            console.log(event);
             this.setState({roomName: event.data.name});
         };
 

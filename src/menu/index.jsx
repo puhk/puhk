@@ -8,7 +8,6 @@ import type {Game, Stadium} from 'nojball-game';
 export default class Menu extends React.Component<void, MenuProps, MenuState> {
     state: MenuState = {
         currentStadium: null,
-        roomNameInput: '',
         roomName: '',
         stadiums: [],
         scoreLimit: 0,
@@ -29,7 +28,6 @@ export default class Menu extends React.Component<void, MenuProps, MenuState> {
         this.setState({
             currentStadium: game.getStadium(),
             roomName: game.getRoomName(),
-            roomNameInput: game.getRoomName(),
             scoreLimit: game.getScoreLimit(),
             timeLimit: game.getTimeLimit()
         });
@@ -64,12 +62,14 @@ export default class Menu extends React.Component<void, MenuProps, MenuState> {
 
     changeRoomName(event: SyntheticInputEvent) {
         this.setState({
-            roomNameInput: event.target.value
+            roomName: event.target.value
         });
     }
 
     setRoomName() {
-        this.props.game.setRoomName(this.state.roomNameInput);
+        if (this.state.roomName != this.props.game.getRoomName()) {
+            this.props.game.setRoomName(this.state.roomName);
+        }
     }
 
     changeStadium(event: SyntheticInputEvent) {
@@ -97,7 +97,7 @@ export default class Menu extends React.Component<void, MenuProps, MenuState> {
                     <div className="input-group">
                         <label>
                             <span>Room name</span>
-                            <input type="text" onChange={e => this.changeRoomName(e)} onBlur={() => this.setRoomName()} value={this.state.roomNameInput} />
+                            <input type="text" onChange={e => this.changeRoomName(e)} onBlur={() => this.setRoomName()} value={this.state.roomName} />
                         </label>
                     </div>
 
@@ -140,7 +140,8 @@ export default class Menu extends React.Component<void, MenuProps, MenuState> {
                             <select
                                 onChange={e => this.changeStadium(e)}
                                 value={(this.state.currentStadium && this.state.currentStadium.name) || ''}
-                                disabled={this.props.game.isPlaying()}>
+                                disabled={this.props.game.isPlaying()}
+                            >
                                 {this.state.stadiums.map(stadium =>
                                     <option value={stadium.name} key={stadium.name}>{stadium.name}</option>
                                 )}
@@ -160,7 +161,6 @@ type MenuProps = {
 type MenuState = {
     currentStadium: ?Stadium,
     roomName: string,
-    roomNameInput: string,
     stadiums: Stadium[],
     scoreLimit: number,
     timeLimit: number
