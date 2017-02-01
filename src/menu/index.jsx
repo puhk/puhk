@@ -8,6 +8,8 @@ import type {Game, Stadium} from 'nojball-game';
 export default class Menu extends React.Component<void, MenuProps, MenuState> {
     state: MenuState = {
         currentStadium: null,
+        roomNameInput: '',
+        roomName: '',
         stadiums: [],
         scoreLimit: 0,
         timeLimit: 0
@@ -26,8 +28,14 @@ export default class Menu extends React.Component<void, MenuProps, MenuState> {
 
         this.setState({
             currentStadium: game.getStadium(),
+            roomName: game.getRoomName(),
+            roomNameInput: game.getRoomName(),
             scoreLimit: game.getScoreLimit(),
             timeLimit: game.getTimeLimit()
+        });
+
+        this.createSubscriber(Events.ChangeRoomName, (event: Events.ChangeRoomName) => {
+            this.setState({roomName: event.data.name});
         });
 
         this.createSubscriber(Events.ChangeStadium, (event: Events.ChangeStadium) => {
@@ -52,6 +60,16 @@ export default class Menu extends React.Component<void, MenuProps, MenuState> {
     createSubscriber<T>(event: Class<T>, handler: (event: T) => void) {
         const subscriber = this.props.game.eventAggregator.subscribe(event, handler);
         this.subscribers.push(subscriber);
+    }
+
+    changeRoomName(event: SyntheticInputEvent) {
+        this.setState({
+            roomNameInput: event.target.value
+        });
+    }
+
+    setRoomName() {
+        this.props.game.setRoomName(this.state.roomNameInput);
     }
 
     changeStadium(event: SyntheticInputEvent) {
@@ -79,7 +97,7 @@ export default class Menu extends React.Component<void, MenuProps, MenuState> {
                     <div className="input-group">
                         <label>
                             <span>Room name</span>
-                            <input type="text" />
+                            <input type="text" onChange={e => this.changeRoomName(e)} onBlur={() => this.setRoomName()} value={this.state.roomNameInput} />
                         </label>
                     </div>
 
@@ -141,6 +159,8 @@ type MenuProps = {
 
 type MenuState = {
     currentStadium: ?Stadium,
+    roomName: string,
+    roomNameInput: string,
     stadiums: Stadium[],
     scoreLimit: number,
     timeLimit: number

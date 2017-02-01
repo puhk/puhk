@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import ReactDOM from 'react-dom';
+import {Events} from 'nojball-game';
 
 import Timer from './timer';
 
@@ -9,31 +9,49 @@ import type {Game, JsonTeam, Goal, State} from 'nojball-game';
 
 export default class TopBar extends React.Component<void, Props, TopBarState> {
     state: TopBarState = {
+        roomName: '',
         scores: new Map,
         teams: []
     };
 
-    goalScoredSubscriber: any;
+    subscribers = [];
 
     constructor(props: Props) {
         super(props);
 
         this.state = {
+            roomName: props.game.getRoomName(),
             teams: props.game.getTeams(),
             scores: props.game.getScores()
         };
     }
 
     componentDidMount() {
+        this.initGoalSubscriber();
+        this.initRoomNameSubscriber();
+    }
+
+    componentWillUnmount() {
+        for (const subscriber of this.subscribers) {
+            subscriber.dispose();
+        }
+    }
+
+    initGoalSubscriber() {
         const handler = (event: {goal: Goal, state: State}) => {
             this.setState({scores: event.state.scores});
         };
 
-        this.goalScoredSubscriber = this.props.game.eventAggregator.subscribe('goalScored', handler);
+        this.subscribers.push(this.props.game.eventAggregator.subscribe('goalScored', handler));
     }
 
-    componentWillUnmount() {
-        this.goalScoredSubscriber.dispose();
+    initRoomNameSubscriber() {
+        const handler = (event: Events.ChangeRoomName) => {
+            console.log(event);
+            this.setState({roomName: event.data.name});
+        };
+
+        this.subscribers.push(this.props.game.eventAggregator.subscribe(Events.ChangeRoomName, handler));
     }
 
     render() {
@@ -48,7 +66,7 @@ export default class TopBar extends React.Component<void, Props, TopBarState> {
                     )}
                 </ul>
 
-                <div className="room-name">Nojs Room</div>
+                <div className="room-name">{this.state.roomName}</div>
                 <Timer game={this.props.game} />
             </div>
         );
@@ -60,6 +78,7 @@ type Props = {
 };
 
 type TopBarState = {
+    roomName: string,
     scores: Map<string, number>,
     teams: JsonTeam[]
 };
