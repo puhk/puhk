@@ -4,11 +4,12 @@ import React from 'react';
 import {Events} from 'nojball-game';
 
 import Player from './player';
+import withSubscribers from '../enhancers/with-subscribers';
 
 import type {Game, JsonTeam, State, Goal, Player as PlayerType} from 'nojball-game';
+import type {SubscriberCreator} from '../enhancers/with-subscribers';
 
-export default class Team extends React.Component<void, TeamProps, TeamState> {
-    eventSubscribers = [];
+class Team extends React.Component<void, TeamProps, TeamState> {
     state: TeamState = {
         players: [],
         score: 0
@@ -34,7 +35,7 @@ export default class Team extends React.Component<void, TeamProps, TeamState> {
     }
 
     initChangeTeamListener() {
-        const handler = (event: Events.ChangeTeam) => {
+        this.props.createSubscriber(Events.ChangeTeam, (event: Events.ChangeTeam) => {
             const {player} = event;
 
             if (player.team == this.props.team.name || (this.props.specs && !player.team)) {
@@ -48,52 +49,34 @@ export default class Team extends React.Component<void, TeamProps, TeamState> {
             this.setState({
                 players: this.state.players.filter(p => p.clientId !== player.clientId)
             });
-        };
-
-        const subscriber = this.props.game.eventAggregator.subscribe(Events.ChangeTeam, handler);
-        this.eventSubscribers.push(subscriber);
+        });
     }
 
     initPlayerJoinedListener() {
-        const handler = (event: Events.PlayerJoined) => {
+        this.props.createSubscriber(Events.PlayerJoined, (event: Events.PlayerJoined) => {
             this.setState({
                 players: this.state.players.concat(event.player)
             });
-        };
-
-        const subscriber = this.props.game.eventAggregator.subscribe(Events.PlayerJoined, handler);
-        this.eventSubscribers.push(subscriber);
+        });
     }
 
     initStartGameListener() {
-        const handler = (event: Events.StartGame) => {
+        this.props.createSubscriber(Events.StartGame, (event: Events.StartGame) => {
             this.setState({score: 0});
-        };
-
-        const subscriber = this.props.game.eventAggregator.subscribe(Events.StartGame, handler);
-        this.eventSubscribers.push(subscriber);
+        });
     }
 
     initGoalScoredSubscriber() {
-        const handler = ({goal, state}: {goal: Goal, state: State}) => {
+        this.props.createSubscriber('goalScored', ({goal, state}: {goal: Goal, state: State}) => {
             if (goal.teamScored == this.props.team.name) {
                 this.setState({score: this.state.score + 1});
             }
-        };
-
-        const subscriber = this.props.game.eventAggregator.subscribe('goalScored', handler);
-        this.eventSubscribers.push(subscriber);
+        });
     }
 
     switchTeam() {
         const team = this.props.specs ? null : this.props.team.name;
         this.props.game.movePlayerToTeam(this.props.game.me.id, team);
-    }
-
-    componentWillUnmount() {
-        for (const subscriber of this.eventSubscribers) {
-            subscriber.dispose();
-        }
     }
 
     render() {
@@ -122,7 +105,10 @@ export default class Team extends React.Component<void, TeamProps, TeamState> {
     }
 }
 
+export default withSubscribers(Team);
+
 type TeamProps = {
+    createSubscriber: SubscriberCreator,
     game: Game,
     team: JsonTeam,
     specs?: boolean

@@ -3,9 +3,12 @@
 import React from 'react';
 import {Events, defaultStadiums} from 'nojball-game';
 
-import type {Game, Stadium} from 'nojball-game';
+import withSubscribers from '../enhancers/with-subscribers';
 
-export default class Menu extends React.Component<void, MenuProps, MenuState> {
+import type {Game, Stadium} from 'nojball-game';
+import type {SubscriberCreator} from '../enhancers/with-subscribers';
+
+class Menu extends React.Component<void, MenuProps, MenuState> {
     state: MenuState = {
         currentStadium: null,
         roomName: '',
@@ -13,8 +16,6 @@ export default class Menu extends React.Component<void, MenuProps, MenuState> {
         scoreLimit: 0,
         timeLimit: 0
     };
-
-    subscribers = [];
 
     constructor(props: MenuProps) {
         super(props);
@@ -32,32 +33,21 @@ export default class Menu extends React.Component<void, MenuProps, MenuState> {
             timeLimit: game.getTimeLimit()
         });
 
-        this.createSubscriber(Events.ChangeRoomName, (event: Events.ChangeRoomName) => {
+        this.props.createSubscriber(Events.ChangeRoomName, (event: Events.ChangeRoomName) => {
             this.setState({roomName: event.data.name});
         });
 
-        this.createSubscriber(Events.ChangeStadium, (event: Events.ChangeStadium) => {
+        this.props.createSubscriber(Events.ChangeStadium, (event: Events.ChangeStadium) => {
             this.setState({currentStadium: event.stadium});
         });
 
-        this.createSubscriber(Events.ChangeScoreLimit, (event: Events.ChangeScoreLimit) => {
+        this.props.createSubscriber(Events.ChangeScoreLimit, (event: Events.ChangeScoreLimit) => {
             this.setState({scoreLimit: event.data.limit});
         });
 
-        this.createSubscriber(Events.ChangeTimeLimit, (event: Events.ChangeTimeLimit) => {
+        this.props.createSubscriber(Events.ChangeTimeLimit, (event: Events.ChangeTimeLimit) => {
             this.setState({timeLimit: event.data.limit});
         });
-    }
-
-    componentWillUnmount() {
-        for (const subscriber of this.subscribers) {
-            subscriber.dispose();
-        }
-    }
-
-    createSubscriber<T>(event: Class<T>, handler: (event: T) => void) {
-        const subscriber = this.props.game.eventAggregator.subscribe(event, handler);
-        this.subscribers.push(subscriber);
     }
 
     changeRoomName(event: SyntheticInputEvent) {
@@ -154,7 +144,10 @@ export default class Menu extends React.Component<void, MenuProps, MenuState> {
     }
 }
 
+export default withSubscribers(Menu);
+
 type MenuProps = {
+    createSubscriber: SubscriberCreator,
     game: Game
 };
 

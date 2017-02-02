@@ -4,17 +4,17 @@ import React from 'react';
 import {Events} from 'nojball-game';
 
 import Timer from './timer';
+import withSubscribers from './enhancers/with-subscribers';
 
 import type {Game, JsonTeam, Goal, State} from 'nojball-game';
+import type {SubscriberCreator} from './enhancers/with-subscribers';
 
-export default class TopBar extends React.Component<void, Props, TopBarState> {
+class TopBar extends React.Component<void, Props, TopBarState> {
     state: TopBarState = {
         roomName: '',
         scores: new Map,
         teams: []
     };
-
-    subscribers = [];
 
     constructor(props: Props) {
         super(props);
@@ -27,30 +27,13 @@ export default class TopBar extends React.Component<void, Props, TopBarState> {
     }
 
     componentDidMount() {
-        this.initGoalSubscriber();
-        this.initRoomNameSubscriber();
-    }
+        this.props.createSubscriber('goalScored', (event: { goal: Goal, state: State }) => {
+            this.setState({ scores: event.state.scores });
+        });
 
-    componentWillUnmount() {
-        for (const subscriber of this.subscribers) {
-            subscriber.dispose();
-        }
-    }
-
-    initGoalSubscriber() {
-        const handler = (event: {goal: Goal, state: State}) => {
-            this.setState({scores: event.state.scores});
-        };
-
-        this.subscribers.push(this.props.game.eventAggregator.subscribe('goalScored', handler));
-    }
-
-    initRoomNameSubscriber() {
-        const handler = (event: Events.ChangeRoomName) => {
-            this.setState({roomName: event.data.name});
-        };
-
-        this.subscribers.push(this.props.game.eventAggregator.subscribe(Events.ChangeRoomName, handler));
+        this.props.createSubscriber(Events.ChangeRoomName, (event: Events.ChangeRoomName) => {
+            this.setState({ roomName: event.data.name });
+        });
     }
 
     render() {
@@ -72,7 +55,10 @@ export default class TopBar extends React.Component<void, Props, TopBarState> {
     }
 }
 
+export default withSubscribers(TopBar);
+
 type Props = {
+    createSubscriber: SubscriberCreator,
     game: Game
 };
 

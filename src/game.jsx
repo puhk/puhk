@@ -8,13 +8,14 @@ import Menu from './menu';
 import Pitch from './pitch';
 import Sidebar from './sidebar';
 import TopBar from './topbar';
+import withSubscribers from './enhancers/with-subscribers';
 
 import grassImage from '../images/grass.png';
 
 import type {Game as GameType, Renderer} from 'nojball-game';
+import type {SubscriberCreator} from './enhancers/with-subscribers';
 
-export default class Game extends React.Component<void, GameProps, GameState> {
-    eventSubscribers = [];
+class Game extends React.Component<void, GameProps, GameState> {
     state: GameState = {
         playing: false,
         showMenu: false
@@ -22,31 +23,21 @@ export default class Game extends React.Component<void, GameProps, GameState> {
 
     constructor(props: GameProps) {
         super(props);
-        const {game} = props;
 
-        this.state.playing = game.isPlaying();
+        this.state.playing = props.game.isPlaying();
+    }
 
-        const startGameHandler = () => {
+    componentDidMount() {
+        this.props.createSubscriber(Events.StartGame, () => {
             this.setState({
                 playing: true,
                 showMenu: false
             });
-        };
+        });
 
-        const stopGameHandler = () => {
-            this.setState({playing: false});
-        };
-
-        this.eventSubscribers = [
-            game.eventAggregator.subscribe(Events.StartGame, startGameHandler),
-            game.eventAggregator.subscribe(Events.StopGame, stopGameHandler)
-        ];
-    }
-
-    componentWillUnmount() {
-        for (const subscriber of this.eventSubscribers) {
-            subscriber.dispose();
-        }
+        this.props.createSubscriber(Events.StopGame, () => {
+            this.setState({ playing: false });
+        });
     }
 
     toggleMenu() {
@@ -86,7 +77,10 @@ export default class Game extends React.Component<void, GameProps, GameState> {
     }
 }
 
+export default withSubscribers(Game);
+
 type GameProps = {
+    createSubscriber: SubscriberCreator,
     game: GameType,
     renderer: Renderer
 };

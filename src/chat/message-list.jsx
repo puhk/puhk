@@ -3,27 +3,23 @@
 import React from 'react';
 import {Events} from 'nojball-game';
 
-import type {Game, ChatMessage} from 'nojball-game';
+import withSubscribers from '../enhancers/with-subscribers';
 
-export default class MessageList extends React.Component<void, MessageListProps, MessageListState> {
+import type {Game, ChatMessage} from 'nojball-game';
+import type {SubscriberCreator} from '../enhancers/with-subscribers';
+
+class MessageList extends React.Component<void, MessageListProps, MessageListState> {
     element: HTMLElement;
-    subscriber: any = null;
     state: MessageListState = {
         messages: []
     };
 
     componentDidMount() {
-        const handler = (event: Events.PlayerChat) => {
+        this.props.createSubscriber(Events.PlayerChat, (event: Events.PlayerChat) => {
             this.setState({
                 messages: this.props.game.getChatMessages()
             });
-        };
-
-        this.subscriber = this.props.game.eventAggregator.subscribe(Events.PlayerChat, handler);
-    }
-
-    componentWillUnmount() {
-        this.subscriber.dispose();
+        })
     }
 
     componentDidUpdate() {
@@ -44,7 +40,10 @@ export default class MessageList extends React.Component<void, MessageListProps,
     }
 }
 
+export default withSubscribers(MessageList);
+
 type MessageListProps = {
+    createSubscriber: SubscriberCreator,
     game: Game
 };
 
