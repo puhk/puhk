@@ -1,0 +1,11 @@
+body {
+    margin: 0;
+}
+
+#mount {
+    height: 100vh;
+}
+
+canvas {
+    display: block;
+}
