@@ -1,13 +1,15 @@
 // @flow
 
 import Event from '../Event';
+import ChatMessage from '../../entities/ChatMessage';
 
 import type State from '../State';
 import type Game from '../../Game';
 
-export default class ChangeScoreLimit extends Event {
+export default class PlayerChat extends Event {
     data: EventData;
-    type = 'ChangeScoreLimit';
+    message: ?ChatMessage;
+    type = 'PlayerChat';
 
     constructor(sender: number, data: EventData) {
         super(sender);
@@ -15,15 +17,17 @@ export default class ChangeScoreLimit extends Event {
     }
 
     apply(state: State, game: Game) {
-        state.scoreLimit = this.data.limit;
+        this.message = new ChatMessage(this.sender, this.data.message);
+        state.addChatMessage(this.message);
+
         game.eventAggregator.publish(this);
     }
 
     static parse(sender, data: EventData) {
-        return new ChangeScoreLimit(sender, data);
+        return new PlayerChat(sender, data);
     }
 }
 
 type EventData = {
-    limit: number
+    message: string
 };

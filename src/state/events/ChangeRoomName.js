@@ -5,9 +5,9 @@ import Event from '../Event';
 import type State from '../State';
 import type Game from '../../Game';
 
-export default class ChangeTimeLimit extends Event {
+export default class ChangeRoomName extends Event {
     data: EventData;
-    type = 'ChangeTimeLimit';
+    type = 'ChangeRoomName';
 
     constructor(sender: number, data: EventData) {
         super(sender);
@@ -15,15 +15,15 @@ export default class ChangeTimeLimit extends Event {
     }
 
     apply(state: State, game: Game) {
-        state.timeLimit = this.data.limit;
+        state.roomName = this.data.name;
         game.eventAggregator.publish(this);
     }
 
     static parse(sender, data: EventData) {
-        return new ChangeTimeLimit(sender, data);
+        return new ChangeRoomName(sender, data);
     }
 }
 
 type EventData = {
-    limit: number
+    name: string
 };
