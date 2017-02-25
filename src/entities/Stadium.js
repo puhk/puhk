@@ -14,6 +14,7 @@ import type {JsonSegment} from './Segment';
 
 export default class Stadium {
     name: string;
+    cameraConstraints: CameraConstraints = [0, 0];
     backgrounds: Background[] = [];
     discs: Disc[] = [];
     goals: Goal[] = [];
@@ -37,6 +38,7 @@ export default class Stadium {
     pack(): JsonStadium {
         return {
             name: this.name,
+            cameraConstraints: this.cameraConstraints,
             backgrounds: this.backgrounds.map(background => background.pack()),
             discs: this.discs.map(disc => disc.pack()),
             goals: this.goals.map(goal => goal.pack()),
@@ -48,6 +50,7 @@ export default class Stadium {
 
     static parse(json: JsonStadium) {
         let stadium = new Stadium(json.name);
+        stadium.cameraConstraints = json.cameraConstraints;
         stadium.teams = json.teams;
         stadium.playerPhysics = json.player;
 
@@ -62,6 +65,7 @@ export default class Stadium {
 
 export type JsonStadium = {
     name: string,
+    cameraConstraints: CameraConstraints,
     backgrounds: JsonBackground[],
     discs: JsonDisc[],
     goals: JsonGoal[],
@@ -84,3 +88,5 @@ type JsonPlayerPhysics = {
     invMass: number,
     radius: number
 };
+
+type CameraConstraints = [number, number];

@@ -1,13 +1,17 @@
 // @flow
 
+import Vec from 'victor';
+
 import State from './state/State';
+
+import type Disc from './entities/Disc';
 
 export default class Renderer {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
     parent: ?HTMLElement;
-    width = 0;
-    height = 0;
+    cameraPos = new Vec(0, 0);
+    cameraLerp = 0.04;
 
     constructor() {
         this.canvas = this.createCanvas();
@@ -26,21 +30,15 @@ export default class Renderer {
     }
 
     setWidth(width: number) {
-        this.width = width;
-
-        if (this.canvas) {
-            this.canvas.width = width;
-        }
+        this.canvas.width = width;
+        this.translate();
 
         return this;
     }
 
     setHeight(height: number) {
-        this.height = height;
-
-        if (this.canvas) {
-            this.canvas.height = height;
-        }
+        this.canvas.height = height;
+        this.translate();
 
         return this;
     }
@@ -55,7 +53,7 @@ export default class Renderer {
         this.remove();
         parent.appendChild(this.canvas);
         this.canvas.focus();
-        this.center();
+        this.translate();
 
         return this;
     }
@@ -75,13 +73,25 @@ export default class Renderer {
         return canvas;
     }
 
-    center() {
-        this.ctx.translate(this.canvas.width / 2, this.canvas.height / 2);
+    get centerPos(): Vec {
+        return new Vec(this.canvas.width / 2, this.canvas.height / 2);
+    }
+
+    translate() {
+        let center = this.centerPos;
+        this.ctx.translate(center.x - this.cameraPos.x, center.y - this.cameraPos.y);
         return this;
     }
 
     draw(state: State) {
-        let area = [-this.canvas.width / 2, -this.canvas.height / 2, this.canvas.width, this.canvas.height];
+        this.lerpCamera(state);
+
+        let area = [
+            (-this.canvas.width / 2) + this.cameraPos.x,
+            (-this.canvas.height / 2) + this.cameraPos.y,
+            this.canvas.width,
+            this.canvas.height
+        ];
 
         this.ctx.clearRect(...area);
         this.ctx.fillStyle = '#718c5a';
@@ -102,5 +112,49 @@ export default class Renderer {
         state.discs.forEach(disc => {
             disc.draw(this.ctx);
         });
+    }
+
+    lerpCamera(state: State) {
+        let {width, height} = this.canvas;
+        let {cameraConstraints} = state.stadium;
+
+        if (width >= cameraConstraints[0] * 2 && height >= cameraConstraints[1] * 2) {
+            this.resetCamera();
+            return;
+        }
+
+        let ball = state.discs.find(disc => disc.isBall);
+        let player = state.discs.find(disc => disc.isMe);
+        let target = new Vec(0, 0);
+
+        if (ball) {
+            target = ball.position.clone();
+
+            if (player) {
+                let diff = player.position.clone().subtract(ball.position);
+                target.add(diff.divideScalar(2));
+            }
+        } else if (player) {
+            target = player.position.clone();
+        }
+
+        let diff = target.clone().subtract(this.cameraPos);
+        let lerp = diff.multiplyScalar(this.cameraLerp);
+
+        if ((width / 2) + Math.abs(this.cameraPos.x) + (lerp.x * Math.sign(this.cameraPos.x)) > cameraConstraints[0]) {
+            lerp.x = (cameraConstraints[0] - (width / 2) - Math.abs(this.cameraPos.x)) * Math.sign(this.cameraPos.x);
+        }
+
+        if ((height / 2) + Math.abs(this.cameraPos.y) + (lerp.y * Math.sign(this.cameraPos.y)) > cameraConstraints[1]) {
+            lerp.y = (cameraConstraints[1] - (height / 2) - Math.abs(this.cameraPos.y)) * Math.sign(this.cameraPos.y);
+        }
+
+        this.ctx.translate(-lerp.x, -lerp.y);
+        this.cameraPos.add(lerp);
+    }
+
+    resetCamera() {
+        this.ctx.translate(this.cameraPos.x, this.cameraPos.y);
+        this.cameraPos.zero();
     }
 }

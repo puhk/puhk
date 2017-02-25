@@ -28,7 +28,7 @@
     "webpack-dev-server": "^2.3.0"
   },
   "scripts": {
-    "build": "webpack --progress --colors",
+    "build": "cross-env NODE_ENV=production webpack --progress --colors",
     "start": "cross-env NODE_ENV=development yarn run webpack-dev-server -- --inline --progress --profile --watch"
   }
 }
