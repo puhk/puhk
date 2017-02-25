@@ -9,6 +9,17 @@ import withSubscribers from './enhancers/with-subscribers';
 import type {Game, JsonTeam, Goal, State} from 'nojball-game';
 import type {SubscriberCreator} from './enhancers/with-subscribers';
 
+type Props = {
+    createSubscriber: SubscriberCreator,
+    game: Game
+};
+
+type TopBarState = {
+    roomName: string,
+    scores: Map<string, number>,
+    teams: JsonTeam[]
+};
+
 class TopBar extends React.Component<void, Props, TopBarState> {
     state: TopBarState = {
         roomName: '',
@@ -56,14 +67,3 @@ class TopBar extends React.Component<void, Props, TopBarState> {
 }
 
 export default withSubscribers(TopBar);
-
-type Props = {
-    createSubscriber: SubscriberCreator,
-    game: Game
-};
-
-type TopBarState = {
-    roomName: string,
-    scores: Map<string, number>,
-    teams: JsonTeam[]
-};

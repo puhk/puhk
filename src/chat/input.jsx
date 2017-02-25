@@ -4,6 +4,14 @@ import React from 'react';
 
 import type {Game} from 'nojball-game';
 
+type InputProps = {
+    game: Game
+};
+
+type InputState = {
+    inputText: string
+};
+
 export default class Input extends React.Component<void, InputProps, InputState> {
     state: InputState = {
         inputText: ''
@@ -34,11 +42,3 @@ export default class Input extends React.Component<void, InputProps, InputState>
         );
     }
 }
-
-type InputProps = {
-    game: Game
-};
-
-type InputState = {
-    inputText: string
-};

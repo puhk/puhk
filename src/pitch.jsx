@@ -5,6 +5,11 @@ import ResizeObserver from 'resize-observer-polyfill';
 
 import type {Game, Renderer} from 'nojball-game';
 
+type PitchProps = {
+    game: Game,
+    renderer: Renderer
+};
+
 export default class Pitch extends React.Component<void, PitchProps, void> {
     element: HTMLElement;
     resizeObserver: ResizeObserver;
@@ -18,8 +23,7 @@ export default class Pitch extends React.Component<void, PitchProps, void> {
 
                 props.renderer
                     .setWidth(width)
-                    .setHeight(height)
-                    .center();
+                    .setHeight(height);
             }
         });
     }
@@ -44,8 +48,3 @@ export default class Pitch extends React.Component<void, PitchProps, void> {
         return <div className="pitch" ref={el => this.element = el} tabIndex="1" />;
     }
 }
-
-type PitchProps = {
-    game: Game,
-    renderer: Renderer
-};

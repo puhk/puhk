@@ -15,6 +15,17 @@ import grassImage from '../images/grass.png';
 import type {Game as GameType, Renderer} from 'nojball-game';
 import type {SubscriberCreator} from './enhancers/with-subscribers';
 
+type GameProps = {
+    createSubscriber: SubscriberCreator,
+    game: GameType,
+    renderer: Renderer
+};
+
+type GameState = {
+    playing: boolean,
+    showMenu: boolean
+};
+
 class Game extends React.Component<void, GameProps, GameState> {
     state: GameState = {
         playing: false,
@@ -78,14 +89,3 @@ class Game extends React.Component<void, GameProps, GameState> {
 }
 
 export default withSubscribers(Game);
-
-type GameProps = {
-    createSubscriber: SubscriberCreator,
-    game: GameType,
-    renderer: Renderer
-};
-
-type GameState = {
-    playing: boolean,
-    showMenu: boolean
-};

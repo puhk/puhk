@@ -8,6 +8,15 @@ import withSubscribers from '../enhancers/with-subscribers';
 import type {Game, ChatMessage} from 'nojball-game';
 import type {SubscriberCreator} from '../enhancers/with-subscribers';
 
+type MessageListProps = {
+    createSubscriber: SubscriberCreator,
+    game: Game
+};
+
+type MessageListState = {
+    messages: ChatMessage[]
+};
+
 class MessageList extends React.Component<void, MessageListProps, MessageListState> {
     element: HTMLElement;
     state: MessageListState = {
@@ -41,12 +50,3 @@ class MessageList extends React.Component<void, MessageListProps, MessageListSta
 }
 
 export default withSubscribers(MessageList);
-
-type MessageListProps = {
-    createSubscriber: SubscriberCreator,
-    game: Game
-};
-
-type MessageListState = {
-    messages: ChatMessage[]
-};

@@ -32,4 +32,12 @@ const host = (name: string, avatar: number|string) => {
     render(game);
 };
 
+const join = (host: string, avatar: number|string) => {
+    const game = GameCreator.join(host, renderer);
+    window.game = game;
+
+    render(game);
+};
+
 window.host = host;
+window.join = join;

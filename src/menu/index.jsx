@@ -8,6 +8,19 @@ import withSubscribers from '../enhancers/with-subscribers';
 import type {Game, Stadium} from 'nojball-game';
 import type {SubscriberCreator} from '../enhancers/with-subscribers';
 
+type MenuProps = {
+    createSubscriber: SubscriberCreator,
+    game: Game
+};
+
+type MenuState = {
+    currentStadium: ?Stadium,
+    roomName: string,
+    stadiums: Stadium[],
+    scoreLimit: number,
+    timeLimit: number
+};
+
 class Menu extends React.Component<void, MenuProps, MenuState> {
     state: MenuState = {
         currentStadium: null,
@@ -145,16 +158,3 @@ class Menu extends React.Component<void, MenuProps, MenuState> {
 }
 
 export default withSubscribers(Menu);
-
-type MenuProps = {
-    createSubscriber: SubscriberCreator,
-    game: Game
-};
-
-type MenuState = {
-    currentStadium: ?Stadium,
-    roomName: string,
-    stadiums: Stadium[],
-    scoreLimit: number,
-    timeLimit: number
-};

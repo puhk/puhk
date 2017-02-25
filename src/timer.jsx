@@ -4,6 +4,14 @@ import React from 'react';
 
 import type {Game} from 'nojball-game';
 
+type TimerProps = {
+    game: Game
+};
+
+type TimerState = {
+    timer: number
+};
+
 export default class Timer extends React.Component<void, TimerProps, TimerState> {
     state: TimerState = {
         timer: 0
@@ -55,11 +63,3 @@ export default class Timer extends React.Component<void, TimerProps, TimerState>
         );
     }
 }
-
-type TimerProps = {
-    game: Game
-};
-
-type TimerState = {
-    timer: number
-};

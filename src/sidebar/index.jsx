@@ -5,6 +5,11 @@ import TeamsList from './teamslist';
 
 import type {Game} from 'nojball-game';
 
+type SidebarProps = {
+    game: Game,
+    toggleMenu: () => void
+};
+
 export default (props: SidebarProps) => {
     const {game} = props;
 
@@ -24,9 +29,4 @@ export default (props: SidebarProps) => {
             </div>
         </div>
     );
-};
-
-type SidebarProps = {
-    game: Game,
-    toggleMenu: () => void
 };

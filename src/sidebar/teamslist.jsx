@@ -5,6 +5,14 @@ import Team from './team';
 
 import type {Game, JsonTeam} from 'nojball-game';
 
+type TeamsListProps = {
+    game: Game
+};
+
+type TeamsListState = {
+    teams: JsonTeam[]
+};
+
 export default class TeamsList extends React.Component {
     state: TeamsListState = {
         teams: []
@@ -33,11 +41,3 @@ export default class TeamsList extends React.Component {
         );
     }
 }
-
-type TeamsListProps = {
-    game: Game
-};
-
-type TeamsListState = {
-    teams: JsonTeam[]
-};

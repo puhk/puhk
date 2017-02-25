@@ -7,6 +7,10 @@ import MessageList from './message-list';
 
 import type {Game} from 'nojball-game';
 
+type ChatProps = {
+    game: Game
+};
+
 export default (props: ChatProps) => (
     <div className="chat">
         <div className="messages">
@@ -16,7 +20,3 @@ export default (props: ChatProps) => (
         <Input game={props.game} />
     </div>
 );
-
-type ChatProps = {
-    game: Game
-};

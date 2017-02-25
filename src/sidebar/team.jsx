@@ -9,6 +9,18 @@ import withSubscribers from '../enhancers/with-subscribers';
 import type {Game, JsonTeam, State, Goal, Player as PlayerType} from 'nojball-game';
 import type {SubscriberCreator} from '../enhancers/with-subscribers';
 
+type TeamProps = {
+    createSubscriber: SubscriberCreator,
+    game: Game,
+    team: JsonTeam,
+    specs?: boolean
+};
+
+type TeamState = {
+    players: PlayerType[],
+    score: number
+};
+
 class Team extends React.Component<void, TeamProps, TeamState> {
     state: TeamState = {
         players: [],
@@ -106,15 +118,3 @@ class Team extends React.Component<void, TeamProps, TeamState> {
 }
 
 export default withSubscribers(Team);
-
-type TeamProps = {
-    createSubscriber: SubscriberCreator,
-    game: Game,
-    team: JsonTeam,
-    specs?: boolean
-};
-
-type TeamState = {
-    players: PlayerType[],
-    score: number
-};
