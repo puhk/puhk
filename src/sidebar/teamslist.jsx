@@ -13,6 +13,11 @@ type TeamsListState = {
     teams: JsonTeam[]
 };
 
+const specTeam = {
+    name: 'Spectators',
+    color: '#ccc'
+};
+
 export default class TeamsList extends React.Component {
     state: TeamsListState = {
         teams: []
@@ -21,15 +26,10 @@ export default class TeamsList extends React.Component {
     constructor(props: TeamsListProps) {
         super(props);
 
-        this.state.teams = this.props.game.getTeams();
+        this.state.teams = this.props.game.state.stadium.getTeams();
     }
 
     render() {
-        const specTeam = {
-            name: 'Spectators',
-            color: '#ccc'
-        };
-
         return (
             <ul className="teams-list">
                 {this.state.teams.map(team =>

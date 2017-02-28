@@ -1,7 +1,7 @@
+@import 'colors';
 @import 'chat';
 @import 'menu';
-
-$bgColor: #718c5a;
+@import 'player-list';
 
 body {
     font-family: 'Open Sans';
@@ -22,7 +22,7 @@ body {
     height: 100%;
 
     .sidebar {
-        background-color: #111518;
+        background-color: $sidebarColor;
         color: #fff;
         display: flex;
         flex: 1;
@@ -58,26 +58,6 @@ body {
                 .score {
                     float: right;
                     font-weight: bold;
-                }
-
-                ul {
-                    background: #181d20;
-                    font-size: 0.8rem;
-                    margin-top: 8px;
-                    list-style: none;
-                    padding-left: 0px;
-
-                    li {
-                        margin-bottom: 0;
-                        padding: 4px 6px;
-                    }
-
-                    img {
-                        display: inline-block;
-                        margin-right: 5px;
-                        vertical-align: middle;
-                        width: 16px;
-                    }
                 }
             }
         }

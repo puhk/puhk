@@ -40,10 +40,10 @@ class Menu extends React.Component<void, MenuProps, MenuState> {
         const {game} = this.props;
 
         this.setState({
-            currentStadium: game.getStadium(),
-            roomName: game.getRoomName(),
-            scoreLimit: game.getScoreLimit(),
-            timeLimit: game.getTimeLimit()
+            currentStadium: game.state.stadium,
+            roomName: game.state.roomName,
+            scoreLimit: game.state.scoreLimit,
+            timeLimit: game.state.timeLimit
         });
 
         this.props.createSubscriber(Events.ChangeRoomName, (event: Events.ChangeRoomName) => {
@@ -70,8 +70,9 @@ class Menu extends React.Component<void, MenuProps, MenuState> {
     }
 
     setRoomName() {
-        if (this.state.roomName != this.props.game.getRoomName()) {
-            this.props.game.setRoomName(this.state.roomName);
+        if (this.state.roomName != this.props.game.state.roomName) {
+            const event = new Events.ChangeRoomName(this.props.game.me.id, {name: this.state.roomName});
+            this.props.game.addEvent(event);
         }
     }
 
@@ -79,16 +80,19 @@ class Menu extends React.Component<void, MenuProps, MenuState> {
         const stadium = this.state.stadiums.find(stadium => stadium.name == event.target.value);
 
         if (stadium) {
-            this.props.game.changeStadium(stadium);
+            const event = new Events.ChangeStadium(this.props.game.me.id, {stadium});
+            this.props.game.addEvent(event);
         }
     }
 
     changeScoreLimit(event: SyntheticInputEvent) {
-        this.props.game.setScoreLimit(parseInt(event.target.value));
+        const limit = parseInt(event.target.value);
+        this.props.game.addEvent(new Events.ChangeScoreLimit(this.props.game.me.id, {limit}));
     }
 
     changeTimeLimit(event: SyntheticInputEvent) {
-        this.props.game.setTimeLimit(parseInt(event.target.value));
+        const limit = parseInt(event.target.value);
+        this.props.game.addEvent(new Events.ChangeTimeLimit(this.props.game.me.id, {limit}));
     }
 
     render() {
@@ -143,7 +147,7 @@ class Menu extends React.Component<void, MenuProps, MenuState> {
                             <select
                                 onChange={e => this.changeStadium(e)}
                                 value={(this.state.currentStadium && this.state.currentStadium.name) || ''}
-                                disabled={this.props.game.isPlaying()}
+                                disabled={this.props.game.state.playing}
                             >
                                 {this.state.stadiums.map(stadium =>
                                     <option value={stadium.name} key={stadium.name}>{stadium.name}</option>

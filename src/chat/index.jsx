@@ -11,12 +11,12 @@ type ChatProps = {
     game: Game
 };
 
-export default (props: ChatProps) => (
+export default ({game}: ChatProps) => (
     <div className="chat">
         <div className="messages">
-            <MessageList game={props.game} />
+            <MessageList game={game} />
         </div>
 
-        <Input game={props.game} />
+        <Input game={game} />
     </div>
 );

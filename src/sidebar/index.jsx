@@ -1,6 +1,8 @@
 // @flow
 
 import React from 'react';
+import {Events} from 'nojball-game';
+
 import TeamsList from './teamslist';
 
 import type {Game} from 'nojball-game';
@@ -18,11 +20,11 @@ export default (props: SidebarProps) => {
             <TeamsList {...props} />
 
             <div>
-                {game.isPlaying() &&
+                {game.state.playing &&
                     <button onClick={props.toggleMenu} className="toggle-menu">Toggle menu</button>
                 }
 
-                {game.isPlaying() ?
+                {game.state.playing ?
                     <button onClick={e => game.stop()} className="stop-game">Stop game</button> :
                     <button onClick={e => game.start()} className="start-game">Start game</button>
                 }

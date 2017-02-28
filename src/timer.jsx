@@ -25,7 +25,7 @@ export default class Timer extends React.Component<void, TimerProps, TimerState>
         const updateTimer = () => {
             this.timerInterval = requestAnimationFrame(updateTimer);
 
-            const timer =  game.getTimer();
+            const timer =  game.state.timer;
             const currentSeconds = Math.floor(this.state.timer % 60);
             const newSeconds = Math.floor(timer % 60);
 
@@ -49,7 +49,7 @@ export default class Timer extends React.Component<void, TimerProps, TimerState>
         const seconds = Math.floor(timer % 60);
         const time = `${mins < 10 ? '0' : ''}${mins}:${seconds < 10 ? '0' : ''}${seconds}`;
 
-        const timeLimit = game.getTimeLimit() * 60;
+        const timeLimit = game.state.timeLimit * 60;
         const overtime = timer > timeLimit && game.scoresEqual();
         const flash = timer <= timeLimit && timer > timeLimit - 30;
 

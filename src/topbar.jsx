@@ -31,9 +31,9 @@ class TopBar extends React.Component<void, Props, TopBarState> {
         super(props);
 
         this.state = {
-            roomName: props.game.getRoomName(),
-            teams: props.game.getTeams(),
-            scores: props.game.getScores()
+            roomName: props.game.state.roomName,
+            teams: props.game.state.stadium.getTeams(),
+            scores: props.game.state.scores
         };
     }
 

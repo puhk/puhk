@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+import {Events} from 'nojball-game';
 
 import type {Game} from 'nojball-game';
 
@@ -24,7 +25,10 @@ export default class Input extends React.Component<void, InputProps, InputState>
     sendMessage(event: SyntheticInputEvent) {
         event.preventDefault();
 
-        this.props.game.sendChatMessage(this.state.inputText);
+        const {game} = this.props;
+        const message = this.state.inputText;
+        game.addEvent(new Events.PlayerChat(game.me.id, {message}));
+
         this.setState({inputText: ''});
     }
 

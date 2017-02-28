@@ -35,7 +35,7 @@ class Game extends React.Component<void, GameProps, GameState> {
     constructor(props: GameProps) {
         super(props);
 
-        this.state.playing = props.game.isPlaying();
+        this.state.playing = props.game.state.playing;
     }
 
     componentDidMount() {
@@ -47,7 +47,7 @@ class Game extends React.Component<void, GameProps, GameState> {
         });
 
         this.props.createSubscriber(Events.StopGame, () => {
-            this.setState({ playing: false });
+            this.setState({playing: false});
         });
     }
 

@@ -26,7 +26,7 @@ class MessageList extends React.Component<void, MessageListProps, MessageListSta
     componentDidMount() {
         this.props.createSubscriber(Events.PlayerChat, (event: Events.PlayerChat) => {
             this.setState({
-                messages: this.props.game.getChatMessages()
+                messages: this.props.game.state.chatMessages
             });
         })
     }
@@ -40,7 +40,7 @@ class MessageList extends React.Component<void, MessageListProps, MessageListSta
             <ul ref={el => this.element = el}>
                 {this.state.messages.map((message, i) =>
                     <li key={i}>
-                        <strong>{this.props.game.getPlayerById(message.playerId).name}: </strong>
+                        <strong>{this.props.game.state.getPlayerById(message.playerId).name}: </strong>
                         <span>{message.msg}</span>
                     </li>
                 )}

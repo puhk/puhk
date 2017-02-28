@@ -38,8 +38,8 @@ class Team extends React.Component<void, TeamProps, TeamState> {
         }
 
         this.setState({
-            players: game.getTeamPlayers(team.name),
-            score: game.getScore(team.name)
+            players: game.state.getTeamPlayers(team),
+            score: game.state.getTeamScore(team)
         });
 
         this.initStartGameListener();
@@ -87,8 +87,14 @@ class Team extends React.Component<void, TeamProps, TeamState> {
     }
 
     switchTeam() {
-        const team = this.props.specs ? null : this.props.team.name;
-        this.props.game.movePlayerToTeam(this.props.game.me.id, team);
+        const {id} = this.props.game.me;
+
+        const event = new Events.ChangeTeam(id, {
+            clientId: id,
+            team: this.props.specs ? null : this.props.team.name
+        });
+
+        this.props.game.addEvent(event);
     }
 
     render() {
@@ -104,7 +110,7 @@ class Team extends React.Component<void, TeamProps, TeamState> {
                 }
 
                 {this.state.players.length > 0 &&
-                    <ul>
+                    <ul className="player-list">
                         {this.state.players.map(player =>
                             <li key={player.clientId}>
                                 <Player game={this.props.game} player={player} />
