@@ -16,6 +16,7 @@ import {
     ChangeTeam,
     ChangeTimeLimit,
     Keypress,
+    PlayerAdmin,
     PlayerAvatar,
     PlayerChat,
     PlayerJoined,
@@ -101,7 +102,15 @@ export default class Game {
         }
     }
 
-    addEvent(event: Event, send?: boolean) {
+    start() {
+        this.addEvent(new StartGame(this.me.id));
+    }
+
+    stop() {
+        this.addEvent(new StopGame(this.me.id));
+    }
+
+    addEvent(event: Event, send: boolean = true) {
         this.simulator.addEvent(event);
 
         if (send) {
@@ -304,92 +313,8 @@ export default class Game {
         MainLoop.stop();
     }
 
-    /** API */
-
-    start() {
-        this.addEvent(new StartGame(this.me.id));
-    }
-
-    stop() {
-        this.addEvent(new StopGame(this.me.id));
-    }
-
-    isPlaying() {
-        return this.simulator.currentState.playing;
-    }
-
-    getRoomName() {
-        return this.simulator.currentState.roomName;
-    }
-
-    setRoomName(name: string) {
-        this.addEvent(new ChangeRoomName(this.me.id, {name}))
-    }
-
-    getPlayerById(id: number) {
-        return this.simulator.currentState.getPlayerById(id);
-    }
-
-    getTeams() {
-        return this.simulator.currentState.stadium.getTeams();
-    }
-
-    getTeamPlayers(name: string) {
-        let state = this.simulator.currentState;
-        let team = state.stadium.getTeam(name);
-        return team && state.getTeamPlayers(team);
-    }
-
-    getScore(team: string) {
-        return this.simulator.currentState.scores.get(team);
-    }
-
-    getScores() {
-        return this.simulator.currentState.scores;
-    }
-
-    getScoreLimit() {
-        return this.simulator.currentState.scoreLimit;
-    }
-
-    setScoreLimit(limit: number) {
-        this.addEvent(new ChangeScoreLimit(this.me.id, {limit}));
-    }
-
-    getTimer() {
-        return this.simulator.currentState.timer;
-    }
-
-    getTimeLimit() {
-        return this.simulator.currentState.timeLimit;
-    }
-
-    setTimeLimit(limit: number) {
-        this.addEvent(new ChangeTimeLimit(this.me.id, {limit}));
-    }
-
-    movePlayerToTeam(clientId: number, team: ?string) {
-        this.addEvent(new ChangeTeam(this.me.id, {clientId, team}))
-    }
-
-    getChatMessages() {
-        return this.simulator.currentState.chatMessages;
-    }
-
-    sendChatMessage(message: string) {
-        this.addEvent(new PlayerChat(this.me.id, {message}));
-    }
-
-    getStadium() {
-        return this.simulator.currentState.stadium;
-    }
-
-    changeStadium(stadium: Stadium) {
-        this.addEvent(new ChangeStadium(this.me.id, {stadium}));
-    }
-
-    changeAvatar(avatar: string) {
-        this.addEvent(new PlayerAvatar(this.me.id, {avatar}));
+    get state(): State {
+        return this.simulator.currentState;
     }
 }
 

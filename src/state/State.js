@@ -58,6 +58,10 @@ export default class State {
         return this.players.filter(player => player.team == team.name);
     }
 
+    getTeamScore(team: JsonTeam) {
+        return this.scores.get(team.name);
+    }
+
     addDiscs(discs: Disc[]) {
         this.discs = this.discs.concat(discs);
     }
