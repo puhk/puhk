@@ -1,4 +1,16 @@
 {
-  "presets": ["stage-1", ["es2015", {"modules": false}]],
-  "plugins": ["transform-runtime", "transform-class-properties", "transform-flow-strip-types"]
+  "presets": [
+    ["env", {
+      "modules": false,
+      "targets": {
+        "node": 7
+      }
+    }]
+  ],
+  "plugins": [
+    "transform-runtime",
+    "transform-export-extensions",
+    "transform-class-properties",
+    "transform-flow-strip-types"
+  ]
 }

@@ -17,7 +17,8 @@ let config = {
     path: path.resolve('dist'),
     filename: 'bundle.js',
     library: 'nojball-game',
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
+    umdNamedDefine: true
   },
   module: {
     rules: [{
@@ -47,12 +48,12 @@ if (ENV === 'development') {
 } else {
   Object.assign(config, {
     plugins: [
-      new webpack.optimize.UglifyJsPlugin({
+      /*new webpack.optimize.UglifyJsPlugin({
         minimize: true,
         compress: {
           warnings: false
         }
-      })
+      })*/
     ],
     externals: {
       lodash: {
