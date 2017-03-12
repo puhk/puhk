@@ -2,9 +2,10 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {AppContainer} from 'react-hot-loader';
 import {GameCreator, Renderer, Background} from 'nojball-game';
 
-import Game from './game.jsx';
+import Game from './game';
 import grassImage from '../images/grass.png';
 import '../styles/main.scss';
 
@@ -18,7 +19,9 @@ Background.images.grass = img;
 
 const render = (game: GameType) => {
     ReactDOM.render(
-        <Game game={game} renderer={renderer} />,
+        <AppContainer>
+            <Game game={game} renderer={renderer} />
+        </AppContainer>,
         document.getElementById('gameMount')
     );
 };
@@ -41,3 +44,17 @@ const join = (host: string, avatar: number|string) => {
 
 window.host = host;
 window.join = join;
+
+// Hot Module Replacement API
+if (module.hot && typeof module.hot.accept == 'function') {
+    module.hot.accept('./game', () => {
+        const Game = require('./game').default;
+
+        ReactDOM.render(
+            <AppContainer>
+                <Game game={window.game} renderer={renderer} />
+            </AppContainer>,
+            document.getElementById('gameMount')
+        );
+    });
+}

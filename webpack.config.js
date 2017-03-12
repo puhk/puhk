@@ -15,6 +15,7 @@ module.exports = {
   entry: [
     'webpack-dev-server/client?http://localhost:8080',
     'webpack/hot/only-dev-server',
+    'react-hot-loader/patch',
     './src/index.jsx'
   ],
   output: {
@@ -25,7 +26,7 @@ module.exports = {
     rules: [{
       test: /\.jsx?$/,
       include: path.resolve('src'),
-      use: ['react-hot-loader', 'babel-loader']
+      use: ['babel-loader']
     }, {
       test: /\.scss$/,
       use: [{
@@ -63,7 +64,7 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin()
   ],
-  devtool: DEBUG ? 'inline-source-map' : null,
+  devtool: DEBUG ? 'inline-source-map' : false,
   devServer: {
     port: metadata.port,
     host: metadata.host,
