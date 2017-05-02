@@ -11,6 +11,15 @@ import State from './state/State';
 import classic from './stadiums/classic.json';
 
 import type Renderer from './Renderer';
+import type {Config} from './network/Base';
+
+type Opts = Config & {
+    renderer?: Renderer
+};
+
+type ClientOps = Opts & {
+    id: string
+};
 
 const createGame = (renderer?: Renderer) => {
     const engine = new Engine;
@@ -26,24 +35,25 @@ const createGame = (renderer?: Renderer) => {
 }
 
 const GameCreator = {
-    host(renderer?: Renderer) {
+    host({host, path, renderer}: Opts): Promise<Game> {
         const game = createGame(renderer);
-        const network = new Host(game);
+        const network = new Host(game, {host, path});
 
-        network.peer.on('open', () => {
-            game.initLocalPlayer();
-            game.init();
+        return new Promise((resolve, reject) => {
+            network.peer.on('open', () => {
+                game.initLocalPlayer();
+                game.init();
+
+                resolve(game);
+            });
         });
-
-        return game;
     },
 
-    join(host: string, renderer?: Renderer) {
+    join({host, path, id, renderer}: ClientOps) {
         const game = createGame(renderer);
-        const network = new Client(game);
-        network.connectTo(host);
+        const network = new Client(game, {host, path});
 
-        return game;
+        return network.connectTo(id);
     }
 };
 

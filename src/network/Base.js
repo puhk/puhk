@@ -5,6 +5,11 @@ import type {JsonState} from '../state/State';
 
 export default class Base {}
 
+export type Config = {
+    host: string,
+    path: string
+};
+
 export type syncMsg = {
     type: string,
     state: JsonState

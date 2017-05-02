@@ -6,7 +6,7 @@ import Base from './Base';
 import * as Events from '../state/events';
 import PlayerJoinedEvent from '../state/events/PlayerJoined';
 
-import type {syncMsg, initMsg, eventMsg, messages} from './Base';
+import type {Config, syncMsg, initMsg, eventMsg, messages} from './Base';
 import type Game from '../Game';
 
 export default class Host extends Base {
@@ -18,12 +18,12 @@ export default class Host extends Base {
     nextSync = null;
     syncInterval = 1000 / 10;
 
-    constructor(game: Game) {
+    constructor(game: Game, {host, path}: Config) {
         super();
         this.game = game;
         game.network = this;
 
-        this.peer = new Peer('host', {host: 'localhost', path: '/p2p'});
+        this.peer = new Peer('host', {host, path});
         this.peer.on('connection', this.handleConnection.bind(this));
 
         // this.nextSync = setInterval(this.sendSync.bind(this), this.syncInterval);

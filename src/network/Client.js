@@ -3,13 +3,24 @@
 import _ from 'lodash';
 import Peer from 'peerjs';
 
-import type Game from '../Game';
 import Base from './Base';
 import * as Events from '../state/events';
 import State from '../state/State';
 import Disc from '../entities/Disc';
 
-import type {syncMsg, initMsg, eventMsg, messages} from './Base';
+import type {Config, syncMsg, initMsg, eventMsg, messages} from './Base';
+import type Game from '../Game';
+
+const STATE_UNCONNECTED = 0;
+const STATE_CONNECTING = 1;
+const STATE_CONNECTED = 2;
+
+const CONNECT_TIMEOUT = 10000;
+
+type States =
+    typeof STATE_UNCONNECTED |
+    typeof STATE_CONNECTING |
+    typeof STATE_CONNECTED;
 
 let msgHandlers = {
     init(msg: initMsg) {
@@ -30,6 +41,8 @@ let msgHandlers = {
         this.game.me.id = player.clientId;
         this.game.init();
         this.game.initRenderer();
+
+        this.state = STATE_CONNECTED;
     },
 
     sync(msg: syncMsg) {
@@ -69,8 +82,7 @@ let msgHandlers = {
 
         if (event.frame >= this.game.simulator.currentFrame) {
             this.game.simulator.addEvent(event, event.frame);
-        }
-        else if (this.game.simulator.hasFrameInHistory(event.frame)) {
+        } else if (this.game.simulator.hasFrameInHistory(event.frame)) {
             let currentFrame = this.game.simulator.currentFrame;
 
             this.game.simulator.rewind(event.frame);
@@ -87,28 +99,43 @@ export default class Client extends Base {
     hostConn: any;
     name = 'sock';
     lastSyncFrame = 0;
+    state: States;
 
-    constructor(game: Game) {
+    constructor(game: Game, {host, path}: Config) {
         super();
         this.game = game;
         game.network = this;
 
         let ident = Math.random().toString(36).substring(7);
-        this.peer = new Peer(ident, {host: 'localhost', path: '/p2p'});
+        this.peer = new Peer(ident, {host, path});
     }
 
-    connectTo(host: string) {
+    connectTo(host: string): Promise<Game> {
+        this.state = STATE_CONNECTING;
         this.hostConn = this.peer.connect(host);
-        this.hostConn.on('data', this.handleMsg.bind(this));
 
         this.hostConn.on('close', () => {
             this.game.destroy();
+        });
+
+        return new Promise((resolve, reject) => {
+            let timeout = setTimeout(() => reject(), CONNECT_TIMEOUT);
+
+            this.hostConn.on('data', (msg: messages) => {
+                this.handleMsg(msg);
+
+                if (timeout && this.state == STATE_CONNECTED) {
+                    clearTimeout(timeout);
+                    timeout = null;
+                    resolve(this.game);
+                }
+            });
         });
     }
 
     handleMsg(msg: messages) {
         if (!msgHandlers[msg.type] || typeof msgHandlers[msg.type] !== 'function') {
-            throw new Error('Invalid msg type recieved: ' + msg.type);
+            throw new Error(`Invalid msg type recieved: ${msg.type}`);
         }
 
         msgHandlers[msg.type].call(this, msg);
