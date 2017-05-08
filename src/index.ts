@@ -1,7 +1,7 @@
 import Stadium from './entities/Stadium';
 import * as Events from './state/events';
-import classic = require('./stadiums/classic.json');
-import big = require('./stadiums/big.json');
+const classic = require('./stadiums/classic.json');
+const big = require('./stadiums/big.json');
 
 let defaultStadiums: Stadium[] = [];
 defaultStadiums.push(Stadium.parse(classic));

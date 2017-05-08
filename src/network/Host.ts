@@ -3,12 +3,10 @@ import * as Events from '../state/events';
 import Game from '../Game';
 import PlayerJoinedEvent from '../state/events/PlayerJoined';
 
-export interface NojballDataConnection extends PeerJs.DataConnection {
-    client: Client
-}
+declare const Peer: any;
 
 export default class Host {
-    peer: PeerJs.Peer;
+    peer: any;
     game: Game;
 
     clients: Client[] = [];
@@ -26,7 +24,7 @@ export default class Host {
         // this.nextSync = setInterval(this.sendSync.bind(this), this.syncInterval);
     }
 
-    handleConnection(conn: NojballDataConnection) {
+    handleConnection(conn: any) {
         conn.on('open', () => {
             let client = new Client(this.nextClientId++, conn, this.game);
             conn.client = client;
@@ -97,10 +95,10 @@ let msgHandlers = {
 
 export class Client {
     id: number;
-    conn: NojballDataConnection;
+    conn: any;
     game: Game;
 
-    constructor(id: number, conn: NojballDataConnection, game: Game) {
+    constructor(id: number, conn: any, game: Game) {
         this.id = id;
         this.conn = conn;
         this.game = game;

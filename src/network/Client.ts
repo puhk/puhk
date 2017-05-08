@@ -7,6 +7,8 @@ import Disc from '../entities/Disc';
 import { Config, syncMsg, initMsg, eventMsg, messages } from './Base';
 import Game from '../Game';
 
+declare const Peer: any;
+
 const CONNECT_TIMEOUT = 10000;
 
 export enum States {
@@ -88,7 +90,7 @@ let msgHandlers = {
 export default class Client {
     id: number;
     game: Game;
-    private peer: PeerJs.Peer;
+    private peer: any;
     hostConn: any;
     name = 'sock';
     lastSyncFrame = 0;

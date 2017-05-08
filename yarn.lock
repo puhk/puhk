@@ -14,12 +14,6 @@
   version "7.0.18"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.18.tgz#cd67f27d3dc0cfb746f0bdd5e086c4c5d55be173"
 
-"@types/peerjs@^0.0.28":
-  version "0.0.28"
-  resolved "https://registry.yarnpkg.com/@types/peerjs/-/peerjs-0.0.28.tgz#677c1dc730220162cbfa501c0ee75ff7e4b0f764"
-  dependencies:
-    "@types/webrtc" "*"
-
 "@types/simple-peer@^6.1.1":
   version "6.1.1"
   resolved "https://registry.yarnpkg.com/@types/simple-peer/-/simple-peer-6.1.1.tgz#5d0f65ea72a0125b1e92b3cb392be3cab14976ad"
@@ -29,10 +23,6 @@
 "@types/victor@^0.2.28":
   version "0.2.28"
   resolved "https://registry.yarnpkg.com/@types/victor/-/victor-0.2.28.tgz#8d4f404f203049188f65787e49af33d7fa648757"
-
-"@types/webrtc@*":
-  version "0.0.21"
-  resolved "https://registry.yarnpkg.com/@types/webrtc/-/webrtc-0.0.21.tgz#bc3cfb7e22add284761e5d63efad664b0eba8b86"
 
 abbrev@1:
   version "1.0.9"
