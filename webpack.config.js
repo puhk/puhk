@@ -11,7 +11,7 @@ const metadata = {
 
 let config = {
   entry: [
-    './src/index.js'
+    './src/index.ts'
   ],
   output: {
     path: path.resolve('dist'),
@@ -22,11 +22,17 @@ let config = {
   },
   module: {
     rules: [{
-      test: /.js$/,
+      test: /.ts$/,
       include: path.join(__dirname, 'src'),
       exclude: /node_modules/,
-      use: ['babel-loader']
+      use: ['awesome-typescript-loader']
     }]
+  },
+  resolve: {
+    extensions: ['.ts', '.js', '.json'],
+    alias: {
+      'src': path.resolve('./src')
+    }
   }
 };
 

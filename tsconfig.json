@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2016",
+    "declaration": true,
+    "baseUrl": "./",
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "noImplicitAny": true,
+    // "strictNullChecks": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "paths": {
+      "src/*": [
+        "./src/*"
+      ]
+    }
+  },
+  "include": [
+    "./src/**/*"
+  ]
+}
