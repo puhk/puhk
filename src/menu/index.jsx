@@ -24,17 +24,43 @@ type MenuState = {
 class Menu extends React.Component<void, MenuProps, MenuState> {
     state: MenuState = {
         currentStadium: null,
+        stadiums: defaultStadiums,
         roomName: '',
-        stadiums: [],
         scoreLimit: 0,
         timeLimit: 0
     };
 
-    constructor(props: MenuProps) {
-        super(props);
+    changeStadium = (event: SyntheticInputEvent) => {
+        const stadium = this.state.stadiums.find(stadium => stadium.name == event.target.value);
 
-        this.state.stadiums = defaultStadiums;
-    }
+        if (stadium) {
+            const event = new Events.ChangeStadium(this.props.game.me.id, {stadium});
+            this.props.game.addEvent(event);
+        }
+    };
+
+    changeRoomName = (event: SyntheticInputEvent) => {
+        this.setState({
+            roomName: event.target.value
+        });
+    };
+
+    changeScoreLimit = (event: SyntheticInputEvent) => {
+        const limit = parseInt(event.target.value);
+        this.props.game.addEvent(new Events.ChangeScoreLimit(this.props.game.me.id, {limit}));
+    };
+
+    changeTimeLimit = (event: SyntheticInputEvent) => {
+        const limit = parseInt(event.target.value);
+        this.props.game.addEvent(new Events.ChangeTimeLimit(this.props.game.me.id, {limit}));
+    };
+
+    setRoomName = () => {
+        if (this.state.roomName != this.props.game.state.roomName) {
+            const event = new Events.ChangeRoomName(this.props.game.me.id, {name: this.state.roomName});
+            this.props.game.addEvent(event);
+        }
+    };
 
     componentDidMount() {
         const {game} = this.props;
@@ -63,38 +89,6 @@ class Menu extends React.Component<void, MenuProps, MenuState> {
         });
     }
 
-    changeRoomName(event: SyntheticInputEvent) {
-        this.setState({
-            roomName: event.target.value
-        });
-    }
-
-    setRoomName() {
-        if (this.state.roomName != this.props.game.state.roomName) {
-            const event = new Events.ChangeRoomName(this.props.game.me.id, {name: this.state.roomName});
-            this.props.game.addEvent(event);
-        }
-    }
-
-    changeStadium(event: SyntheticInputEvent) {
-        const stadium = this.state.stadiums.find(stadium => stadium.name == event.target.value);
-
-        if (stadium) {
-            const event = new Events.ChangeStadium(this.props.game.me.id, {stadium});
-            this.props.game.addEvent(event);
-        }
-    }
-
-    changeScoreLimit(event: SyntheticInputEvent) {
-        const limit = parseInt(event.target.value);
-        this.props.game.addEvent(new Events.ChangeScoreLimit(this.props.game.me.id, {limit}));
-    }
-
-    changeTimeLimit(event: SyntheticInputEvent) {
-        const limit = parseInt(event.target.value);
-        this.props.game.addEvent(new Events.ChangeTimeLimit(this.props.game.me.id, {limit}));
-    }
-
     render() {
         return (
             <div className="menu">
@@ -104,7 +98,7 @@ class Menu extends React.Component<void, MenuProps, MenuState> {
                     <div className="input-group">
                         <label>
                             <span>Room name</span>
-                            <input type="text" onChange={e => this.changeRoomName(e)} onBlur={() => this.setRoomName()} value={this.state.roomName} />
+                            <input type="text" onChange={this.changeRoomName} onBlur={this.setRoomName} value={this.state.roomName} />
                         </label>
                     </div>
 
@@ -129,14 +123,14 @@ class Menu extends React.Component<void, MenuProps, MenuState> {
                     <div className="input-group">
                         <label>
                             <span>Time limit</span>
-                            <input type="number" min="0" onChange={e => this.changeTimeLimit(e)} value={this.state.timeLimit} />
+                            <input type="number" min="0" onChange={this.changeTimeLimit} value={this.state.timeLimit} />
                         </label>
                     </div>
 
                     <div className="input-group">
                         <label>
                             <span>Score limit</span>
-                            <input type="number" min="0" onChange={e => this.changeScoreLimit(e)} value={this.state.scoreLimit} />
+                            <input type="number" min="0" onChange={this.changeScoreLimit} value={this.state.scoreLimit} />
                         </label>
                     </div>
 
@@ -145,7 +139,7 @@ class Menu extends React.Component<void, MenuProps, MenuState> {
                             <span>Stadium</span>
 
                             <select
-                                onChange={e => this.changeStadium(e)}
+                                onChange={this.changeStadium}
                                 value={(this.state.currentStadium && this.state.currentStadium.name) || ''}
                                 disabled={this.props.game.state.playing}
                             >

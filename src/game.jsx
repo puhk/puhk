@@ -51,11 +51,11 @@ class Game extends React.Component<void, GameProps, GameState> {
         });
     }
 
-    toggleMenu() {
+    toggleMenu = () => {
         this.setState({
             showMenu: !this.state.showMenu
         });
-    }
+    };
 
     render() {
         const {game} = this.props;
@@ -82,7 +82,7 @@ class Game extends React.Component<void, GameProps, GameState> {
                     </div>
                 </div>
 
-                <Sidebar game={game} toggleMenu={() => this.toggleMenu()} />
+                <Sidebar game={game} toggleMenu={this.toggleMenu} />
             </div>
         );
     }

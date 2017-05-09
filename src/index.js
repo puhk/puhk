@@ -1,6 +1,11 @@
 // @flow
 
-import React from 'react';
+import Game from './game';
+import '../styles/main.scss';
+
+export default Game;
+
+/*import React from 'react';
 import ReactDOM from 'react-dom';
 import {AppContainer} from 'react-hot-loader';
 import {GameCreator, Renderer, Background} from 'nojball-game';
@@ -58,3 +63,4 @@ if (module.hot && typeof module.hot.accept == 'function') {
         );
     });
 }
+*/

@@ -9,7 +9,16 @@
     "stage-1",
     "react"
   ],
-  "plugins": [
-    "react-hot-loader/babel"
-  ]
+  "env": {
+    "production": {
+      "presets": ["babili"]
+    },
+    "development": {
+      "plugins": [
+        "transform-class-properties",
+        "transform-es2015-classes",
+        "react-hot-loader/babel"
+      ]
+    }
+  }
 }

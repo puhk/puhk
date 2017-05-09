@@ -45,6 +45,6 @@ export default class Pitch extends React.Component<void, PitchProps, void> {
     }
 
     render() {
-        return <div className="pitch" ref={el => this.element = el} tabIndex="1" />;
+        return <div className="pitch" ref={el => this.element = el} tabIndex="-1" />;
     }
 }
