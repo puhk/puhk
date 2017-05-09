@@ -5,6 +5,7 @@
   "license": "MIT",
   "private": true,
   "main": "dist/bundle.js",
+  "typings": "dist/index.d.ts",
   "dependencies": {
     "aurelia-event-aggregator": "^1.0.1",
     "babel-preset-env": "^1.2.1",
