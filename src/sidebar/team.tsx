@@ -1,34 +1,67 @@
-// @flow
-
 import React from 'react';
-import {Events} from 'nojball-game';
+import styled from 'styled-components';
+import { Events, Entities, State } from 'nojball-game';
 
 import Player from './player';
-import withSubscribers from '../enhancers/with-subscribers';
+import withSubscribers, { SubscriberProps, SubscriberWrapper } from '../enhancers/with-subscribers';
+import ColorBlock from '../elements/color-block';
 
-import type {Game, JsonTeam, State, Goal, Player as PlayerType} from 'nojball-game';
-import type {SubscriberCreator} from '../enhancers/with-subscribers';
-
-type TeamProps = {
-    createSubscriber: SubscriberCreator,
-    game: Game,
-    team: JsonTeam,
+export interface TeamProps extends SubscriberProps {
+    team: Entities.JsonTeam,
     specs?: boolean
-};
+}
 
-type TeamState = {
-    players: PlayerType[],
+export interface TeamState {
+    players: Entities.Player[],
     score: number
-};
+}
 
-class Team extends React.Component<void, TeamProps, TeamState> {
+const Item = styled.li`
+    border-bottom: 1px solid #000;
+    border-top: 1px solid #1f2528;
+    padding: 8px 2px;
+
+    &:first-child {
+        border-top: 0;
+    }
+
+    &:last-child {
+        border-bottom: 0;
+    }
+
+    a {
+        color: #fff;
+        font-weight: bold;
+        text-decoration: none;
+    }
+`;
+
+const Score = styled.span`
+    float: right;
+    font-weight: bold;
+`;
+
+const Players = styled.ul`
+    background: #181d20;
+    font-size: 0.8rem;
+    margin-top: 8px;
+    list-style: none;
+    padding-left: 0px;
+
+    li {
+        margin-bottom: 0;
+        padding: 4px 6px;
+    }
+`;
+
+class Team extends React.Component<TeamProps, TeamState> {
     state: TeamState = {
         players: [],
         score: 0
     };
 
     componentDidMount() {
-        const {game, team, specs} = this.props;
+        const { game, team, specs } = this.props;
 
         this.initChangeTeamListener();
 
@@ -48,7 +81,7 @@ class Team extends React.Component<void, TeamProps, TeamState> {
 
     initChangeTeamListener() {
         this.props.createSubscriber(Events.ChangeTeam, (event: Events.ChangeTeam) => {
-            const {player} = event;
+            const { player } = event;
 
             if (player.team == this.props.team.name || (this.props.specs && !player.team)) {
                 this.setState({
@@ -74,20 +107,20 @@ class Team extends React.Component<void, TeamProps, TeamState> {
 
     initStartGameListener() {
         this.props.createSubscriber(Events.StartGame, (event: Events.StartGame) => {
-            this.setState({score: 0});
+            this.setState({ score: 0 });
         });
     }
 
     initGoalScoredSubscriber() {
-        this.props.createSubscriber('goalScored', ({goal, state}: {goal: Goal, state: State}) => {
+        this.props.createSubscriber('goalScored', ({ goal, state }: { goal: Entities.Goal, state: State }) => {
             if (goal.teamScored == this.props.team.name) {
-                this.setState({score: this.state.score + 1});
+                this.setState({ score: this.state.score + 1 });
             }
         });
     }
 
     switchTeam() {
-        const {id} = this.props.game.me;
+        const { id } = this.props.game.me;
 
         const event = new Events.ChangeTeam(id, {
             clientId: id,
@@ -99,26 +132,26 @@ class Team extends React.Component<void, TeamProps, TeamState> {
 
     render() {
         return (
-            <li>
+            <Item>
                 <a href="#" onDoubleClick={e => this.switchTeam()}>
-                    <span className="color-block" style={{backgroundColor: this.props.team.color}}></span>
+                    <ColorBlock style={{ backgroundColor: this.props.team.color }}></ColorBlock>
                     <span>{this.props.team.name}</span>
                 </a>
 
                 {!this.props.specs &&
-                    <span className="score">{this.state.score}</span>
+                    <Score>{this.state.score}</Score>
                 }
 
                 {this.state.players.length > 0 &&
-                    <ul className="player-list">
+                    <Players>
                         {this.state.players.map(player =>
                             <li key={player.clientId}>
                                 <Player game={this.props.game} player={player} />
                             </li>
                         )}
-                    </ul>
+                    </Players>
                 }
-            </li>
+            </Item>
         );
     }
 }

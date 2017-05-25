@@ -1,24 +1,30 @@
-// @flow
-
 import React from 'react';
+import styled from 'styled-components';
+import { Game, Entities } from 'nojball-game';
+
 import Team from './team';
 
-import type {Game, JsonTeam} from 'nojball-game';
-
-type TeamsListProps = {
+export interface TeamsListProps {
     game: Game
-};
+}
 
-type TeamsListState = {
-    teams: JsonTeam[]
-};
+export interface TeamsListState {
+    teams: Entities.JsonTeam[]
+}
 
 const specTeam = {
     name: 'Spectators',
     color: '#ccc'
 };
 
-export default class TeamsList extends React.Component {
+const Teams = styled.ul`
+    font-size: 0.9rem;
+    margin: 0;
+    list-style: none;
+    padding: 0;
+`;
+
+export default class TeamsList extends React.Component<TeamsListProps, TeamsListState> {
     state: TeamsListState = {
         teams: []
     };
@@ -31,13 +37,13 @@ export default class TeamsList extends React.Component {
 
     render() {
         return (
-            <ul className="teams-list">
+            <Teams>
                 {this.state.teams.map(team =>
                     <Team game={this.props.game} team={team} key={team.name} />
                 )}
 
                 <Team game={this.props.game} team={specTeam} specs={true} />
-            </ul>
+            </Teams>
         );
     }
 }

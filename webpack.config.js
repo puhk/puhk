@@ -20,9 +20,8 @@ let config = {
   },
   module: {
     rules: [{
-      test: /\.jsx?$/,
-      include: path.resolve('src'),
-      use: ['babel-loader']
+      test: /\.tsx?$/,
+      use: ['awesome-typescript-loader']
     }, {
       test: /\.scss$/,
       use: [{
@@ -50,7 +49,7 @@ let config = {
     }]
   },
   resolve: {
-    extensions: ['.js', '.jsx']
+    extensions: ['.ts', '.tsx', '.js']
   }
 };
 
@@ -60,12 +59,12 @@ if (DEBUG) {
       'webpack-dev-server/client?http://localhost:8080',
       'webpack/hot/only-dev-server',
       'react-hot-loader/patch',
-      './src/index.js'
+      './public/index.tsx'
     ],
     plugins: [
       new HtmlWebpackPlugin({
-        inject: true,
-        template: 'index.html'
+        inject: 'head',
+        template: 'public/index.html'
       }),
       new webpack.HotModuleReplacementPlugin(),
       new webpack.NamedModulesPlugin()
@@ -74,12 +73,13 @@ if (DEBUG) {
     devServer: {
       port: metadata.port,
       host: metadata.host,
-      hot: true
+      hot: true,
+      contentBase: path.resolve('public')
     }
   });
 } else {
   Object.assign(config, {
-    entry: ['./src/index.js'],
+    entry: ['./src/index.ts'],
     externals: {
       react: {
         root: 'React',
