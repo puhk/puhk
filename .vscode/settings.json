@@ -1,5 +1,6 @@
-// Place your settings in this file to overwrite default and user settings.
 {
-    "javascript.validate.enable": false,
-    "flow.pathToFlow": "./node_modules/.bin/flow"
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/build": true
+  }
 }

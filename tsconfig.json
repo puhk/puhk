@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "target": "es2016",
+    "baseUrl": "./src",
+    "sourceMap": false,
+    "noImplicitAny": true,
+    // "strictNullChecks": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "suppressImplicitAnyIndexErrors": true
+    /*"paths": {
+      "src/*": [
+        "./src/*"
+      ]
+    }*/
+  },
+  "include": [
+    "./src/**/*"
+  ]
+}
