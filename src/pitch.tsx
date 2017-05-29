@@ -1,16 +1,25 @@
-// @flow
-
 import React from 'react';
+import styled from 'styled-components';
+import { Game, Renderer } from 'nojball-game';
 import ResizeObserver from 'resize-observer-polyfill';
 
-import type {Game, Renderer} from 'nojball-game';
-
-type PitchProps = {
+export interface PitchProps {
     game: Game,
     renderer: Renderer
-};
+}
 
-export default class Pitch extends React.Component<void, PitchProps, void> {
+const PitchContainer = styled.div`
+    height: 100%;
+    position: relative;
+    outline: none;
+
+    canvas {
+        display: block;
+        position: absolute;
+    }
+`;
+
+export default class Pitch extends React.Component<PitchProps, void> {
     element: HTMLElement;
     resizeObserver: ResizeObserver;
 
@@ -19,7 +28,7 @@ export default class Pitch extends React.Component<void, PitchProps, void> {
 
         this.resizeObserver = new ResizeObserver((entries, observer) => {
             for (const entry of entries) {
-                const {width, height} = entry.contentRect;
+                const { width, height } = entry.contentRect;
 
                 props.renderer
                     .setWidth(width)
@@ -45,6 +54,6 @@ export default class Pitch extends React.Component<void, PitchProps, void> {
     }
 
     render() {
-        return <div className="pitch" ref={el => this.element = el} tabIndex="-1" />;
+        return <PitchContainer innerRef={el => this.element = el} tabIndex={-1} />;
     }
 }

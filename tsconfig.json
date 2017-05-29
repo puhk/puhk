@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "moduleResolution": "node",
+    "jsx": "react",
+    "baseUrl": "./",
+    "noImplicitAny": true,
+    // "strictNullChecks": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "paths": {
+      "src/*": [
+        "./src/*"
+      ]
+    }
+  },
+  "include": [
+    "./src/**/*",
+    "./custom-types/**/*.d.ts"
+  ]
+}

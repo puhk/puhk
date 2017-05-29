@@ -1,32 +1,58 @@
-// @flow
-
 import React from 'react';
-import {Events} from 'nojball-game';
+import styled from 'styled-components';
+import { Events, Renderer } from 'nojball-game';
 
 import Chat from './chat';
 import Menu from './menu';
 import Pitch from './pitch';
 import Sidebar from './sidebar';
 import TopBar from './topbar';
-import withSubscribers from './enhancers/with-subscribers';
+import withSubscribers, { SubscriberProps, SubscriberWrapper } from './enhancers/with-subscribers';
+import colors from './colors';
 
-import grassImage from '../images/grass.png';
-
-import type {Game as GameType, Renderer} from 'nojball-game';
-import type {SubscriberCreator} from './enhancers/with-subscribers';
-
-type GameProps = {
-    createSubscriber: SubscriberCreator,
-    game: GameType,
+export interface GameProps extends SubscriberProps {
     renderer: Renderer
-};
+}
 
-type GameState = {
+interface GameState {
     playing: boolean,
     showMenu: boolean
-};
+}
 
-class Game extends React.Component<void, GameProps, GameState> {
+const GameContainer = styled.div`
+    display: flex;
+    height: 100%;
+`;
+
+const MainArea = styled.div`
+    display: flex;
+    flex: 5;
+    flex-direction: column;
+    position: relative;
+`;
+
+const Content = styled.div`
+    flex: 1;
+    position: relative;
+`;
+
+const MenuContainer = styled.div`
+    bottom: 0;
+    display: flex;
+    left: 0;
+    right: 0;
+    top: 0;
+    position: absolute;
+`;
+
+const ChatContainer = styled.div`
+    background: ${colors.bg};
+    flex: 1;
+    max-height: 25%;
+    padding: 1%;
+`;
+
+class Game extends React.Component<GameProps, GameState> {
     state: GameState = {
         playing: false,
         showMenu: false
@@ -47,7 +73,7 @@ class Game extends React.Component<void, GameProps, GameState> {
         });
 
         this.props.createSubscriber(Events.StopGame, () => {
-            this.setState({playing: false});
+            this.setState({ playing: false });
         });
     }
 
@@ -58,32 +84,32 @@ class Game extends React.Component<void, GameProps, GameState> {
     };
 
     render() {
-        const {game} = this.props;
+        const { game } = this.props;
 
         return (
-            <div className="game-container">
-                <div className="main-area">
+            <GameContainer>
+                <MainArea>
                     {this.state.playing &&
                         <TopBar game={game} />
                     }
 
-                    <div className="content">
+                    <Content>
                         <Pitch game={game} renderer={this.props.renderer} />
 
                         {(this.state.showMenu || !this.state.playing) &&
-                            <div className="menu-container">
+                            <MenuContainer>
                                 <Menu game={game} />
-                            </div>
+                            </MenuContainer>
                         }
-                    </div>
+                    </Content>
 
-                    <div className="chat-container">
+                    <ChatContainer>
                         <Chat game={game} />
-                    </div>
-                </div>
+                    </ChatContainer>
+                </MainArea>
 
                 <Sidebar game={game} toggleMenu={this.toggleMenu} />
-            </div>
+            </GameContainer>
         );
     }
 }

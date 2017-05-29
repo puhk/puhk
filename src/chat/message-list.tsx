@@ -1,23 +1,31 @@
-// @flow
-
 import React from 'react';
-import {Events} from 'nojball-game';
+import styled from 'styled-components';
+import { Game, Events, Entities } from 'nojball-game';
 
-import withSubscribers from '../enhancers/with-subscribers';
+import withSubscribers, { SubscriberProps, SubscriberWrapper } from '../enhancers/with-subscribers';
 
-import type {Game, ChatMessage} from 'nojball-game';
-import type {SubscriberCreator} from '../enhancers/with-subscribers';
+export interface MessageListState {
+    messages: Entities.ChatMessage[]
+}
 
-type MessageListProps = {
-    createSubscriber: SubscriberCreator,
-    game: Game
-};
+const List = styled.ul`
+    height: 100%;
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+    overflow: auto;
 
-type MessageListState = {
-    messages: ChatMessage[]
-};
+    &::-webkit-scrollbar {
+        width: 10px;
+    }
 
-class MessageList extends React.Component<void, MessageListProps, MessageListState> {
+    &::-webkit-scrollbar-track, &::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+    }
+`;
+
+class MessageList extends React.Component<SubscriberProps, MessageListState> {
     element: HTMLElement;
     state: MessageListState = {
         messages: []
@@ -37,14 +45,14 @@ class MessageList extends React.Component<void, MessageListProps, MessageListSta
 
     render() {
         return (
-            <ul ref={el => this.element = el}>
+            <List innerRef={el => this.element = el}>
                 {this.state.messages.map((message, i) =>
                     <li key={i}>
                         <strong>{this.props.game.state.getPlayerById(message.playerId).name}: </strong>
                         <span>{message.msg}</span>
                     </li>
                 )}
-            </ul>
+            </List>
         );
     }
 }
