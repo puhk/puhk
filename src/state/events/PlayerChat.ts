@@ -1,5 +1,5 @@
-import Game from 'src/Game';
-import ChatMessage from 'src/entities/ChatMessage';
+import Game from '../../Game';
+import ChatMessage from '../../entities/ChatMessage';
 import Event from '../Event';
 import State from '../State';
 

@@ -1,11 +1,11 @@
-import { Config, syncMsg, initMsg, eventMsg, messages } from './Base';
+import { Base, Config, syncMsg, initMsg, eventMsg, messages } from './Base';
 import * as Events from '../state/events';
 import Game from '../Game';
 import PlayerJoinedEvent from '../state/events/PlayerJoined';
 
 declare const Peer: any;
 
-export default class Host {
+export default class Host extends Base {
     peer: any;
     game: Game;
 
@@ -15,6 +15,7 @@ export default class Host {
     syncInterval = 1000 / 10;
 
     constructor(game: Game, {host, path}: Config) {
+        super();
         this.game = game;
         game.network = this;
 

@@ -1,5 +1,7 @@
-import { JsonEvent } from 'src/state/Event';
-import { JsonState } from 'src/state/State';
+import { JsonEvent } from '../state/Event';
+import { JsonState } from '../state/State';
+
+export class Base {}
 
 export interface Config {
     host: string,

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import Engine from 'src/Engine';
+import Engine from '../Engine';
 import State from './State';
 import Event from './Event';
 

@@ -1,4 +1,4 @@
-import Game from 'src/Game';
+import Game from '../../Game';
 import Event from '../Event';
 import State from '../State';
 

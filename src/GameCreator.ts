@@ -1,14 +1,13 @@
 import Game from './Game';
 import Engine from './Engine';
 import Renderer from './Renderer';
-import Stadium from './entities/Stadium';
+import Stadium, { JsonStadium } from './entities/Stadium';
 import { Config } from './network/Base';
 import Host from './network/Host';
 import Client from './network/Client';
 import Simulator from './state/Simulator';
 import State from './state/State';
-
-const classic = require('./stadiums/classic.json');
+import classic from './stadiums/classic';
 
 export interface Opts extends Config {
     renderer?: Renderer
@@ -25,7 +24,7 @@ const createGame = (renderer?: Renderer) => {
     const game = new Game(simulator, renderer);
     engine.setGame(game);
 
-    const state = State.createFromStadium(Stadium.parse(classic));
+    const state = State.createFromStadium(Stadium.parse(<JsonStadium>classic));
     simulator.addState(state);
 
     return game;

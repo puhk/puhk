@@ -1,5 +1,5 @@
-import Game from 'src/Game';
-import Player from 'src/entities/Player';
+import Game from '../../Game';
+import Player from '../../entities/Player';
 import Event from '../Event';
 import State from '../State';
 

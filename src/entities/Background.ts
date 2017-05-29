@@ -1,29 +1,25 @@
 import Vec from 'victor';
 
-export type Types = 'grass';
-
-export interface Images {
-    grass: HTMLImageElement
-}
+export type PitchTypes =
+    'grass' |
+    'hockey';
 
 export interface JsonBackground {
     pos: number[],
     width: number,
     height: number,
-    type: Types
+    type: PitchTypes
 }
 
 export default class Background {
-    static images: Images = {
-        grass: null
-    };
+    static images = new Map<PitchTypes, HTMLImageElement>();
 
     pos: Vec;
     width: number;
     height: number;
-    type: Types;
+    type: PitchTypes;
 
-    constructor(pos: Vec, width: number, height: number, type: Types) {
+    constructor(pos: Vec, width: number, height: number, type: PitchTypes) {
         this.pos = pos;
         this.width = width;
         this.height = height;
@@ -31,7 +27,7 @@ export default class Background {
     }
 
     draw(ctx: CanvasRenderingContext2D) {
-        let image = Background.images[this.type];
+        let image = Background.images.get(this.type);
 
         if (!(image instanceof HTMLImageElement) || !image.complete) {
             return;

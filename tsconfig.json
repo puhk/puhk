@@ -1,21 +1,19 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "moduleResolution": "node",
     "target": "es2016",
-    "declaration": true,
-    "baseUrl": "./",
-    "outDir": "./dist/",
-    "sourceMap": true,
+    "baseUrl": "./src",
+    "sourceMap": false,
     "noImplicitAny": true,
     // "strictNullChecks": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "paths": {
+    "suppressImplicitAnyIndexErrors": true
+    /*"paths": {
       "src/*": [
         "./src/*"
       ]
-    }
+    }*/
   },
   "include": [
     "./src/**/*"

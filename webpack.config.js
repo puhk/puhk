@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { TsConfigPathsPlugin } = require('awesome-typescript-loader');
 
 const ENV = process.env.NODE_ENV && process.env.NODE_ENV.toLowerCase() || 'development';
 
@@ -10,11 +11,9 @@ const metadata = {
 };
 
 let config = {
-  entry: [
-    './src/index.ts'
-  ],
+  entry: ['./src/index.ts'],
   output: {
-    path: path.resolve('dist'),
+    path: path.resolve('build/dist'),
     filename: 'bundle.js',
     library: 'nojball-game',
     libraryTarget: 'umd',
@@ -29,11 +28,9 @@ let config = {
     }]
   },
   resolve: {
-    extensions: ['.ts', '.js', '.json'],
-    alias: {
-      'src': path.resolve('./src')
-    }
-  }
+    extensions: ['.ts', '.js', '.json']
+  },
+  plugins: []
 };
 
 if (ENV === 'development') {
@@ -67,9 +64,12 @@ if (ENV === 'development') {
         commonjs2: 'lodash',
         amd: 'lodash',
         root: '_'
-      }
+      },
+      victor: 'victor'
     }
   });
 }
+
+config.plugins.push(new TsConfigPathsPlugin);
 
 module.exports = config;

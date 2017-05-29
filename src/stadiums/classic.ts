@@ -1,4 +1,6 @@
-{
+import { JsonStadium } from '../entities/Stadium';
+
+const classic = <JsonStadium>{
   "name": "Classic",
   "cameraConstraints": [420, 200],
 
@@ -51,4 +53,6 @@
     {"pos": [370, 64], "color": "#CCCCFF", "bounce": 0.5, "radius": 8, "invMass": 0},
     {"pos": [370, -64], "color": "#CCCCFF", "bounce": 0.5, "radius": 8, "invMass": 0
   }]
-}
+};
+
+export default classic;

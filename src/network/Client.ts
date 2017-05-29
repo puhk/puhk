@@ -1,11 +1,10 @@
 import _ from 'lodash';
 
+import { Base, Config, syncMsg, initMsg, eventMsg, messages } from './Base';
+import Game from '../Game';
 import * as Events from '../state/events';
 import State from '../state/State';
 import Disc from '../entities/Disc';
-
-import { Config, syncMsg, initMsg, eventMsg, messages } from './Base';
-import Game from '../Game';
 
 declare const Peer: any;
 
@@ -87,7 +86,7 @@ let msgHandlers = {
     }
 };
 
-export default class Client {
+export default class Client extends Base {
     id: number;
     game: Game;
     private peer: any;
@@ -97,6 +96,7 @@ export default class Client {
     state: States;
 
     constructor(game: Game, { host, path }: Config) {
+        super();
         this.game = game;
         game.network = this;
 

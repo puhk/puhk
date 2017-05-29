@@ -1,10 +1,10 @@
 import * as Events from './events';
 import Event, { JsonEvent } from './Event';
-import Stadium, { JsonStadium, JsonTeam } from 'src/entities/Stadium';
-import ChatMessage from 'src/entities/ChatMessage';
-import Disc, { JsonDisc } from 'src/entities/Disc';
-import Player, { JsonPlayer } from 'src/entities/Player';
-import Segment from 'src/entities/Segment';
+import Stadium, { JsonStadium, JsonTeam } from '../entities/Stadium';
+import ChatMessage from '../entities/ChatMessage';
+import Disc, { JsonDisc } from '../entities/Disc';
+import Player, { JsonPlayer } from '../entities/Player';
+import Segment from '../entities/Segment';
 
 export const enum States {
     Kickoff = 0,

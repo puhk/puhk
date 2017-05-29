@@ -1,5 +1,5 @@
-import Game from 'src/Game';
-import { Keys } from 'src/Keyboard';
+import Game from '../../Game';
+import { Keys } from '../../Keyboard';
 import Event from '../Event';
 import State from '../State';
 
