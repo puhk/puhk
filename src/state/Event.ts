@@ -1,6 +1,6 @@
 import State from './State';
 import Game from '../Game';
-import { eventMsg } from '../network/Base';
+import { EventMsg } from '../network/AbstractNetwork';
 
 export interface JsonEvent {
     eventType: string,
@@ -34,7 +34,7 @@ export default abstract class Event {
         return this.data;
     }
 
-    toMessage(): eventMsg {
+    toMessage(): EventMsg {
         return {
             type: 'event',
             event: this.pack()

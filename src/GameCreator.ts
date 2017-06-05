@@ -2,7 +2,7 @@ import Game from './Game';
 import Engine from './Engine';
 import Renderer from './Renderer';
 import Stadium, { JsonStadium } from './entities/Stadium';
-import { Config } from './network/Base';
+import { Config } from './network/AbstractNetwork';
 import Host from './network/Host';
 import Client from './network/Client';
 import Simulator from './state/Simulator';
@@ -24,7 +24,7 @@ const createGame = (renderer?: Renderer) => {
     const game = new Game(simulator, renderer);
     engine.setGame(game);
 
-    const state = State.createFromStadium(Stadium.parse(<JsonStadium>classic));
+    const state = State.createFromStadium(Stadium.parse(classic));
     simulator.addState(state);
 
     return game;

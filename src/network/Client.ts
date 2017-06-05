@@ -1,6 +1,13 @@
 import _ from 'lodash';
 
-import { Base, Config, syncMsg, initMsg, eventMsg, messages } from './Base';
+import {
+    AbstractNetwork,
+    Config,
+    SyncMsg,
+    InitMsg,
+    EventMsg,
+    Message
+} from './AbstractNetwork';
 import Game from '../Game';
 import * as Events from '../state/events';
 import State from '../state/State';
@@ -17,7 +24,7 @@ export enum States {
 }
 
 let msgHandlers = {
-    init(msg: initMsg) {
+    init(msg: InitMsg) {
         let state = State.parse(msg.state);
 
         Disc.nextDiscId = _.maxBy(state.discs, disc => disc.id).id + 1;
@@ -39,7 +46,7 @@ let msgHandlers = {
         this.state = States.Connected;
     },
 
-    sync(msg: syncMsg) {
+    sync(msg: SyncMsg) {
         let currentFrame = this.game.simulator.currentFrame;
 
         // if sync state is earlier than the last synced state, we can ignore it
@@ -70,7 +77,7 @@ let msgHandlers = {
         }
     },
 
-    event(msg: eventMsg) {
+    event(msg: EventMsg) {
         let event = Events[msg.event.eventType].parse(msg.event.sender, msg.event.data);
         event.frame = msg.event.frame;
 
@@ -86,16 +93,13 @@ let msgHandlers = {
     }
 };
 
-export default class Client extends Base {
-    id: number;
-    game: Game;
-    private peer: any;
-    hostConn: any;
-    name = 'sock';
-    lastSyncFrame = 0;
-    state: States;
+export default class Client extends AbstractNetwork {
+    private game: Game;
+    private hostConn: any;
+    private lastSyncFrame = 0;
+    private state: States;
 
-    constructor(game: Game, { host, path }: Config) {
+    public constructor(game: Game, { host, path }: Config) {
         super();
         this.game = game;
         game.network = this;
@@ -104,7 +108,7 @@ export default class Client extends Base {
         this.peer = new Peer(ident, { host, path });
     }
 
-    connectTo(host: string): Promise<Game> {
+    public connectTo(host: string): Promise<Game> {
         this.state = States.Connecting;
         this.hostConn = this.peer.connect(host);
 
@@ -115,7 +119,7 @@ export default class Client extends Base {
         return new Promise((resolve, reject) => {
             let timeout = setTimeout(() => reject(), CONNECT_TIMEOUT);
 
-            this.hostConn.on('data', (msg: messages) => {
+            this.hostConn.on('data', (msg: Message) => {
                 this.handleMsg(msg);
 
                 if (timeout && this.state == States.Connected) {
@@ -127,7 +131,7 @@ export default class Client extends Base {
         });
     }
 
-    handleMsg(msg: messages) {
+    private handleMsg(msg: Message) {
         if (!msgHandlers[msg.type] || typeof msgHandlers[msg.type] !== 'function') {
             throw new Error(`Invalid msg type recieved: ${msg.type}`);
         }
@@ -135,7 +139,7 @@ export default class Client extends Base {
         msgHandlers[msg.type].call(this, msg);
     }
 
-    sendMsg(msg: messages) {
+    public sendMsg(msg: Message) {
         this.hostConn.send(msg);
     }
 }

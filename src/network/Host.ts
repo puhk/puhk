@@ -1,20 +1,26 @@
-import { Base, Config, syncMsg, initMsg, eventMsg, messages } from './Base';
+import {
+    AbstractNetwork,
+    Config,
+    SyncMsg,
+    InitMsg,
+    EventMsg,
+    Message
+} from './AbstractNetwork';
 import * as Events from '../state/events';
 import Game from '../Game';
 import PlayerJoinedEvent from '../state/events/PlayerJoined';
 
 declare const Peer: any;
 
-export default class Host extends Base {
-    peer: any;
-    game: Game;
+export default class Host extends AbstractNetwork {
+    private game: Game;
+    private clients: Client[] = [];
+    private nextClientId = 0;
+    private nextSync: number = null;
 
-    clients: Client[] = [];
-    nextClientId = 0;
-    nextSync: number = null;
-    syncInterval = 1000 / 10;
+    private static syncInterval = 1000 / 10;
 
-    constructor(game: Game, {host, path}: Config) {
+    public constructor(game: Game, {host, path}: Config) {
         super();
         this.game = game;
         game.network = this;
@@ -25,7 +31,7 @@ export default class Host extends Base {
         // this.nextSync = setInterval(this.sendSync.bind(this), this.syncInterval);
     }
 
-    handleConnection(conn: any) {
+    private handleConnection(conn: any) {
         conn.on('open', () => {
             let client = new Client(this.nextClientId++, conn, this.game);
             conn.client = client;
@@ -49,7 +55,7 @@ export default class Host extends Base {
         });
     }
 
-    sendMsg(msg: messages, excludeClient?: Client) {
+    public sendMsg(msg: Message, excludeClient?: Client) {
         for (let client of this.clients) {
             if (!excludeClient || client !== excludeClient) {
                 client.conn.send(msg);
@@ -57,7 +63,7 @@ export default class Host extends Base {
         }
     }
 
-    sendSync() {
+    private sendSync() {
         if (!this.game.state.playing) {
             return;
         }
@@ -72,7 +78,7 @@ export default class Host extends Base {
 }
 
 let msgHandlers = {
-    event(msg: eventMsg) {
+    event(msg: EventMsg) {
         let event = Events[msg.event.eventType].parse(msg.event.sender, msg.event.data);
         event.frame = msg.event.frame;
 
@@ -99,7 +105,7 @@ export class Client {
     conn: any;
     game: Game;
 
-    constructor(id: number, conn: any, game: Game) {
+    public constructor(id: number, conn: any, game: Game) {
         this.id = id;
         this.conn = conn;
         this.game = game;
@@ -107,7 +113,7 @@ export class Client {
         conn.on('data', this.handleMsg.bind(this));
     }
 
-    handleMsg(msg: messages) {
+    private handleMsg(msg: Message) {
         if (!msgHandlers[msg.type] || typeof msgHandlers[msg.type] !== 'function') {
             throw new Error('Invalid msg type recieved: ' + msg.type);
         }

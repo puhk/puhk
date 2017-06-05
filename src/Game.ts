@@ -18,8 +18,7 @@ import Goal from './entities/Goal';
 import Player from './entities/Player';
 import Stadium from './entities/Stadium';
 
-import NetworkHost from './network/Host';
-import NetworkClient from './network/Client';
+import { AbstractNetwork } from './network/AbstractNetwork';
 import Event from './state/Event';
 import Simulator from './state/Simulator';
 
@@ -33,9 +32,9 @@ export interface LocalPlayerInfo extends PlayerInfo {
 }
 
 export default class Game {
-    keyboard: Keyboard;
-    network: NetworkHost | NetworkClient;
-    renderer: Renderer;
+    keyboard?: Keyboard;
+    network?: AbstractNetwork;
+    renderer?: Renderer;
     simulator: Simulator;
     eventAggregator: EventAggregator;
 
@@ -63,7 +62,7 @@ export default class Game {
     }
 
     init() {
-        if (this.inited || !this.network) {
+        if (this.inited || !this.network || this.network.isDisconnected()) {
             return;
         }
 
@@ -73,12 +72,16 @@ export default class Game {
     }
 
     destroy() {
-        if (!this.inited) {
+        if (!this.inited || (this.network && this.network.isDisconnected())) {
             return;
         }
 
         this.stopLoop();
-        this.inited = false;
+        this.network.disconnect();
+    }
+
+    isDestroyed() {
+        return this.network.isDisconnected();
     }
 
     initKeyboard(element: HTMLElement) {
