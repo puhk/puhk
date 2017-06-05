@@ -49,6 +49,9 @@ const Button = styled.button`
 export default (props: SidebarProps) => {
     const { game } = props;
 
+    const start = () => game.start();
+    const stop = () => game.stop();
+
     return (
         <Sidebar>
             <TeamsList {...props} />
@@ -59,8 +62,8 @@ export default (props: SidebarProps) => {
                 }
 
                 {game.state.playing ?
-                    <Button onClick={e => game.stop()} type="stop">Stop game</Button> :
-                    <Button onClick={e => game.start()} type="start">Start game</Button>
+                    <Button onClick={stop} type="stop">Stop game</Button> :
+                    <Button onClick={start} type="start">Start game</Button>
                 }
             </div>
         </Sidebar>

@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Game, Events } from 'nojball-game';
+import { autobind } from 'core-decorators';
 
 export interface InputProps {
     game: Game
@@ -31,10 +32,12 @@ export default class Input extends React.Component<InputProps, InputState> {
         inputText: ''
     };
 
+    @autobind
     setMessageText(event: React.SyntheticEvent<HTMLInputElement>) {
         this.setState({ inputText: event.currentTarget.value });
     }
 
+    @autobind
     sendMessage(event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault();
 
@@ -47,13 +50,13 @@ export default class Input extends React.Component<InputProps, InputState> {
 
     render() {
         return (
-            <Form onSubmit={e => this.sendMessage(e)}>
+            <Form onSubmit={this.sendMessage}>
                 <input
                     type="text"
                     placeholder="Type here to chat"
                     tabIndex={2}
                     value={this.state.inputText}
-                    onChange={e => this.setMessageText(e)} />
+                    onChange={this.setMessageText} />
             </Form>
         );
     }
