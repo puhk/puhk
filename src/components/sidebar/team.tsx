@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { Events, Entities, State } from 'nojball-game';
 
 import Player from './player';
-import withSubscribers, { SubscriberProps, SubscriberWrapper } from '../enhancers/with-subscribers';
-import ColorBlock from '../elements/color-block';
+import withSubscribers, { SubscriberProps } from '../../enhancers/with-subscribers';
+import ColorBlock from '../../elements/color-block';
 
 export interface TeamProps extends SubscriberProps {
     team: Entities.JsonTeam,

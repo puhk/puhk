@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Game, Events, Entities } from 'nojball-game';
 
-import withSubscribers, { SubscriberProps, SubscriberWrapper } from '../enhancers/with-subscribers';
+import withSubscribers, { SubscriberProps } from '../../enhancers/with-subscribers';
 
 export interface MessageListState {
     messages: Entities.ChatMessage[]

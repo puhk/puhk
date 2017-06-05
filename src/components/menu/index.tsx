@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Game, Events, Entities, defaultStadiums } from 'nojball-game';
 
-import withSubscribers, { SubscriberProps, SubscriberWrapper } from '../enhancers/with-subscribers';
+import withSubscribers, { SubscriberProps } from '../../enhancers/with-subscribers';
 
 export interface MenuState {
     currentStadium: Entities.Stadium,

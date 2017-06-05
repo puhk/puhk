@@ -7,8 +7,8 @@ import Menu from './menu';
 import Pitch from './pitch';
 import Sidebar from './sidebar';
 import TopBar from './topbar';
-import withSubscribers, { SubscriberProps, SubscriberWrapper } from './enhancers/with-subscribers';
-import colors from './colors';
+import withSubscribers, { SubscriberProps } from '../enhancers/with-subscribers';
+import colors from '../colors';
 
 export interface GameProps extends SubscriberProps {
     renderer: Renderer

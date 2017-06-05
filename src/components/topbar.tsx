@@ -4,9 +4,9 @@ import { Events, Entities, State } from 'nojball-game';
 import Color from 'color';
 
 import Timer from './timer';
-import withSubscribers, { SubscriberProps, SubscriberWrapper } from './enhancers/with-subscribers';
-import ColorBlock from './elements/color-block';
-import colors from './colors';
+import withSubscribers, { SubscriberProps } from '../enhancers/with-subscribers';
+import ColorBlock from '../elements/color-block';
+import colors from '../colors';
 
 interface TopBarState {
     roomName: string,

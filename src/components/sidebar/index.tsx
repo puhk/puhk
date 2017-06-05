@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Game, Events } from 'nojball-game';
 
 import TeamsList from './teamslist';
-import colors from '../colors';
+import colors from '../../colors';
 
 export interface SidebarProps {
     game: Game;

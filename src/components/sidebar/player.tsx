@@ -3,8 +3,8 @@ import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 import styled from 'styled-components';
 import { Events, Entities } from 'nojball-game';
 
-import withSubscribers, { SubscriberProps, SubscriberWrapper } from '../enhancers/with-subscribers';
-import colors from '../colors';
+import withSubscribers, { SubscriberProps } from '../../enhancers/with-subscribers';
+import colors from '../../colors';
 
 export interface PlayerProps extends SubscriberProps {
     player: Entities.Player

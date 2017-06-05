@@ -10,12 +10,7 @@ export interface SubscriberProps extends React.ClassAttributes<any> {
     game: Game
 }
 
-export interface SubscriberWrapper<P> extends React.Component<P, void> {
-    subscribers: any[],
-    createSubscriber: SubscriberCreator
-}
-
-export default <P extends SubscriberProps>(Component: React.ComponentClass<P>): (new() => SubscriberWrapper<P>) => {
+export default <P extends SubscriberProps>(Component: React.ComponentClass<P>): React.ComponentClass<P> => {
     return class Wrapper extends React.Component<P, void> {
         subscribers: any[] = [];
 
