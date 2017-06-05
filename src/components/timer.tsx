@@ -37,7 +37,7 @@ const flash = keyframes`
 
 const Time = styled.span`
     ${(props: TimeProps) => props.flash &&
-        'animation: ${flash} linear 500ms alternate infinite'
+        `animation: ${flash} linear 500ms alternate infinite`
     }
 `;
 
