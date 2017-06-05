@@ -24,7 +24,7 @@ import Simulator from './state/Simulator';
 
 export interface PlayerInfo {
     name: string,
-    avatar: string
+    avatar: string | number
 }
 
 export interface LocalPlayerInfo extends PlayerInfo {
@@ -32,27 +32,26 @@ export interface LocalPlayerInfo extends PlayerInfo {
 }
 
 export default class Game {
-    keyboard?: Keyboard;
-    network?: AbstractNetwork;
-    renderer?: Renderer;
-    simulator: Simulator;
-    eventAggregator: EventAggregator;
+    private keyboard?: Keyboard;
+    private network?: AbstractNetwork;
+    private renderer?: Renderer;
+    private simulator: Simulator;
+    private eventApi: EventAggregator;
+    private inited = false;
 
-    inited = false;
-
-    me: LocalPlayerInfo = {
+    private me: LocalPlayerInfo = {
         id: -1,
         name: '',
         avatar: ''
     };
 
-    constructor(simulator: Simulator, renderer?: Renderer) {
+    public constructor(simulator: Simulator, renderer?: Renderer) {
         this.simulator = simulator;
         this.renderer = renderer;
-        this.eventAggregator = new EventAggregator;
+        this.eventApi = new EventAggregator;
     }
 
-    setLocalPlayer(playerInfo: PlayerInfo) {
+    public setLocalPlayer(playerInfo: PlayerInfo) {
         if (this.inited) {
             throw new Error('Game already init');
         }
@@ -61,17 +60,25 @@ export default class Game {
         this.me.avatar = playerInfo.avatar;
     }
 
-    init() {
+    public init() {
         if (this.inited || !this.network || this.network.isDisconnected()) {
             return;
         }
+
+        let event = new PlayerJoined(this.me.id, {
+            clientId: this.me.id,
+            name: this.me.name,
+            avatar: this.me.avatar
+        });
+
+        this.addEvent(event, false);
 
         this.setupLoop();
         this.startLoop();
         this.inited = true;
     }
 
-    destroy() {
+    public destroy() {
         if (!this.inited || (this.network && this.network.isDisconnected())) {
             return;
         }
@@ -80,11 +87,11 @@ export default class Game {
         this.network.disconnect();
     }
 
-    isDestroyed() {
+    public isDestroyed() {
         return this.network.isDisconnected();
     }
 
-    initKeyboard(element: HTMLElement) {
+    public initKeyboard(element: HTMLElement) {
         if (!this.keyboard) {
             this.keyboard = new Keyboard((key, state) => {
                 let event = new Keypress(this.me.id, { key, state, clientId: this.me.id });
@@ -95,21 +102,21 @@ export default class Game {
         this.keyboard.bindTo(element);
     }
 
-    initRenderer() {
+    public initRenderer() {
         if (this.renderer instanceof Renderer) {
-            this.renderer.render();
+            this.renderer.attach();
         }
     }
 
-    start() {
+    public start() {
         this.addEvent(new StartGame(this.me.id));
     }
 
-    stop() {
+    public stop() {
         this.addEvent(new StopGame(this.me.id));
     }
 
-    addEvent(event: Event, send: boolean = true) {
+    public addEvent(event: Event, send: boolean = true) {
         this.simulator.addEvent(event);
 
         if (send) {
@@ -117,21 +124,11 @@ export default class Game {
         }
     }
 
-    initLocalPlayer() {
-        let event = new PlayerJoined(this.me.id, {
-            clientId: this.me.id,
-            name: this.me.name,
-            avatar: this.me.avatar
-        });
-
-        this.addEvent(event, false);
-    }
-
-    createPlayer(clientId: number, name: string) {
+    public createPlayer(clientId: number, name: string) {
         return new Player(clientId, name);
     }
 
-    createPlayerDisc(player: Player): Disc {
+    public createPlayerDisc(player: Player): Disc {
         if (!player.team) {
             return;
         }
@@ -156,7 +153,7 @@ export default class Game {
         return disc;
     }
 
-    createPlayerDiscs(state: State) {
+    public createPlayerDiscs(state: State) {
         let discs: Disc[] = [];
 
         for (let player of state.players) {
@@ -173,7 +170,7 @@ export default class Game {
         state.addDiscs(discs);
     }
 
-    kickOffState(state: State) {
+    public kickOffState(state: State) {
         if (!state.playing) {
             return;
         }
@@ -189,7 +186,7 @@ export default class Game {
             });
     }
 
-    setKickOffPositions(state: State) {
+    private setKickOffPositions(state: State) {
         if (!state.playing) {
             return;
         }
@@ -207,7 +204,7 @@ export default class Game {
         });
     }
 
-    goalScored(goal: Goal, state: State) {
+    public goalScored(goal: Goal, state: State) {
         let team = state.stadium.getTeam(goal.teamScored);
 
         if (state.matchState != States.Inplay || !team) {
@@ -218,10 +215,10 @@ export default class Game {
         state.matchState = States.GoalScored;
         state.matchStateTimer = 150;
 
-        this.eventAggregator.publish('goalScored', { goal, state });
+        this.eventApi.publish('goalScored', { goal, state });
     }
 
-    scoresEqual() {
+    public scoresEqual() {
         let state = this.simulator.currentState;
 
         let scores = state.stadium.teams.map(team => {
@@ -231,7 +228,7 @@ export default class Game {
         return scores.every(score => score == scores[0]);
     }
 
-    update(state: State) {
+    public update(state: State) {
         switch (state.matchState) {
             case States.Kickoff:
                 state.discs.filter(disc => disc.isBall)
@@ -292,7 +289,7 @@ export default class Game {
         }
     }
 
-    setupLoop() {
+    private setupLoop() {
         MainLoop.setUpdate(() => {
             this.simulator.advance();
         });
@@ -304,15 +301,31 @@ export default class Game {
         });
     }
 
-    startLoop() {
+    private startLoop() {
         MainLoop.start();
     }
 
-    stopLoop() {
+    private stopLoop() {
         MainLoop.stop();
     }
 
-    get state(): State {
+    public getSimulator() {
+        return this.simulator;
+    }
+
+    public getEventApi() {
+        return this.eventApi;
+    }
+
+    public setNetwork(network: AbstractNetwork) {
+        this.network = network;
+    }
+
+    public getMe() {
+        return this.me;
+    }
+
+    public get state(): State {
         return this.simulator.currentState;
     }
 }

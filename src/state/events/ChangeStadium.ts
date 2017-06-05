@@ -31,7 +31,7 @@ export default class ChangeStadium extends Event {
         state.initScores();
 
         this.stadium = this.data.stadium;
-        game.eventAggregator.publish(this);
+        game.getEventApi().publish(this);
     }
 
     getData(): JsonEventData {

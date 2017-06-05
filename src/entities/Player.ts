@@ -4,7 +4,7 @@ export interface JsonPlayer {
     clientId: number,
     name: string,
     admin: boolean,
-    avatar: string,
+    avatar: string | number,
     team: string,
     discId: number,
     keys: Keys
@@ -34,7 +34,7 @@ export default class Player {
         }
     }
 
-    public setAvatar(avatar: any) {
+    public setAvatar(avatar: string | number) {
         this.avatar = (avatar + '').substr(0, 2);
     }
 

@@ -29,7 +29,7 @@ export default class PlayerAvatar extends Event {
             disc.text = player.avatar;
         }
 
-        game.eventAggregator.publish(this);
+        game.getEventApi().publish(this);
     }
 
     static parse(sender: number, data: EventData) {

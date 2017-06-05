@@ -23,7 +23,7 @@ export default class Host extends AbstractNetwork {
     public constructor(game: Game, {host, path}: Config) {
         super();
         this.game = game;
-        game.network = this;
+        game.setNetwork(this);
 
         this.peer = new Peer('host', {host, path});
         this.peer.on('connection', this.handleConnection.bind(this));
@@ -33,22 +33,23 @@ export default class Host extends AbstractNetwork {
 
     private handleConnection(conn: any) {
         conn.on('open', () => {
-            let client = new Client(this.nextClientId++, conn, this.game);
+            const client = new Client(this.nextClientId++, conn, this.game);
             conn.client = client;
             this.clients.push(client);
 
-            let event = new PlayerJoinedEvent(this.game.me.id, {
+            const event = new PlayerJoinedEvent(this.game.getMe().id, {
                 clientId: client.id,
                 name: 'sock',
                 avatar: ':)'
             });
 
-            this.game.simulator.addEvent(event);
+            const simulator = this.game.getSimulator();
+            simulator.addEvent(event);
 
             conn.send({
                 type: 'init',
                 id: client.id,
-                state: this.game.simulator.currentState.pack()
+                state: simulator.currentState.pack()
             });
 
             this.sendMsg(event.toMessage(), client);
@@ -70,7 +71,7 @@ export default class Host extends AbstractNetwork {
 
         let msg = {
             type: 'sync',
-            state: this.game.simulator.currentState.pack()
+            state: this.game.getSimulator().currentState.pack()
         };
 
         this.sendMsg(msg);
@@ -79,22 +80,24 @@ export default class Host extends AbstractNetwork {
 
 let msgHandlers = {
     event(msg: EventMsg) {
-        let event = Events[msg.event.eventType].parse(msg.event.sender, msg.event.data);
+        const event = Events[msg.event.eventType].parse(msg.event.sender, msg.event.data);
         event.frame = msg.event.frame;
 
         if (event instanceof Events.Keypress) {
             event.data.clientId = this.id;
         }
 
-        if (event.frame >= this.game.simulator.currentFrame) {
-            this.game.simulator.addEvent(event, event.frame);
-        } else if (this.game.simulator.hasFrameInHistory(event.frame)) {
-            let currentFrame = this.game.simulator.currentState.frame;
+        const simulator = this.game.getSimulator();
+
+        if (event.frame >= simulator.currentFrame) {
+            simulator.addEvent(event, event.frame);
+        } else if (simulator.hasFrameInHistory(event.frame)) {
+            const currentFrame = simulator.currentState.frame;
 
             this.game.stopLoop();
-            this.game.simulator.rewind(event.frame);
-            this.game.simulator.addEvent(event);
-            this.game.simulator.fastForward(currentFrame);
+            simulator.rewind(event.frame);
+            simulator.addEvent(event);
+            simulator.fastForward(currentFrame);
             this.game.startLoop();
         }
     }

@@ -102,7 +102,7 @@ export default class Client extends AbstractNetwork {
     public constructor(game: Game, { host, path }: Config) {
         super();
         this.game = game;
-        game.network = this;
+        game.setNetwork(this);
 
         let ident = Math.random().toString(36).substring(7);
         this.peer = new Peer(ident, { host, path });

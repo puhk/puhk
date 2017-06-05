@@ -17,7 +17,7 @@ export default class ChangeScoreLimit extends Event {
 
     apply(state: State, game: Game) {
         state.scoreLimit = this.data.limit;
-        game.eventAggregator.publish(this);
+        game.getEventApi().publish(this);
     }
 
     static parse(sender: number, data: EventData) {

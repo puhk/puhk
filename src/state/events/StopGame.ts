@@ -20,7 +20,7 @@ export default class StopGame extends Event {
             }
         }
 
-        game.eventAggregator.publish(this);
+        game.getEventApi().publish(this);
     }
 
     static parse(sender: number) {

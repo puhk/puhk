@@ -18,7 +18,7 @@ export default class StartGame extends Event {
         game.createPlayerDiscs(state);
         game.kickOffState(state);
 
-        game.eventAggregator.publish(this);
+        game.getEventApi().publish(this);
     }
 
     static parse(sender: number) {

@@ -17,7 +17,7 @@ export default class ChangeTimeLimit extends Event {
 
     apply(state: State, game: Game) {
         state.timeLimit = this.data.limit;
-        game.eventAggregator.publish(this);
+        game.getEventApi().publish(this);
     }
 
     static parse(sender: number, data: EventData) {

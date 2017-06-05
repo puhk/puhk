@@ -1,12 +1,10 @@
-import Game from '../../Game';
+import Game, { PlayerInfo } from '../../Game';
 import Player from '../../entities/Player';
 import Event from '../Event';
 import State from '../State';
 
-export interface EventData {
-    clientId: number,
-    name: string,
-    avatar: string
+export interface EventData extends PlayerInfo {
+    clientId: number;
 }
 
 export default class PlayerJoined extends Event {
@@ -25,7 +23,7 @@ export default class PlayerJoined extends Event {
 
         state.addPlayers(this.player);
 
-        game.eventAggregator.publish(this);
+        game.getEventApi().publish(this);
     }
 
     static parse(sender: number, data: EventData) {

@@ -55,7 +55,7 @@ export default class ChangeTeam extends Event {
             }
         }
 
-        game.eventAggregator.publish(this);
+        game.getEventApi().publish(this);
     }
 
     static parse(sender: number, data: EventData) {

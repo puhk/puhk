@@ -1,4 +1,4 @@
-import Game from './Game';
+import Game, { PlayerInfo } from './Game';
 import Engine from './Engine';
 import Renderer from './Renderer';
 import Stadium, { JsonStadium } from './entities/Stadium';
@@ -10,11 +10,12 @@ import State from './state/State';
 import classic from './stadiums/classic';
 
 export interface Opts extends Config {
-    renderer?: Renderer
+    player: PlayerInfo;
+    renderer?: Renderer;
 }
 
 export interface ClientOps extends Opts {
-    id: string
+    roomId: string;
 }
 
 const createGame = (renderer?: Renderer) => {
@@ -30,23 +31,25 @@ const createGame = (renderer?: Renderer) => {
     return game;
 };
 
-export function host({ host, path, renderer }: Opts): Promise<Game> {
+export function host({ host, path, player, renderer }: Opts): Promise<Game> {
     const game = createGame(renderer);
     const network = new Host(game, { host, path });
 
+    game.setLocalPlayer(player);
+
     return new Promise((resolve, reject) => {
         network.peer.on('open', () => {
-            game.initLocalPlayer();
             game.init();
-
             resolve(game);
         });
     });
 };
 
-export function join({ host, path, id, renderer }: ClientOps) {
+export function join({ host, path, roomId, player, renderer }: ClientOps) {
     const game = createGame(renderer);
     const network = new Client(game, { host, path });
 
-    return network.connectTo(id);
+    game.setLocalPlayer(player);
+
+    return network.connectTo(roomId);
 };

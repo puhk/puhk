@@ -21,7 +21,7 @@ export default class PlayerChat extends Event {
         this.message = new ChatMessage(this.sender, this.data.message);
         state.addChatMessage(this.message);
 
-        game.eventAggregator.publish(this);
+        game.getEventApi().publish(this);
     }
 
     static parse(sender: number, data: EventData) {

@@ -40,7 +40,7 @@ export default class Renderer {
         return this;
     }
 
-    render() {
+    attach() {
         let parent = this.parent;
 
         if (!parent || parent == this.canvas.parentElement) {

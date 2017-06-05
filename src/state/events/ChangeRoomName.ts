@@ -17,7 +17,7 @@ export default class ChangeRoomName extends Event {
 
     apply(state: State, game: Game) {
         state.roomName = this.data.name;
-        game.eventAggregator.publish(this);
+        game.getEventApi().publish(this);
     }
 
     static parse(sender: number, data: EventData) {

@@ -29,7 +29,7 @@ export default class PlayerAdmin extends Event {
 
         player.admin = this.data.isAdmin;
 
-        game.eventAggregator.publish(this);
+        game.getEventApi().publish(this);
     }
 
     static parse(sender: number, data: EventData) {
