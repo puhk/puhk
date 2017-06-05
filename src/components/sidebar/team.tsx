@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Events, Entities, State } from 'nojball-game';
+import { autobind } from 'core-decorators';
 
 import Player from './player';
 import withSubscribers, { SubscriberProps } from '../../enhancers/with-subscribers';
@@ -31,6 +32,7 @@ const Item = styled.li`
 
     a {
         color: #fff;
+        cursor: pointer;
         font-weight: bold;
         text-decoration: none;
     }
@@ -119,6 +121,7 @@ class Team extends React.Component<TeamProps, TeamState> {
         });
     }
 
+    @autobind
     switchTeam() {
         const { id } = this.props.game.me;
 
@@ -133,7 +136,7 @@ class Team extends React.Component<TeamProps, TeamState> {
     render() {
         return (
             <Item>
-                <a href="#" onDoubleClick={e => this.switchTeam()}>
+                <a onDoubleClick={this.switchTeam}>
                     <ColorBlock style={{ backgroundColor: this.props.team.color }}></ColorBlock>
                     <span>{this.props.team.name}</span>
                 </a>
