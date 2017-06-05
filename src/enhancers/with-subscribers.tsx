@@ -20,7 +20,7 @@ export default <P extends SubscriberProps>(Component: React.ComponentClass<P>): 
         }
 
         createSubscriber<T>(event: (new () => T) | string, handler: (event: T) => void) {
-            const subscriber = this.props.game.eventAggregator.subscribe(event, handler);
+            const subscriber = this.props.game.getEventApi().subscribe(event, handler);
             this.subscribers.push(subscriber);
         };
 

@@ -44,7 +44,7 @@ export default class Pitch extends React.Component<PitchProps, void> {
             .setParent(this.element)
             .setWidth(this.element.offsetWidth)
             .setHeight(this.element.offsetHeight)
-            .render();
+            .attach();
 
         this.resizeObserver.observe(this.element);
     }

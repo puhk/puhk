@@ -25,7 +25,7 @@ const Flag = styled.img`
     width: 16px;
 `;
 
-const Name = styled.div`
+const Name = styled.span`
     color: ${(props: NameProps) => props.admin && colors.admin};
 `;
 
@@ -46,7 +46,7 @@ class Player extends React.Component<PlayerProps, PlayerState> {
     };
 
     toggleAdmin = () => {
-        const event = new Events.PlayerAdmin(this.props.game.me.id, {
+        const event = new Events.PlayerAdmin(this.props.game.getMe().id, {
             player: this.props.player.clientId,
             isAdmin: !this.state.isAdmin
         });

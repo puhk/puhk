@@ -43,7 +43,7 @@ export default class Input extends React.Component<InputProps, InputState> {
 
         const { game } = this.props;
         const message = this.state.inputText;
-        game.addEvent(new Events.PlayerChat(game.me.id, { message }));
+        game.addEvent(new Events.PlayerChat(game.getMe().id, { message }));
 
         this.setState({ inputText: '' });
     }

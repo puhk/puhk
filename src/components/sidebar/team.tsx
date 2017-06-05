@@ -8,13 +8,13 @@ import withSubscribers, { SubscriberProps } from '../../enhancers/with-subscribe
 import ColorBlock from '../../elements/color-block';
 
 export interface TeamProps extends SubscriberProps {
-    team: Entities.JsonTeam,
-    specs?: boolean
+    team: Entities.JsonTeam;
+    specs?: boolean;
 }
 
 export interface TeamState {
-    players: Entities.Player[],
-    score: number
+    players: Entities.Player[];
+    score: number;
 }
 
 const Item = styled.li`
@@ -123,7 +123,7 @@ class Team extends React.Component<TeamProps, TeamState> {
 
     @autobind
     switchTeam() {
-        const { id } = this.props.game.me;
+        const { id } = this.props.game.getMe();
 
         const event = new Events.ChangeTeam(id, {
             clientId: id,

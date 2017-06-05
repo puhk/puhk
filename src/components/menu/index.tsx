@@ -72,7 +72,7 @@ class Menu extends React.Component<SubscriberProps, MenuState> {
         const stadium = this.state.stadiums.find(stadium => stadium.name == event.currentTarget.value);
 
         if (stadium) {
-            const event = new Events.ChangeStadium(this.props.game.me.id, { stadium });
+            const event = new Events.ChangeStadium(this.props.game.getMe().id, { stadium });
             this.props.game.addEvent(event);
         }
     };
@@ -85,17 +85,17 @@ class Menu extends React.Component<SubscriberProps, MenuState> {
 
     changeScoreLimit = (event: React.SyntheticEvent<HTMLInputElement>) => {
         const limit = parseInt(event.currentTarget.value);
-        this.props.game.addEvent(new Events.ChangeScoreLimit(this.props.game.me.id, { limit }));
+        this.props.game.addEvent(new Events.ChangeScoreLimit(this.props.game.getMe().id, { limit }));
     };
 
     changeTimeLimit = (event: React.SyntheticEvent<HTMLInputElement>) => {
         const limit = parseInt(event.currentTarget.value);
-        this.props.game.addEvent(new Events.ChangeTimeLimit(this.props.game.me.id, { limit }));
+        this.props.game.addEvent(new Events.ChangeTimeLimit(this.props.game.getMe().id, { limit }));
     };
 
     setRoomName = () => {
         if (this.state.roomName != this.props.game.state.roomName) {
-            const event = new Events.ChangeRoomName(this.props.game.me.id, { name: this.state.roomName });
+            const event = new Events.ChangeRoomName(this.props.game.getMe().id, { name: this.state.roomName });
             this.props.game.addEvent(event);
         }
     };
