@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import { host, join, Game as GameType, Renderer, Background } from 'nojball-game';
 
-import Game from '../src/game';
+import Game from '../src/components/game';
 const grassImage = require('./images/grass.png') as string;
 
 interface Window {
@@ -57,8 +57,8 @@ window.join = joinGame;
 
 // Hot Module Replacement API
 if (module.hot && typeof module.hot.accept == 'function') {
-    module.hot.accept('../src/game', () => {
-        const Game = (require('../src/game') as any).default;
+    module.hot.accept('../src/components/game', () => {
+        const Game = (require('../src/components/game') as any).default;
 
         ReactDOM.render(
             <AppContainer>
