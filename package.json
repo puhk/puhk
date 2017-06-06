@@ -1,9 +1,8 @@
 {
-  "name": "nojball-game",
+  "name": "@nojball/client",
   "version": "0.0.1",
   "description": "",
   "license": "MIT",
-  "private": true,
   "main": "build/cjs/index.js",
   "module": "build/es6/index.js",
   "types": "build/cjs/index.d.ts",
