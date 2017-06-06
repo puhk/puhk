@@ -1,10 +1,10 @@
 {
-  "name": "nojball-game-ui",
+  "name": "@nojball/client-ui",
   "version": "0.0.1",
+  "license": "MIT",
   "main": "build/cjs/index.js",
   "module": "build/es6/index.js",
   "types": "build/es6/index.d.ts",
-  "license": "MIT",
   "scripts": {
     "start": "yarn run server:dev",
     "build": "yarn build:es6 && yarn build:cjs",
