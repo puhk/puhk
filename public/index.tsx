@@ -33,6 +33,7 @@ const hostGame = (name: string, avatar: string) => {
     const game = host({
         host: 'localhost',
         path: '/p2p',
+        player: { name, avatar},
         renderer
     }).then(game => {
         window.game = game;
@@ -44,7 +45,8 @@ const joinGame = (host: string, avatar: string) => {
     const game = join({
         host: 'localhost',
         path: '/p2p',
-        id: host,
+        player: { name, avatar },
+        roomId: host,
         renderer
     }).then(game => {
         window.game = game;
