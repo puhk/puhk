@@ -1,7 +1,7 @@
-const path = require('path');
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { TsConfigPathsPlugin } = require('awesome-typescript-loader');
+import path = require('path');
+import webpack = require('webpack');
+import HtmlWebpackPlugin = require('html-webpack-plugin');
+import { TsConfigPathsPlugin } from 'awesome-typescript-loader';
 
 const ENV = process.env.NODE_ENV && process.env.NODE_ENV.toLowerCase() || 'development';
 
@@ -10,7 +10,7 @@ const metadata = {
   host: process.env.WEBPACK_HOST || 'localhost'
 };
 
-let config = {
+let config: webpack.Configuration = {
   entry: ['./src/index.ts'],
   output: {
     path: path.resolve('build/dist'),
@@ -70,6 +70,6 @@ if (ENV === 'development') {
   });
 }
 
-config.plugins.push(new TsConfigPathsPlugin);
+// config.plugins.push(new TsConfigPathsPlugin);
 
-module.exports = config;
+export default config;
