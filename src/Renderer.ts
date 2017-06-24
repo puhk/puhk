@@ -4,13 +4,13 @@ import State from './state/State';
 import Disc from './entities/Disc';
 
 export default class Renderer {
-    canvas: HTMLCanvasElement;
-    ctx: CanvasRenderingContext2D;
-    parent: HTMLElement;
-    cameraPos = new Vec(0, 0);
-    cameraLerp = 0.04;
+    private canvas: HTMLCanvasElement;
+    private ctx: CanvasRenderingContext2D;
+    private parent: HTMLElement;
+    private cameraPos = new Vec(0, 0);
+    private cameraLerp = 0.04;
 
-    constructor() {
+    public constructor() {
         this.canvas = this.createCanvas();
         let ctx = this.canvas.getContext('2d');
 
@@ -21,26 +21,22 @@ export default class Renderer {
         this.ctx = ctx;
     }
 
-    setParent(parent: HTMLElement) {
+    public setParent(parent: HTMLElement) {
         this.parent = parent;
         return this;
     }
 
-    setWidth(width: number) {
+    public setWidth(width: number) {
         this.canvas.width = width;
-        this.translate();
-
         return this;
     }
 
-    setHeight(height: number) {
+    public setHeight(height: number) {
         this.canvas.height = height;
-        this.translate();
-
         return this;
     }
 
-    attach() {
+    public attach() {
         let parent = this.parent;
 
         if (!parent || parent == this.canvas.parentElement) {
@@ -50,18 +46,17 @@ export default class Renderer {
         this.remove();
         parent.appendChild(this.canvas);
         this.canvas.focus();
-        this.translate();
 
         return this;
     }
 
-    remove() {
+    public remove() {
         if (this.canvas.parentElement) {
             this.canvas.remove();
         }
     }
 
-    createCanvas() {
+    private createCanvas() {
         let canvas = document.createElement('canvas');
         canvas.style.width = '100%';
         canvas.style.height = '100%';
@@ -70,17 +65,17 @@ export default class Renderer {
         return canvas;
     }
 
-    get centerPos(): Vec {
+    private get centerPos(): Vec {
         return new Vec(this.canvas.width / 2, this.canvas.height / 2);
     }
 
-    translate() {
+    public center() {
         let center = this.centerPos;
         this.ctx.translate(center.x - this.cameraPos.x, center.y - this.cameraPos.y);
         return this;
     }
 
-    draw(state: State) {
+    public draw(state: State) {
         this.lerpCamera(state);
 
         let area = [
@@ -111,7 +106,7 @@ export default class Renderer {
         });
     }
 
-    lerpCamera(state: State) {
+    private lerpCamera(state: State) {
         let { width, height } = this.canvas;
         let { cameraConstraints } = state.stadium;
 
@@ -122,18 +117,7 @@ export default class Renderer {
 
         let ball = state.discs.find(disc => disc.isBall);
         let player = state.discs.find(disc => disc.isMe);
-        let target = new Vec(0, 0);
-
-        if (ball) {
-            target = ball.position.clone();
-
-            if (player) {
-                let diff = player.position.clone().subtract(ball.position);
-                target.add((<any>diff).divideScalar(2));
-            }
-        } else if (player) {
-            target = player.position.clone();
-        }
+        let target = this.calculateTarget(ball, player);
 
         let diff = target.clone().subtract(this.cameraPos);
         let lerp = diff.multiplyScalar(this.cameraLerp);
@@ -150,7 +134,24 @@ export default class Renderer {
         this.cameraPos.add(lerp);
     }
 
-    resetCamera() {
+    private calculateTarget(ball: Disc, player: Disc) {
+        let target = new Vec(0, 0);
+
+        if (ball) {
+            target = ball.position.clone();
+
+            if (player) {
+                let diff = player.position.clone().subtract(ball.position);
+                target.add((<any>diff).divideScalar(2));
+            }
+        } else if (player) {
+            target = player.position.clone();
+        }
+
+        return target;
+    }
+
+    private resetCamera() {
         this.ctx.translate(this.cameraPos.x, this.cameraPos.y);
         (<any>this.cameraPos).zero();
     }

@@ -10,6 +10,7 @@ const render = () => {
     renderer.setParent($mount)
         .setWidth($mount.offsetWidth)
         .setHeight($mount.offsetHeight)
+        .center()
         .attach();
 };
 
