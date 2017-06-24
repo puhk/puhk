@@ -35,6 +35,7 @@ const Item = styled.li`
         cursor: pointer;
         font-weight: bold;
         text-decoration: none;
+        user-select: none;
     }
 `;
 
@@ -138,7 +139,7 @@ class Team extends React.Component<TeamProps, TeamState> {
             <Item>
                 <a onDoubleClick={this.switchTeam}>
                     <ColorBlock style={{ backgroundColor: this.props.team.color }}></ColorBlock>
-                    <span>{this.props.team.name}</span>
+                    {this.props.team.name}
                 </a>
 
                 {!this.props.specs &&
