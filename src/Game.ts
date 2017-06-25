@@ -160,7 +160,7 @@ export default class Game {
             let disc = this.createPlayerDisc(player);
 
             if (!disc) {
-                return;
+                continue;
             }
 
             player.discId = disc.id;
