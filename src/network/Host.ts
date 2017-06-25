@@ -20,12 +20,12 @@ export default class Host extends AbstractNetwork {
 
     private static syncInterval = 1000 / 10;
 
-    public constructor(game: Game, {host, path}: Config) {
+    public constructor(game: Game, { host, path }: Config) {
         super();
         this.game = game;
         game.setNetwork(this);
 
-        this.peer = new Peer('host', {host, path});
+        this.peer = new Peer('host', { host, path });
         this.peer.on('connection', this.handleConnection.bind(this));
 
         // this.nextSync = setInterval(this.sendSync.bind(this), this.syncInterval);
@@ -57,7 +57,7 @@ export default class Host extends AbstractNetwork {
     }
 
     public sendMsg(msg: Message, excludeClient?: Client) {
-        for (let client of this.clients) {
+        for (const client of this.clients) {
             if (!excludeClient || client !== excludeClient) {
                 client.conn.send(msg);
             }
@@ -69,36 +69,34 @@ export default class Host extends AbstractNetwork {
             return;
         }
 
-        let msg = {
+        this.sendMsg(<SyncMsg>{
             type: 'sync',
             state: this.game.getSimulator().currentState.pack()
-        };
-
-        this.sendMsg(msg);
+        });
     }
 }
 
-let msgHandlers = {
-    event(msg: EventMsg) {
+const msgHandlers = {
+    event(game: Game, client: Client, msg: EventMsg) {
         const event = Events[msg.event.eventType].parse(msg.event.sender, msg.event.data);
         event.frame = msg.event.frame;
 
         if (event instanceof Events.Keypress) {
-            event.data.clientId = this.id;
+            event.data.clientId = client.id;
         }
 
-        const simulator = this.game.getSimulator();
+        const simulator = game.getSimulator();
 
         if (event.frame >= simulator.currentFrame) {
             simulator.addEvent(event, event.frame);
         } else if (simulator.hasFrameInHistory(event.frame)) {
             const currentFrame = simulator.currentState.frame;
 
-            this.game.stopLoop();
+            game.stopLoop();
             simulator.rewind(event.frame);
             simulator.addEvent(event);
             simulator.fastForward(currentFrame);
-            this.game.startLoop();
+            game.startLoop();
         }
     }
 };
@@ -121,6 +119,6 @@ export class Client {
             throw new Error('Invalid msg type recieved: ' + msg.type);
         }
 
-        msgHandlers[msg.type].call(this, msg);
+        msgHandlers[msg.type](this.game, this, msg);
     }
 }

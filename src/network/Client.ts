@@ -8,7 +8,7 @@ import {
     EventMsg,
     Message
 } from './AbstractNetwork';
-import Game from '../Game';
+import Game, { PlayerInfo } from '../Game';
 import * as Events from '../state/events';
 import State from '../state/State';
 import Disc from '../entities/Disc';
@@ -23,72 +23,80 @@ export enum States {
     Connected = 2
 }
 
-let msgHandlers = {
-    init(msg: InitMsg) {
-        let state = State.parse(msg.state);
+const msgHandlers = {
+    init(game: Game, client: Client, msg: InitMsg) {
+        const simulator = game.getSimulator();
+        const state = State.parse(msg.state);
 
         Disc.nextDiscId = _.maxBy(state.discs, disc => disc.id).id + 1;
 
-        this.game.simulator.resetState(state);
-        let newState = this.game.simulator.advance();
+        simulator.resetState(state);
+        const newState = simulator.advance();
 
-        let player = newState.getPlayerById(msg.id);
-        let myDisc = newState.getPlayerDisc(player);
+        const player = newState.getPlayerById(msg.id);
+        const myDisc = newState.getPlayerDisc(player);
 
         if (myDisc) {
             myDisc.isMe = true;
         }
 
-        this.game.me.id = player.clientId;
-        this.game.init();
-        this.game.initRenderer();
+        game.setMe({
+            id: player.clientId,
+            name: player.name,
+            avatar: player.avatar
+        })
 
-        this.state = States.Connected;
+        game.initRenderer();
+        game.init();
+
+        client.setState(States.Connected);
     },
 
-    sync(msg: SyncMsg) {
-        let currentFrame = this.game.simulator.currentFrame;
+    sync(game: Game, client: Client, msg: SyncMsg) {
+        const simulator = game.getSimulator();
+        const currentFrame = simulator.currentFrame;
 
         // if sync state is earlier than the last synced state, we can ignore it
-        if (msg.state.frame <= this.lastSyncFrame) {
+        if (msg.state.frame <= client.lastSyncFrame) {
             console.log('frame earlier than last sync');
             return;
         }
 
         // if sync state is before the current state we need to check if we have the states
         // after it so we can simulate forward again (ie oldest state should at least be the one after)
-        if (msg.state.frame < currentFrame && this.game.simulator.oldestFrame > msg.state.frame + 1) {
+        if (msg.state.frame < currentFrame && simulator.oldestFrame > msg.state.frame + 1) {
             console.log('sync frame too far behind', currentFrame, msg.state.frame);
             return;
         }
 
-        let predictedState = this.game.simulator.findStateFromFrame(msg.state.frame);
+        const predictedState = simulator.findStateFromFrame(msg.state.frame);
 
         /*if (predictedState) {
             msg.state.events = msg.state.events.concat(predictedState.events.map(event => event.pack()));
         }*/
 
-        let syncState = State.parse(msg.state);
-        this.game.simulator.resetState(syncState);
-        this.lastSyncFrame = msg.state.frame;
+        const syncState = State.parse(msg.state);
+        simulator.resetState(syncState);
+        client.lastSyncFrame = msg.state.frame;
 
         if (currentFrame > msg.state.frame) {
-            this.game.simulator.fastForward(currentFrame);
+            simulator.fastForward(currentFrame);
         }
     },
 
-    event(msg: EventMsg) {
-        let event = Events[msg.event.eventType].parse(msg.event.sender, msg.event.data);
+    event(game: Game, client: Client, msg: EventMsg) {
+        const simulator = game.getSimulator();
+        const event = Events[msg.event.eventType].parse(msg.event.sender, msg.event.data);
         event.frame = msg.event.frame;
 
-        if (event.frame >= this.game.simulator.currentFrame) {
-            this.game.simulator.addEvent(event, event.frame);
-        } else if (this.game.simulator.hasFrameInHistory(event.frame)) {
-            let currentFrame = this.game.simulator.currentFrame;
+        if (event.frame >= simulator.currentFrame) {
+            simulator.addEvent(event, event.frame);
+        } else if (simulator.hasFrameInHistory(event.frame)) {
+            const currentFrame = simulator.currentFrame;
 
-            this.game.simulator.rewind(event.frame);
-            this.game.simulator.addEvent(event);
-            this.game.simulator.fastForward(currentFrame);
+            simulator.rewind(event.frame);
+            simulator.addEvent(event);
+            simulator.fastForward(currentFrame);
         }
     }
 };
@@ -96,19 +104,19 @@ let msgHandlers = {
 export default class Client extends AbstractNetwork {
     private game: Game;
     private hostConn: any;
-    private lastSyncFrame = 0;
     private state: States;
+    public lastSyncFrame = 0;
 
     public constructor(game: Game, { host, path }: Config) {
         super();
         this.game = game;
         game.setNetwork(this);
 
-        let ident = Math.random().toString(36).substring(7);
+        const ident = Math.random().toString(36).substring(7);
         this.peer = new Peer(ident, { host, path });
     }
 
-    public connectTo(host: string): Promise<Game> {
+    public connectTo(host: string, playerInfo: PlayerInfo): Promise<Game> {
         this.state = States.Connecting;
         this.hostConn = this.peer.connect(host);
 
@@ -136,10 +144,14 @@ export default class Client extends AbstractNetwork {
             throw new Error(`Invalid msg type recieved: ${msg.type}`);
         }
 
-        msgHandlers[msg.type].call(this, msg);
+        msgHandlers[msg.type](this.game, this, msg);
     }
 
     public sendMsg(msg: Message) {
         this.hostConn.send(msg);
+    }
+
+    public setState(state: States) {
+        this.state = state;
     }
 }

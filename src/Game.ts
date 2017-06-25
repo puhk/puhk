@@ -51,27 +51,27 @@ export default class Game {
         this.eventApi = new EventAggregator;
     }
 
-    public setLocalPlayer(playerInfo: PlayerInfo) {
+    public createLocalPlayer(playerInfo: PlayerInfo) {
         if (this.inited) {
             throw new Error('Game already init');
         }
 
         this.me.name = playerInfo.name;
         this.me.avatar = playerInfo.avatar;
-    }
 
-    public init() {
-        if (this.inited || !this.network || this.network.isDisconnected()) {
-            return;
-        }
-
-        let event = new PlayerJoined(this.me.id, {
+        const event = new PlayerJoined(this.me.id, {
             clientId: this.me.id,
             name: this.me.name,
             avatar: this.me.avatar
         });
 
         this.addEvent(event, false);
+    }
+
+    public init() {
+        if (this.inited || !this.network || this.network.isDisconnected()) {
+            return;
+        }
 
         this.setupLoop();
         this.startLoop();
@@ -301,11 +301,11 @@ export default class Game {
         });
     }
 
-    private startLoop() {
+    public startLoop() {
         MainLoop.start();
     }
 
-    private stopLoop() {
+    public stopLoop() {
         MainLoop.stop();
     }
 
@@ -323,6 +323,10 @@ export default class Game {
 
     public getMe() {
         return this.me;
+    }
+
+    public setMe(me: LocalPlayerInfo) {
+        this.me = me;
     }
 
     public get state(): State {

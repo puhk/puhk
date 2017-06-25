@@ -35,10 +35,9 @@ export function host({ host, path, player, renderer }: Opts): Promise<Game> {
     const game = createGame(renderer);
     const network = new Host(game, { host, path });
 
-    game.setLocalPlayer(player);
-
     return new Promise((resolve, reject) => {
         network.peer.on('open', () => {
+            game.createLocalPlayer(player);
             game.init();
             resolve(game);
         });
@@ -49,7 +48,5 @@ export function join({ host, path, roomId, player, renderer }: ClientOps) {
     const game = createGame(renderer);
     const network = new Client(game, { host, path });
 
-    game.setLocalPlayer(player);
-
-    return network.connectTo(roomId);
+    return network.connectTo(roomId, player);
 };
