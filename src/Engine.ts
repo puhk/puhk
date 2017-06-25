@@ -11,7 +11,7 @@ import State from './state/State';
 export default class Engine {
     private game: Game;
     private state: State;
-    private prevBallPositions = {};
+    private prevBallPositions = new Map<number, Vec>();
 
     public setGame(game: Game) {
         this.game = game;
@@ -27,23 +27,23 @@ export default class Engine {
     }
 
     private applyEvents(events: Event[]) {
-        for (let event of events) {
+        for (const event of events) {
             event.apply(this.state, this.game);
         }
     }
 
     private update() {
-        let stadium = this.state.stadium;
+        const stadium = this.state.stadium;
 
         this.state.discs.forEach((disc, i) => {
             if (!disc.isBall) {
-                let player = this.state.getPlayerFromDisc(disc.id);
+                const player = this.state.getPlayerFromDisc(disc.id);
 
                 if (player) {
                     disc.kicking = player.keys.kick;
 
-                    let accel = stadium.playerPhysics[disc.kicking ? 'kickingAcceleration' : 'acceleration'];
-                    let move = new Vec(0, 0);
+                    const accel = stadium.playerPhysics[disc.kicking ? 'kickingAcceleration' : 'acceleration'];
+                    const move = new Vec(0, 0);
 
                     if (player.keys.left) {
                         move.x -= 1;
@@ -100,7 +100,7 @@ export default class Engine {
                     }
                 });
 
-                this.prevBallPositions[disc.id] = disc.position.clone();
+                this.prevBallPositions.set(disc.id, disc.position.clone());
             }
         });
 
@@ -108,10 +108,10 @@ export default class Engine {
     }
 
     private handleCircleCollision(disc: Disc, disc2: Disc) {
-        let distSq = disc.position.distanceSq(disc2.position);
+        const distSq = disc.position.distanceSq(disc2.position);
 
         if (disc2.isBall && disc.position.distance(disc2.position) <= disc.radius + disc2.radius + 4) {
-            let player = this.state.getPlayerFromDisc(disc.id);
+            const player = this.state.getPlayerFromDisc(disc.id);
 
             if (player && player.keys.kick) {
                 this.kick(disc, disc2);
@@ -126,28 +126,28 @@ export default class Engine {
     }
 
     private collideCircles(disc: Disc, disc2: Disc) {
-        let diff = disc.position.clone().subtract(disc2.position);
-        let direction = diff.clone().normalize();
-        let totalMass = disc.mass + disc2.mass;
+        const diff = disc.position.clone().subtract(disc2.position);
+        const direction = diff.clone().normalize();
+        const totalMass = disc.mass + disc2.mass;
 
         // reposition
-        let total = disc.invMass + disc2.invMass;
-        let overlap = disc.radius + disc2.radius - diff.length();
-        let amount = overlap * (disc.invMass / total);
+        const total = disc.invMass + disc2.invMass;
+        const overlap = disc.radius + disc2.radius - diff.length();
+        const amount = overlap * (disc.invMass / total);
 
         disc.position.add(direction.clone().multiplyScalar(amount));
         disc2.position.subtract(direction.clone().multiplyScalar(overlap - amount));
 
         // bounce?
-        let speedDiff = disc.velocity.clone().subtract(disc2.velocity);
-        let dot = direction.dot(speedDiff);
+        const speedDiff = disc.velocity.clone().subtract(disc2.velocity);
+        const dot = direction.dot(speedDiff);
 
         if (dot < 0) {
-            let totalBounce = disc.bounce * disc2.bounce;
-            let bounceDir = direction.clone().multiplyScalar(dot * (totalBounce + 1));
+            const totalBounce = disc.bounce * disc2.bounce;
+            const bounceDir = direction.clone().multiplyScalar(dot * (totalBounce + 1));
 
-            let bounce1 = bounceDir.clone().multiplyScalar(disc.invMass / total);
-            let bounce2 = bounceDir.clone().multiplyScalar(disc2.invMass / total);
+            const bounce1 = bounceDir.clone().multiplyScalar(disc.invMass / total);
+            const bounce2 = bounceDir.clone().multiplyScalar(disc2.invMass / total);
 
             disc.velocity.subtract(bounce1);
             disc2.velocity.add(bounce2);
@@ -155,16 +155,16 @@ export default class Engine {
     }
 
     private kick(disc: Disc, ball: Disc) {
-        let direction = ball.position.clone()
+        const direction = ball.position.clone()
             .subtract(disc.position)
             .normalize();
 
-        let force = direction.multiplyScalar(disc.kickStrength * ball.invMass);
+        const force = direction.multiplyScalar(disc.kickStrength * ball.invMass);
         ball.velocity.add(force);
     }
 
     private discDistanceToLine(disc: Disc, line: Line): false | [number, Vec] {
-        let lineDist = line.p1.clone().subtract(line.p0);
+        const lineDist = line.p1.clone().subtract(line.p0);
         let discToLine = disc.position.clone().subtract(line.p0);
 
         if (discToLine.dot(lineDist) < 0) {
@@ -179,14 +179,14 @@ export default class Engine {
             return false;
         }
 
-        let direction = lineDist.clone().normalize();
-        let normal = new Vec(-direction.y, direction.x);
+        const direction = lineDist.clone().normalize();
+        const normal = new Vec(-direction.y, direction.x);
 
         return [normal.dot(discToLine), normal];
     }
 
     private handleSegmentCollision(disc: Disc, segment: Segment) {
-        let result = this.discDistanceToLine(disc, segment);
+        const result = this.discDistanceToLine(disc, segment);
 
         if (result === false) {
             return;
@@ -204,27 +204,27 @@ export default class Engine {
             return;
         }
 
-        let sep = normal.clone().multiplyScalar(disc.radius - dist);
+        const sep = normal.clone().multiplyScalar(disc.radius - dist);
         disc.position.add(sep);
 
-        let movement = normal.dot(disc.velocity);
+        const movement = normal.dot(disc.velocity);
 
         if (movement < 0) {
-            let bounceFactor = movement * (disc.bounce * segment.bounce + 1);
-            let bounce = normal.clone().multiplyScalar(bounceFactor);
+            const bounceFactor = movement * (disc.bounce * segment.bounce + 1);
+            const bounce = normal.clone().multiplyScalar(bounceFactor);
 
             disc.velocity.subtract(bounce);
         }
     }
 
     private checkGoal(ball: Disc, goal: Goal) {
-        if (!this.prevBallPositions[ball.id]) {
+        if (!this.prevBallPositions.has(ball.id)) {
             return false;
         }
 
-        let distBall = this.discDistanceToLine(ball, goal);
-        let prevPos = this.prevBallPositions[ball.id];
-        let prevDist = this.discDistanceToLine(new Disc(prevPos), goal);
+        const distBall = this.discDistanceToLine(ball, goal);
+        const prevPos = this.prevBallPositions.get(ball.id);
+        const prevDist = this.discDistanceToLine(new Disc(prevPos), goal);
 
         if (distBall === false || prevDist === false) {
             return false;
