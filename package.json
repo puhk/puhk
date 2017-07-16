@@ -41,7 +41,7 @@
     "sass-loader": "^4.1.1",
     "style-loader": "^0.13.1",
     "ts-node": "^3.0.6",
-    "typescript": "next",
+    "typescript": "^2.4.0",
     "url-loader": "^0.5.7",
     "webpack": "^2.2.0",
     "webpack-dev-server": "^2.2.0"
