@@ -9,14 +9,11 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "suppressImplicitAnyIndexErrors": true
-    /*"paths": {
-      "src/*": [
-        "./src/*"
-      ]
-    }*/
   },
   "include": [
-    "./src/**/*",
-    "./custom-types/**/*.d.ts"
+    "src/**/*"
+  ],
+  "exclude":[
+    "node_modules"
   ]
 }
