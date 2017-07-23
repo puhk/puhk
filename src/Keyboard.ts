@@ -1,3 +1,5 @@
+import { autobind } from 'core-decorators';
+
 const keyCodes = {
     37: 'left',
     38: 'up',
@@ -16,13 +18,10 @@ export interface Keys {
 }
 
 export type callback = (key: keyof Keys, state: boolean) => void;
-export type handler = (e: KeyboardEvent) => void;
 
 export default class Keyboard {
     private element: HTMLElement;
     private callback: callback;
-    private keyDownHandler: handler;
-    private keyUpHandler: handler;
 
     private keyDown: Keys = {
         up: false,
@@ -32,16 +31,9 @@ export default class Keyboard {
         kick: false
     };
 
-    public constructor(callback: callback) {
+    public setCallback(callback: callback) {
         this.callback = callback;
-
-        this.keyDownHandler = (e: KeyboardEvent) => {
-            this.setKey(e, true);
-        };
-
-        this.keyUpHandler = (e: KeyboardEvent) => {
-            this.setKey(e, false);
-        };
+        return this;
     }
 
     public bindTo(element: HTMLElement) {
@@ -52,17 +44,16 @@ export default class Keyboard {
         this.element = element;
         element.addEventListener('keydown', this.keyDownHandler);
         element.addEventListener('keyup', this.keyUpHandler);
+        return this;
     }
 
     public unBind() {
-        const element = this.element;
-
-        if (!element) {
+       if (!this.element) {
             return;
         }
 
-        element.removeEventListener('keydown', this.keyDownHandler);
-        element.removeEventListener('keyup', this.keyUpHandler);
+        this.element.removeEventListener('keydown', this.keyDownHandler);
+        this.element.removeEventListener('keyup', this.keyUpHandler);
         this.element = null;
     }
 
@@ -78,6 +69,16 @@ export default class Keyboard {
             this.keyDown[key] = state;
             this.callback(key, state);
         }
+    }
+
+    @autobind
+    private keyDownHandler(e: KeyboardEvent) {
+        this.setKey(e, true);
+    }
+
+    @autobind
+    protected keyUpHandler(e: KeyboardEvent) {
+        this.setKey(e, false);
     }
 
     private codeToKey(code: number): keyof Keys {

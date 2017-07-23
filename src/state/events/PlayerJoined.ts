@@ -1,4 +1,5 @@
-import Game, { PlayerInfo } from '../../Game';
+import Game from '../../Game';
+import { PlayerInfo } from '../../game-controllers/NetworkGameController'
 import Player from '../../entities/Player';
 import Event from '../Event';
 import State from '../State';

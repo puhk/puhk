@@ -1,38 +1,28 @@
 import { JsonEvent } from '../state/Event';
 import { JsonState } from '../state/State';
 
-export interface Config {
-    host: string;
-    path: string;
-}
-
 export interface Message {
     type: string;
 }
 
 export interface SyncMsg extends Message {
+    type: 'sync',
     state: JsonState;
 }
 
 export interface InitMsg extends Message {
+    type: 'init',
     id: number;
     state: JsonState;
 }
 
 export interface EventMsg extends Message {
+    type: 'event',
     event: JsonEvent;
 }
 
-export abstract class AbstractNetwork {
-    public peer: any;
-
-    public disconnect() {
-        this.peer.destroy();
-    }
-
-    public isDisconnected() {
-        return this.peer.destroyed;
-    }
-
-    public abstract sendMsg(msg: Message): void;
+export interface NetworkInterface {
+    send(msg: Message): void;
+    disconnect(): void;
+    isDisconnected(): boolean;
 }

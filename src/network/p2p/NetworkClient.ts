@@ -1,0 +1,51 @@
+import _ from 'lodash';
+import { AbstractP2PNetwork, Config } from './AbstractP2PNetwork';
+import { NetworkInterface, Message } from '../NetworkInterface';
+import NetworkClientInterface from '../NetworkClientInterface';
+
+declare const Peer: any;
+
+export enum States {
+    Unconnected = 0,
+    Connecting = 1,
+    Connected = 2
+}
+
+export default class NetworkClient extends AbstractP2PNetwork implements NetworkClientInterface {
+    private hostConn: any;
+    private state: States;
+    private static CONNECT_TIMEOUT = 10000;
+
+    public constructor({ host, path }: Config) {
+        super();
+        const ident = Math.random().toString(36).substring(7);
+        this.peer = new Peer(ident, { host, path });
+    }
+
+    public connectTo(host: string): Promise<void> {
+        this.state = States.Connecting;
+        this.hostConn = this.peer.connect(host);
+
+        this.hostConn.on('close', () => {
+            this.emit('host:disconnect');
+        });
+
+        return new Promise((resolve, reject) => {
+            let timeout = setTimeout(() => reject(), NetworkClient.CONNECT_TIMEOUT);
+
+            this.hostConn.on('data', (msg: Message) => {
+                if (timeout && this.state == States.Connecting) {
+                    clearTimeout(timeout);
+                    timeout = null;
+                    resolve();
+                }
+
+                this.emit('host:msg', msg);
+            });
+        });
+    }
+
+    public send(msg: Message) {
+        this.hostConn.send(msg);
+    }
+}

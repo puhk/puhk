@@ -2,10 +2,10 @@ const {host, join, Renderer, Events} = window['nojball-game'];
 const renderer = new Renderer;
 
 const $mount = document.getElementById('mount');
-let game;
+let controller;
 
 const render = () => {
-    game.initKeyboard($mount);
+    controller.initKeyboard($mount);
 
     renderer.setParent($mount)
         .setWidth($mount.offsetWidth)
@@ -24,7 +24,7 @@ const hostGame = () => {
         },
         renderer
     }).then(res => {
-        game = res;
+        controller = res;
         render();
     });
 };
@@ -40,16 +40,16 @@ const joinGame = () => {
         },
         renderer
     }).then(res => {
-        game = res;
+        controller = res;
         render();
     });
 };
 
 const moveToTeam = (player, team) => {
-    const event = new Events.ChangeTeam(game.getMe(), {
+    const event = new Events.ChangeTeam(controller.getMe(), {
         clientId: player,
         team
     });
 
-    game.addEvent(event);
+    controller.addEvent(event);
 };

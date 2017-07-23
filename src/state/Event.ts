@@ -1,6 +1,6 @@
 import State from './State';
 import Game from '../Game';
-import { EventMsg } from '../network/AbstractNetwork';
+import { EventMsg } from '../network/NetworkInterface';
 
 export interface JsonEvent {
     eventType: string,
@@ -15,7 +15,7 @@ export default abstract class Event {
     type: string;
     frame: number;
 
-    constructor(sender: number) {
+    constructor(sender?: number) {
         this.sender = sender;
     }
 

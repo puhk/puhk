@@ -47,7 +47,7 @@ export default class ChangeTeam extends Event {
         }
 
         if (state.playing && this.data.team !== null) {
-            let disc = game.createPlayerDisc(this.player);
+            let disc = game.createPlayerDisc(state, this.player);
 
             if (disc) {
                 this.player.discId = disc.id;

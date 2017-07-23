@@ -14,7 +14,6 @@ export default class StartGame extends Event {
         state.playing = true;
         state.timer = 0;
 
-        game.initRenderer();
         game.createPlayerDiscs(state);
         game.kickOffState(state);
 

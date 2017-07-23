@@ -1,3 +1,4 @@
+import { EventEmitter } from 'eventemitter3';
 import Vec from 'victor';
 
 import Game from './Game';
@@ -5,66 +6,57 @@ import Disc from './entities/Disc';
 import Goal from './entities/Goal';
 import Line from './entities/Line';
 import Segment from './entities/Segment';
+import Player from './entities/Player';
 import Event from './state/Event';
 import State from './state/State';
 
-export default class Engine {
-    private game: Game;
+export default class Engine extends EventEmitter {
     private state: State;
     private prevBallPositions = new Map<number, Vec>();
 
-    public setGame(game: Game) {
-        this.game = game;
-    }
-
     public run(state: State, events: Event[]) {
         this.state = state;
-        this.applyEvents(events);
 
         if (state.playing) {
             this.update();
         }
     }
 
-    private applyEvents(events: Event[]) {
-        for (const event of events) {
-            event.apply(this.state, this.game);
-        }
-    }
-
     private update() {
         const stadium = this.state.stadium;
 
+        const applyPlayerMovement = (disc: Disc, player: Player) => {
+            disc.kicking = player.keys.kick;
+
+            const accel = stadium.playerPhysics[disc.kicking ? 'kickingAcceleration' : 'acceleration'];
+            const move = new Vec(0, 0);
+
+            if (player.keys.left) {
+                move.x -= 1;
+            }
+
+            if (player.keys.right) {
+                move.x += 1;
+            }
+
+            if (player.keys.up) {
+                move.y -= 1;
+            }
+
+            if (player.keys.down) {
+                move.y += 1;
+            }
+
+            if (move.x != 0 || move.y != 0) {
+                disc.velocity.add(move.normalize().multiplyScalar(accel));
+            }
+        };
+
         this.state.discs.forEach((disc, i) => {
-            if (!disc.isBall) {
-                const player = this.state.getPlayerFromDisc(disc.id);
+            const player = this.state.getPlayerFromDisc(disc.id);
 
-                if (player) {
-                    disc.kicking = player.keys.kick;
-
-                    const accel = stadium.playerPhysics[disc.kicking ? 'kickingAcceleration' : 'acceleration'];
-                    const move = new Vec(0, 0);
-
-                    if (player.keys.left) {
-                        move.x -= 1;
-                    }
-
-                    if (player.keys.right) {
-                        move.x += 1;
-                    }
-
-                    if (player.keys.up) {
-                        move.y -= 1;
-                    }
-
-                    if (player.keys.down) {
-                        move.y += 1;
-                    }
-
-                    if (move.x != 0 || move.y != 0) {
-                        disc.velocity.add(move.normalize().multiplyScalar(accel));
-                    }
-                }
+            if (player) {
+                applyPlayerMovement(disc, player);
             }
 
             disc.position.add(disc.velocity);
@@ -93,18 +85,20 @@ export default class Engine {
                 this.handleSegmentCollision(disc, segment);
             });
 
-            if (disc.isBall) {
-                this.state.stadium.goals.forEach(goal => {
-                    if (this.checkGoal(disc, goal)) {
-                        this.game.goalScored(goal, this.state);
-                    }
-                });
-
-                this.prevBallPositions.set(disc.id, disc.position.clone());
+            if (!disc.isBall) {
+                return;
             }
+
+            this.state.stadium.goals.forEach(goal => {
+                if (this.checkGoal(disc, goal)) {
+                    this.emit('goalScored', this.state, goal);
+                }
+            });
+
+            this.prevBallPositions.set(disc.id, disc.position.clone());
         });
 
-        this.game.update(this.state);
+        this.emit('update', this.state);
     }
 
     private handleCircleCollision(disc: Disc, disc2: Disc) {

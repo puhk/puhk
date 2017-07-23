@@ -1,153 +1,47 @@
-import MainLoop from 'mainloop.js';
-import Vec from 'victor';
 import { EventAggregator } from 'aurelia-event-aggregator';
+import { autobind } from 'core-decorators';
+import Vec from 'victor';
 
-import Keyboard from './Keyboard';
-import Renderer from './Renderer';
-import State, { States } from './state/State';
-
-import {
-    Keypress,
-    PlayerJoined,
-    StartGame,
-    StopGame
-} from './state/events';
-
+import Engine from 'Engine';
 import Disc from './entities/Disc';
 import Goal from './entities/Goal';
 import Player from './entities/Player';
 import Stadium from './entities/Stadium';
-
-import { AbstractNetwork } from './network/AbstractNetwork';
-import Event from './state/Event';
 import Simulator from './state/Simulator';
-
-export interface PlayerInfo {
-    name: string,
-    avatar: string | number
-}
-
-export interface LocalPlayerInfo extends PlayerInfo {
-    id: number
-}
+import State, { States } from './state/State';
+import StopGame from './state/events/StopGame';
 
 export default class Game {
-    private keyboard?: Keyboard;
-    private network?: AbstractNetwork;
-    private renderer?: Renderer;
-    private simulator: Simulator;
-    private eventApi: EventAggregator;
-    private inited = false;
+    public constructor(private simulator: Simulator, private engine: Engine, private eventApi: EventAggregator) {}
 
-    private me: LocalPlayerInfo = {
-        id: -1,
-        name: '',
-        avatar: ''
-    };
-
-    public constructor(simulator: Simulator, renderer?: Renderer) {
-        this.simulator = simulator;
-        this.renderer = renderer;
-        this.eventApi = new EventAggregator;
-    }
-
-    public createLocalPlayer(playerInfo: PlayerInfo) {
-        if (this.inited) {
-            throw new Error('Game already init');
-        }
-
-        this.me.name = playerInfo.name;
-        this.me.avatar = playerInfo.avatar;
-
-        const event = new PlayerJoined(this.me.id, {
-            clientId: this.me.id,
-            name: this.me.name,
-            avatar: this.me.avatar
-        });
-
-        this.addEvent(event, false);
-    }
-
-    public init() {
-        if (this.inited || !this.network || this.network.isDisconnected()) {
-            return;
-        }
-
-        this.setupLoop();
-        this.startLoop();
-        this.inited = true;
-    }
-
-    public destroy() {
-        if (!this.inited || (this.network && this.network.isDisconnected())) {
-            return;
-        }
-
-        this.stopLoop();
-        this.network.disconnect();
-    }
-
-    public isDestroyed() {
-        return this.network.isDisconnected();
-    }
-
-    public initKeyboard(element: HTMLElement) {
-        if (!this.keyboard) {
-            this.keyboard = new Keyboard((key, state) => {
-                let event = new Keypress(this.me.id, { key, state, clientId: this.me.id });
-                this.addEvent(event);
-            });
-        }
-
-        this.keyboard.bindTo(element);
-    }
-
-    public initRenderer() {
-        if (this.renderer instanceof Renderer) {
-            this.renderer.attach();
-        }
-    }
-
-    public start() {
-        this.addEvent(new StartGame(this.me.id));
-    }
-
-    public stop() {
-        this.addEvent(new StopGame(this.me.id));
-    }
-
-    public addEvent(event: Event, send: boolean = true) {
-        this.simulator.addEvent(event);
-
-        if (send) {
-            this.network.sendMsg(event.toMessage());
-        }
+    public initEngineListeners() {
+        this.engine.on('goalScored', this.goalScored);
+        this.engine.on('update', this.update);
     }
 
     public createPlayer(clientId: number, name: string) {
         return new Player(clientId, name);
     }
 
-    public createPlayerDisc(player: Player): Disc {
+    public createPlayerDisc(state: State, player: Player): Disc {
         if (!player.team) {
             return;
         }
 
-        let stadium = this.simulator.currentState.stadium;
-        let team = stadium.getTeam(player.team);
+        const team = state.stadium.getTeam(player.team);
 
         if (player.team === null || !team) {
             return;
         }
 
-        let disc = new Disc(new Vec(0, 0), stadium.playerPhysics.radius, {
+        const disc = new Disc(new Vec(0, 0), state.stadium.playerPhysics.radius, {
             color: team.color,
-            damping: stadium.playerPhysics.damping,
-            invMass: stadium.playerPhysics.invMass
+            damping: state.stadium.playerPhysics.damping,
+            invMass: state.stadium.playerPhysics.invMass
         });
 
-        disc.kickStrength = stadium.playerPhysics.kickStrength;
-        disc.isMe = player.clientId == this.me.id;
+        disc.kickStrength = state.stadium.playerPhysics.kickStrength;
+        // disc.isMe = player.clientId == this.me.id;
         disc.text = player.avatar;
 
         return disc;
@@ -157,7 +51,7 @@ export default class Game {
         let discs: Disc[] = [];
 
         for (let player of state.players) {
-            let disc = this.createPlayerDisc(player);
+            let disc = this.createPlayerDisc(state, player);
 
             if (!disc) {
                 continue;
@@ -204,7 +98,8 @@ export default class Game {
         });
     }
 
-    public goalScored(goal: Goal, state: State) {
+    @autobind
+    private goalScored(state: State, goal: Goal) {
         let team = state.stadium.getTeam(goal.teamScored);
 
         if (state.matchState != States.Inplay || !team) {
@@ -228,7 +123,8 @@ export default class Game {
         return scores.every(score => score == scores[0]);
     }
 
-    public update(state: State) {
+    @autobind
+    private update(state: State) {
         switch (state.matchState) {
             case States.Kickoff:
                 state.discs.filter(disc => disc.isBall)
@@ -282,54 +178,14 @@ export default class Game {
                 --state.matchStateTimer;
 
                 if (state.matchStateTimer <= 0) {
-                    this.stop();
+                    this.simulator.addEvent(new StopGame);
                 }
 
                 break;
         }
     }
 
-    private setupLoop() {
-        MainLoop.setUpdate(() => {
-            this.simulator.advance();
-        });
-
-        MainLoop.setDraw(() => {
-            if (this.renderer) {
-                this.renderer.draw(this.simulator.currentState);
-            }
-        });
-    }
-
-    public startLoop() {
-        MainLoop.start();
-    }
-
-    public stopLoop() {
-        MainLoop.stop();
-    }
-
-    public getSimulator() {
-        return this.simulator;
-    }
-
     public getEventApi() {
         return this.eventApi;
-    }
-
-    public setNetwork(network: AbstractNetwork) {
-        this.network = network;
-    }
-
-    public getMe() {
-        return this.me;
-    }
-
-    public setMe(me: LocalPlayerInfo) {
-        this.me = me;
-    }
-
-    public get state(): State {
-        return this.simulator.currentState;
     }
 }

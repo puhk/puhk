@@ -1,25 +1,24 @@
 import _ from 'lodash';
 
-import Engine from '../Engine';
 import State from './State';
 import Event from './Event';
+import Engine from '../Engine';
+import Game from '../Game';
 
 export default class Simulator {
-    engine: Engine;
-    maxStatesToRemember = 120;
-    futureEvents: Event[] = [];
-    states: State[] = [];
+    private maxStatesToRemember = 120;
+    private futureEvents: Event[] = [];
+    private states: State[] = [];
 
-    constructor(engine: Engine) {
-        this.engine = engine;
-    }
+    public constructor(private engine: Engine) {}
 
-    advance(): State {
+    public advance(game: Game): State {
         let newState = this.currentState.clone();
         newState.events = _.remove(this.futureEvents, { frame: ++newState.frame });
 
         let events = this.currentState.events;
         this.states.unshift(newState);
+        this.applyEvents(newState, game, events);
         this.engine.run(newState, events);
 
         if (this.states.length > this.maxStatesToRemember) {
@@ -29,18 +28,24 @@ export default class Simulator {
         return newState;
     }
 
-    fastForward(frame: number) {
-        while (this.currentFrame < frame) {
-            this.advance();
+    private applyEvents(state: State, game: Game, events: Event[]) {
+        for (const event of events) {
+            event.apply(state, game);
         }
     }
 
-    rewind(frame: number) {
+    public fastForward(frame: number, game: Game) {
+        while (this.currentFrame < frame) {
+            this.advance(game);
+        }
+    }
+
+    public rewind(frame: number) {
         let index = _.findIndex(this.states, { frame });
         this.states.splice(0, index);
     }
 
-    resetState(state: State) {
+    public resetState(state: State) {
         if (this.currentState && state.frame < this.currentFrame) {
             this.states.forEach(state => {
                 this.futureEvents = this.futureEvents.concat(state.events);
@@ -51,12 +56,12 @@ export default class Simulator {
         this.states.unshift(state);
     }
 
-    clear() {
+    public clear() {
         this.states.length = 0;
         this.futureEvents.length = 0;
     }
 
-    addEvent(event: Event, frame?: number) {
+    public addEvent(event: Event, frame?: number) {
         if (!frame || frame === this.currentFrame) {
             event.frame = this.currentFrame;
             this.currentState.events.push(event);
@@ -72,28 +77,28 @@ export default class Simulator {
         throw new Error('Trying to add event to past frame');
     }
 
-    findStateFromFrame(frame: number): State {
+    public findStateFromFrame(frame: number): State {
         return this.states.find(state => state.frame == frame);
     }
 
-    hasFrameInHistory(frame: number) {
+    public hasFrameInHistory(frame: number) {
         let state = this.findStateFromFrame(frame);
         return typeof state !== 'undefined';
     }
 
-    addState(state: State) {
+    public addState(state: State) {
         this.states.unshift(state);
     }
 
-    get currentState(): State {
-        return this.states[0] || new State;
+    public get currentState(): State {
+        return this.states[0];
     }
 
-    get currentFrame(): number {
+    public get currentFrame(): number {
         return this.currentState.frame;
     }
 
-    get oldestFrame(): number {
+    public get oldestFrame(): number {
         return this.states[this.states.length - 1].frame;
     }
 }
