@@ -1,4 +1,3 @@
-import Game from '../../Game';
 import ChatMessage from '../../entities/ChatMessage';
 import Event from '../Event';
 import State from '../State';
@@ -17,11 +16,9 @@ export default class PlayerChat extends Event {
         this.data = data;
     }
 
-    apply(state: State, game: Game) {
+    apply(state: State) {
         this.message = new ChatMessage(this.sender, this.data.message);
         state.addChatMessage(this.message);
-
-        game.getEventApi().publish(this);
     }
 
     static parse(sender: number, data: EventData) {

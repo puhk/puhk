@@ -86,10 +86,6 @@ export default class HostGameController extends NetworkGameController {
         this.addEvent(event, null, false);
     }
 
-    protected advance() {
-        this.simulator.advance(this.game);
-    }
-
     /* private sendSync() {
         if (!this.game.state.playing) {
             return;

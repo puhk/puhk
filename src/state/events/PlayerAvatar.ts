@@ -1,4 +1,3 @@
-import Game from '../../Game';
 import Event from '../Event';
 import State from '../State';
 
@@ -15,7 +14,7 @@ export default class PlayerAvatar extends Event {
         this.data = data;
     }
 
-    apply(state: State, game: Game) {
+    apply(state: State) {
         let player = state.getPlayerById(this.sender);
 
         if (!player) {
@@ -28,8 +27,6 @@ export default class PlayerAvatar extends Event {
         if (disc) {
             disc.text = player.avatar;
         }
-
-        game.getEventApi().publish(this);
     }
 
     static parse(sender: number, data: EventData) {

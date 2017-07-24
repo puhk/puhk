@@ -1,7 +1,5 @@
-import { EventEmitter } from 'eventemitter3';
 import Vec from 'victor';
 
-import Game from './Game';
 import Disc from './entities/Disc';
 import Goal from './entities/Goal';
 import Line from './entities/Line';
@@ -10,20 +8,23 @@ import Player from './entities/Player';
 import Event from './state/Event';
 import State from './state/State';
 
-export default class Engine extends EventEmitter {
+export interface GoalScored {
+    disc: Disc;
+    goal: Goal;
+}
+
+export default class Engine {
     private state: State;
     private prevBallPositions = new Map<number, Vec>();
 
     public run(state: State, events: Event[]) {
         this.state = state;
-
-        if (state.playing) {
-            this.update();
-        }
+        return state.playing ? this.update() : [];
     }
 
     private update() {
         const stadium = this.state.stadium;
+        const goalsScored: GoalScored[] = [];
 
         const applyPlayerMovement = (disc: Disc, player: Player) => {
             disc.kicking = player.keys.kick;
@@ -91,14 +92,14 @@ export default class Engine extends EventEmitter {
 
             this.state.stadium.goals.forEach(goal => {
                 if (this.checkGoal(disc, goal)) {
-                    this.emit('goalScored', this.state, goal);
+                    goalsScored.push({ disc, goal });
                 }
             });
 
             this.prevBallPositions.set(disc.id, disc.position.clone());
         });
 
-        this.emit('update', this.state);
+        return goalsScored;
     }
 
     private handleCircleCollision(disc: Disc, disc2: Disc) {

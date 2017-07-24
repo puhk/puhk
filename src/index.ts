@@ -8,7 +8,6 @@ let defaultStadiums: Entities.Stadium[] = [];
 defaultStadiums.push(Entities.Stadium.parse(classic));
 defaultStadiums.push(Entities.Stadium.parse(big));
 
-export { default as Game } from './Game';
 export { host, join } from './GameCreator';
 export { default as Renderer } from './Renderer';
 export { default as State } from './state/State';

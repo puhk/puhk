@@ -1,11 +1,10 @@
-import Game from '../../Game';
 import Event from '../Event';
 import State from '../State';
 
 export default class StartGame extends Event {
     type = 'StartGame';
 
-    apply(state: State, game: Game) {
+    apply(state: State) {
         if (state.playing) {
             return;
         }
@@ -14,10 +13,8 @@ export default class StartGame extends Event {
         state.playing = true;
         state.timer = 0;
 
-        game.createPlayerDiscs(state);
-        game.kickOffState(state);
-
-        game.getEventApi().publish(this);
+        state.createPlayerDiscs();
+        state.kickOffState();
     }
 
     static parse(sender: number) {

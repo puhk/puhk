@@ -1,5 +1,4 @@
 import MainLoop from 'mainloop.js';
-import Game from '../Game';
 import Renderer from '../Renderer';
 import Event from '../state/Event';
 import Simulator from '../state/Simulator';
@@ -7,14 +6,13 @@ import Simulator from '../state/Simulator';
 export default abstract class GameController {
     protected inited = false;
 
-    public constructor(protected game: Game, protected simulator: Simulator, protected renderer?: Renderer) {}
+    public constructor(protected simulator: Simulator, protected renderer?: Renderer) {}
 
     public init() {
         if (this.inited) {
             return;
         }
 
-        this.game.initEngineListeners();
         this.setupLoop();
         this.startLoop();
         this.inited = true;
@@ -48,5 +46,7 @@ export default abstract class GameController {
         MainLoop.stop();
     }
 
-    protected abstract advance(): void;
+    protected advance() {
+        this.simulator.advance();
+    }
 }

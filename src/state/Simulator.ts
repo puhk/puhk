@@ -1,25 +1,35 @@
+import { EventAggregator } from 'aurelia-event-aggregator';
 import _ from 'lodash';
 
 import State from './State';
 import Event from './Event';
 import Engine from '../Engine';
-import Game from '../Game';
 
 export default class Simulator {
     private maxStatesToRemember = 120;
     private futureEvents: Event[] = [];
     private states: State[] = [];
 
-    public constructor(private engine: Engine) {}
+    public constructor(private engine: Engine, private eventApi: EventAggregator) {}
 
-    public advance(game: Game): State {
-        let newState = this.currentState.clone();
+    public advance(): State {
+        const newState = this.currentState.clone();
         newState.events = _.remove(this.futureEvents, { frame: ++newState.frame });
 
-        let events = this.currentState.events;
+        const events = this.currentState.events;
         this.states.unshift(newState);
-        this.applyEvents(newState, game, events);
-        this.engine.run(newState, events);
+
+        for (const event of events) {
+            event.apply(newState);
+            this.eventApi.publish(event);
+        }
+
+        const result = this.engine.run(newState, events);
+        const event = newState.update(this.eventApi, result);
+
+        if (event) {
+            this.addEvent(event);
+        }
 
         if (this.states.length > this.maxStatesToRemember) {
             this.states.splice(this.maxStatesToRemember, this.states.length);
@@ -28,20 +38,14 @@ export default class Simulator {
         return newState;
     }
 
-    private applyEvents(state: State, game: Game, events: Event[]) {
-        for (const event of events) {
-            event.apply(state, game);
-        }
-    }
-
-    public fastForward(frame: number, game: Game) {
+    public fastForward(frame: number) {
         while (this.currentFrame < frame) {
-            this.advance(game);
+            this.advance();
         }
     }
 
     public rewind(frame: number) {
-        let index = _.findIndex(this.states, { frame });
+        const index = _.findIndex(this.states, { frame });
         this.states.splice(0, index);
     }
 
@@ -82,7 +86,7 @@ export default class Simulator {
     }
 
     public hasFrameInHistory(frame: number) {
-        let state = this.findStateFromFrame(frame);
+        const state = this.findStateFromFrame(frame);
         return typeof state !== 'undefined';
     }
 

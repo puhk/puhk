@@ -43,7 +43,7 @@ export default class ClientGameController extends NetworkGameController {
         Disc.nextDiscId = _.maxBy(state.discs, disc => disc.id).id + 1;
 
         this.simulator.resetState(state);
-        const newState = this.simulator.advance(this.game);
+        const newState = this.simulator.advance();
 
         const player = newState.getPlayerById(msg.id);
         const myDisc = newState.getPlayerDisc(player);
@@ -73,7 +73,7 @@ export default class ClientGameController extends NetworkGameController {
 
             this.simulator.rewind(event.frame);
             this.simulator.addEvent(event);
-            this.simulator.fastForward(currentFrame, this.game);
+            this.simulator.fastForward(currentFrame);
         }
     }
 
@@ -105,11 +105,7 @@ export default class ClientGameController extends NetworkGameController {
         this.lastSyncFrame = msg.state.frame;
 
         if (currentFrame > msg.state.frame) {
-            this.simulator.fastForward(currentFrame, this.game);
+            this.simulator.fastForward(currentFrame);
         }
-    }
-
-    protected advance() {
-        this.simulator.advance(this.game);
     }
 }

@@ -1,10 +1,15 @@
+import { EventAggregator } from 'aurelia-event-aggregator';
+import Vec from 'victor';
+
 import * as Events from './events';
 import Event, { JsonEvent } from './Event';
+import { GoalScored } from '../Engine';
+
 import Stadium, { JsonStadium, JsonTeam } from '../entities/Stadium';
 import ChatMessage from '../entities/ChatMessage';
 import Disc, { JsonDisc } from '../entities/Disc';
+import Goal from '../entities/Goal';
 import Player, { JsonPlayer } from '../entities/Player';
-import Segment from '../entities/Segment';
 
 export const enum States {
     Kickoff = 0,
@@ -53,6 +58,165 @@ export default class State {
         this.stadium.teams.forEach(team => {
             this.scores.set(team.name, 0);
         });
+    }
+
+    public scoresEqual() {
+        const scores = this.stadium.teams.map(team => {
+            return this.scores.get(team.name);
+        });
+
+        return scores.every(score => score == scores[0]);
+    }
+
+    public update(eventApi: EventAggregator, goalsScored: GoalScored[]) {
+        switch (this.matchState) {
+            case States.Kickoff:
+                this.discs.filter(disc => disc.isBall)
+                    .forEach(ball => {
+                        if (ball.velocity.x != 0 || ball.velocity.y != 0) {
+                            this.matchState = States.Inplay;
+                        }
+                    });
+
+                break;
+
+            case States.Inplay:
+                this.timer += 1 / 60;
+
+                for (const goalScored of goalsScored) {
+                    this.goalScored(goalScored.goal, eventApi);
+                }
+
+                if (this.timer >= this.timeLimit * 60 && !this.scoresEqual()) {
+                    this.matchState = States.EndGame;
+                    this.matchStateTimer = 300;
+                }
+
+                break;
+
+            case States.GoalScored:
+                --this.matchStateTimer;
+
+                if (this.matchStateTimer > 0) {
+                    return;
+                }
+
+                if (this.timer >= this.timeLimit * 60 && !this.scoresEqual()) {
+                    this.matchState = States.EndGame;
+                    this.matchStateTimer = 300;
+                    return;
+                }
+
+                for (let team of this.stadium.teams) {
+                    let score = this.scores.get(team.name);
+
+                    if (score && score >= this.scoreLimit) {
+                        this.matchState = States.EndGame;
+                        this.matchStateTimer = 300;
+                        return;
+                    }
+                }
+
+                this.matchState = States.Kickoff;
+                this.kickOffState();
+
+                break;
+
+            case States.EndGame:
+                --this.matchStateTimer;
+
+                if (this.matchStateTimer <= 0) {
+                    return new Events.StopGame;
+                }
+
+                break;
+        }
+    }
+
+    public kickOffState() {
+        if (!this.playing) {
+            return;
+        }
+
+        this.matchState = States.Kickoff;
+        this.setKickOffPositions();
+
+        this.discs.filter(disc => disc.isBall)
+            .forEach(ball => {
+                ball.position = new Vec(0, 0);
+                ball.velocity = new Vec(0, 0);
+            });
+    }
+
+    private setKickOffPositions() {
+        if (!this.playing) {
+            return;
+        }
+
+        this.players.forEach(player => {
+            let disc = this.getPlayerDisc(player);
+            let team = this.stadium.getTeam(player.team);
+
+            if (!disc || !team) {
+                return;
+            }
+
+            disc.position = Vec.fromArray(team.kickOffPos);
+            disc.velocity = new Vec(0, 0);
+        });
+    }
+
+    public goalScored(goal: Goal, eventApi: EventAggregator) {
+        const team = this.stadium.getTeam(goal.teamScored);
+
+        if (this.matchState !== States.Inplay || !team) {
+            return;
+        }
+
+        this.scores.set(team.name, this.scores.get(team.name) + 1);
+        this.matchState = States.GoalScored;
+        this.matchStateTimer = 150;
+
+        eventApi.publish('goalScored', { state: this, goal });
+    }
+
+    public createPlayerDisc(player: Player): Disc {
+        if (!player.team) {
+            return;
+        }
+
+        const team = this.stadium.getTeam(player.team);
+
+        if (player.team === null || !team) {
+            return;
+        }
+
+        const disc = new Disc(new Vec(0, 0), this.stadium.playerPhysics.radius, {
+            color: team.color,
+            damping: this.stadium.playerPhysics.damping,
+            invMass: this.stadium.playerPhysics.invMass
+        });
+
+        disc.kickStrength = this.stadium.playerPhysics.kickStrength;
+        // disc.isMe = player.clientId == this.me.id;
+        disc.text = player.avatar;
+
+        return disc;
+    }
+
+    public createPlayerDiscs() {
+        let discs: Disc[] = [];
+
+        for (let player of this.players) {
+            let disc = this.createPlayerDisc(player);
+
+            if (disc) {
+                player.discId = disc.id;
+                discs.push(disc);;
+            }
+        }
+
+        this.addDiscs(discs);
     }
 
     addPlayers(...players: Player[]) {
@@ -158,16 +322,6 @@ export default class State {
             event.frame = e.frame;
             return event;
         });
-
-        return state;
-    }
-
-    static createFromStadium(stadium: Stadium) {
-        let state = new State;
-
-        state.stadium = stadium;
-        state.discs = stadium.discs.map(disc => disc.clone());
-        state.initScores();
 
         return state;
     }

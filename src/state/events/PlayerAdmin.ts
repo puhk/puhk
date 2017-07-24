@@ -1,4 +1,3 @@
-import Game from '../../Game';
 import Event from '../Event';
 import State from '../State';
 
@@ -16,7 +15,7 @@ export default class PlayerAdmin extends Event {
         this.data = data;
     }
 
-    apply(state: State, game: Game) {
+    apply(state: State) {
         if (this.data.player === -1) {
             throw new Error('Cant change admin of host');
         }
@@ -28,8 +27,6 @@ export default class PlayerAdmin extends Event {
         }
 
         player.admin = this.data.isAdmin;
-
-        game.getEventApi().publish(this);
     }
 
     static parse(sender: number, data: EventData) {

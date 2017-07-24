@@ -1,6 +1,5 @@
 import Event from '../Event';
 import State from '../State';
-import Game from '../../Game';
 import Stadium, { JsonStadium } from '../../entities/Stadium';
 
 export interface EventData {
@@ -21,7 +20,7 @@ export default class ChangeStadium extends Event {
         this.data = data;
     }
 
-    apply(state: State, game: Game) {
+    apply(state: State) {
         if (state.playing) {
             throw new Error('Cant change stadium while game playing');
         }
@@ -31,7 +30,6 @@ export default class ChangeStadium extends Event {
         state.initScores();
 
         this.stadium = this.data.stadium;
-        game.getEventApi().publish(this);
     }
 
     getData(): JsonEventData {

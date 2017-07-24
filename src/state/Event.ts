@@ -1,5 +1,4 @@
 import State from './State';
-import Game from '../Game';
 import { EventMsg } from '../network/NetworkInterface';
 
 export interface JsonEvent {
@@ -19,7 +18,7 @@ export default abstract class Event {
         this.sender = sender;
     }
 
-    abstract apply(state: State, game: Game): void;
+    abstract apply(state: State): void;
 
     pack(): JsonEvent {
         return {

@@ -1,4 +1,3 @@
-import Game from '../../Game';
 import { PlayerInfo } from '../../game-controllers/NetworkGameController'
 import Player from '../../entities/Player';
 import Event from '../Event';
@@ -18,13 +17,11 @@ export default class PlayerJoined extends Event {
         this.data = data;
     }
 
-    apply(state: State, game: Game) {
-        this.player = game.createPlayer(this.data.clientId, this.data.name);
+    apply(state: State) {
+        this.player = new Player(this.data.clientId, this.data.name);
         this.player.setAvatar(this.data.avatar);
 
         state.addPlayers(this.player);
-
-        game.getEventApi().publish(this);
     }
 
     static parse(sender: number, data: EventData) {

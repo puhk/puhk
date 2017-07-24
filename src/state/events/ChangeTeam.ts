@@ -1,4 +1,3 @@
-import Game from '../../Game';
 import Player from '../../entities/Player';
 import Event from '../Event';
 import State from '../State';
@@ -18,7 +17,7 @@ export default class ChangeTeam extends Event {
         this.data = data;
     }
 
-    apply(state: State, game: Game) {
+    apply(state: State) {
         let player = state.getPlayerById(this.data.clientId);
 
         if (!player) {
@@ -47,15 +46,13 @@ export default class ChangeTeam extends Event {
         }
 
         if (state.playing && this.data.team !== null) {
-            let disc = game.createPlayerDisc(state, this.player);
+            let disc = state.createPlayerDisc(this.player);
 
             if (disc) {
                 this.player.discId = disc.id;
                 state.addDisc(disc);
             }
         }
-
-        game.getEventApi().publish(this);
     }
 
     static parse(sender: number, data: EventData) {

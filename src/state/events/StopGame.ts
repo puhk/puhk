@@ -1,11 +1,10 @@
-import Game from '../../Game';
 import Event from '../Event';
 import State from '../State';
 
 export default class StopGame extends Event {
     type = 'StopGame';
 
-    apply(state: State, game: Game) {
+    apply(state: State) {
         if (!state.playing) {
             return;
         }
@@ -19,8 +18,6 @@ export default class StopGame extends Event {
                 state.removeDisc(disc);
             }
         }
-
-        game.getEventApi().publish(this);
     }
 
     static parse(sender: number) {

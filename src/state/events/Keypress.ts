@@ -1,4 +1,3 @@
-import Game from '../../Game';
 import { Keys } from '../../Keyboard';
 import Event from '../Event';
 import State from '../State';
@@ -18,7 +17,7 @@ export default class Keypress extends Event {
         this.data = data;
     }
 
-    apply(state: State, game: Game) {
+    apply(state: State) {
         let player = state.getPlayerById(this.data.clientId);
 
         if (!player) {

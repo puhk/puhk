@@ -1,5 +1,4 @@
 import GameController from './GameController';
-import Game from '../Game';
 import Keyboard from '../Keyboard';
 import Renderer from '../Renderer';
 import { NetworkInterface } from '../network/NetworkInterface';
@@ -24,13 +23,12 @@ export abstract class NetworkGameController extends GameController {
     };
 
     public constructor(
-        protected game: Game,
         protected simulator: Simulator,
         protected network: NetworkInterface,
         protected keyboard: Keyboard,
         protected renderer?: Renderer
     ) {
-        super(game, simulator, renderer);
+        super(simulator, renderer);
     }
 
     public initKeyboard(element: HTMLElement) {

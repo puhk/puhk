@@ -1,6 +1,5 @@
 import { EventAggregator } from 'aurelia-event-aggregator';
 
-import Game from './Game';
 import Engine from './Engine';
 import Keyboard from './Keyboard';
 import Renderer from './Renderer';
@@ -11,6 +10,7 @@ import { NetworkGameController, PlayerInfo } from './game-controllers/NetworkGam
 import ClientGameController from './game-controllers/ClientGameController';
 import HostGameController from './game-controllers/HostGameController';
 
+import { NetworkInterface } from './network/NetworkInterface';
 import { Config } from './network/p2p/AbstractP2PNetwork';
 import NetworkHost from './network/p2p/NetworkHost';
 import NetworkClient from './network/p2p/NetworkClient';
@@ -27,31 +27,52 @@ export interface ClientOps extends Opts {
     roomId: string;
 }
 
-const createController = <T extends (typeof HostGameController | typeof ClientGameController)>(
-    Controller: T,
+interface ControllerConstructor<T> {
+    new(
+        simulator: Simulator,
+        network: NetworkInterface,
+        keyboard: Keyboard,
+        renderer?: Renderer
+    ): T
+}
+
+export const eventApi = new EventAggregator;
+
+const createStateFromStadium = (stadium: Stadium) => {
+    let state = new State;
+
+    state.stadium = stadium;
+    state.discs = stadium.discs.map(disc => disc.clone());
+    state.initScores();
+
+    return state;
+};
+
+const createController = <T extends NetworkGameController, N extends NetworkInterface>(
+    Controller: ControllerConstructor<T>,
+    Network: new(opts: Config) => N,
     { host, path, renderer }: Opts
 ) => {
     const engine = new Engine;
-    const simulator = new Simulator(engine);
+    const simulator = new Simulator(engine, eventApi);
 
-    const state = State.createFromStadium(Stadium.parse(classic));
+    const state = createStateFromStadium(Stadium.parse(classic));
     simulator.addState(state);
 
     return new Controller(
-        new Game(simulator, engine, new EventAggregator),
         simulator,
-        new NetworkHost({ host, path }),
+        new Network({ host, path }),
         new Keyboard,
         renderer
     );
 }
 
 export function host(opts: Opts) {
-    const controller = <HostGameController>createController(HostGameController, opts);
+    const controller = createController(HostGameController, NetworkHost, opts);
     return controller.hostGame(opts.player);
 };
 
 export function join(opts: ClientOps) {
-    const controller = <ClientGameController>createController(ClientGameController, opts);
+    const controller = createController(ClientGameController, NetworkClient, opts);
     return controller.join(opts.roomId, opts.player);
 };

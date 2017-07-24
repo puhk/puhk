@@ -1,4 +1,3 @@
-import Game from '../../Game';
 import Event from '../Event';
 import State from '../State';
 
@@ -15,9 +14,8 @@ export default class ChangeRoomName extends Event {
         this.data = data;
     }
 
-    apply(state: State, game: Game) {
+    apply(state: State) {
         state.roomName = this.data.name;
-        game.getEventApi().publish(this);
     }
 
     static parse(sender: number, data: EventData) {
