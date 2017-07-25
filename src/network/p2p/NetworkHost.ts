@@ -38,7 +38,7 @@ export default class NetworkHost extends AbstractP2PNetwork implements NetworkIn
         });
 
         conn.on('data', (msg: Message) => {
-            this.emit('client:msg', { id, msg });
+            this.emit('client:msg', id, msg);
         });
     }
 
@@ -48,7 +48,7 @@ export default class NetworkHost extends AbstractP2PNetwork implements NetworkIn
 
     public broadcast(msg: Message, excludeClient?: number) {
         for (const client of this.clients) {
-            if (!excludeClient || client.id !== excludeClient) {
+            if (typeof excludeClient === 'undefined' || client.id !== excludeClient) {
                 client.conn.send(msg);
             }
         }

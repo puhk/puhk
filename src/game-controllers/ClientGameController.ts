@@ -18,11 +18,9 @@ export default class ClientGameController extends NetworkGameController {
         'sync': this.handleSyncMsg
     };
 
-    public init() {
-        this.network.on('host:msg', this.handleMsg);
-    }
-
     public join(roomId: string, player: PlayerInfo) {
+        this.network.on('host:msg', this.handleMsg);
+
         return this.network.connectTo(roomId)
             .then(() => this);
     }
@@ -56,7 +54,7 @@ export default class ClientGameController extends NetworkGameController {
             id: player.clientId,
             name: player.name,
             avatar: player.avatar
-        })
+        });
 
         this.init();
     }

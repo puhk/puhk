@@ -27,6 +27,7 @@ export default class HostGameController extends NetworkGameController {
         });
     }
 
+    @autobind
     protected clientJoined(id: number) {
         const event = new Events.PlayerJoined(this.me.id, {
             clientId: id,
@@ -64,7 +65,8 @@ export default class HostGameController extends NetworkGameController {
         }
 
         event.frame = Math.max(event.frame, this.simulator.currentFrame);
-        this.addEvent(event, event.frame);
+        this.addEvent(event, event.frame, false);
+        this.network.broadcast(event.toMessage(), client);
     }
 
     public createLocalPlayer(playerInfo: PlayerInfo) {

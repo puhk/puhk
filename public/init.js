@@ -1,4 +1,4 @@
-const {host, join, Renderer, Events} = window['nojball-game'];
+const { host, join, Renderer, Events } = window['nojball-game'];
 const renderer = new Renderer;
 
 const $mount = document.getElementById('mount');
@@ -14,14 +14,11 @@ const render = () => {
         .attach();
 };
 
-const hostGame = () => {
+const hostGame = (name, avatar) => {
     host({
         host: 'localhost',
         path: 'p2p',
-        player: {
-            name: 'noj',
-            avatar: -1
-        },
+        player: { name, avatar },
         renderer
     }).then(res => {
         controller = res;
@@ -29,15 +26,12 @@ const hostGame = () => {
     });
 };
 
-const joinGame = () => {
+const joinGame = (name, avatar) => {
     join({
         host: 'localhost',
         path: 'p2p',
         roomId: 'host',
-        player: {
-            name: 'noj',
-            avatar: -1
-        },
+        player: { name, avatar },
         renderer
     }).then(res => {
         controller = res;
@@ -45,11 +39,7 @@ const joinGame = () => {
     });
 };
 
-const moveToTeam = (player, team) => {
-    const event = new Events.ChangeTeam(controller.getMe(), {
-        clientId: player,
-        team
-    });
-
+const moveToTeam = (clientId, team) => {
+    const event = new Events.ChangeTeam(controller.getMe(), { clientId, team });
     controller.addEvent(event);
 };
