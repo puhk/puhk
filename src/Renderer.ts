@@ -9,6 +9,7 @@ export default class Renderer {
     private parent: HTMLElement;
     private cameraPos = new Vec(0, 0);
     private cameraLerp = 0.04;
+    private firstRender = true;
 
     public constructor() {
         this.canvas = this.createCanvas();
@@ -76,6 +77,10 @@ export default class Renderer {
     }
 
     public draw(state: State) {
+        if (!state.playing && !this.firstRender) {
+            return;
+        }
+
         this.lerpCamera(state);
 
         let area = [
@@ -104,6 +109,8 @@ export default class Renderer {
         state.discs.forEach(disc => {
             disc.draw(this.ctx);
         });
+
+        this.firstRender = false;
     }
 
     private lerpCamera(state: State) {
