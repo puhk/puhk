@@ -29,3 +29,4 @@ hostGame('name', 'avatar') - Create a new game
 moveToTeam(id, 'red') - Move player to a team (host id is -1)
 controller.start() - start game
 controller.stop() - stop game
+```
