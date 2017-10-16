@@ -35,30 +35,44 @@ export interface JsonState {
 }
 
 export default class State {
-    frame = 0;
-    roomName = '';
-    playing = false;
+    private chatMessages: ChatMessage[] = [];
+    private maxChatMessages = 50;
+    private matchState: States = States.Kickoff;
+    private matchStateTimer = 0;
+    private scores: Map<string, number> = new Map;
+    private timer = 0;
 
-    discs: Disc[] = [];
-    players: Player[] = [];
-    stadium: Stadium;
+    public frame = 0;
+    public roomName = '';
+    public playing = false;
+    public scoreLimit = 3;
+    public timeLimit = 3;
 
-    chatMessages: ChatMessage[] = [];
-    maxChatMessages = 50;
-    matchState: States = States.Kickoff;
-    matchStateTimer = 0;
-    scores: Map<string, number> = new Map;
-    scoreLimit = 3;
-    timer = 0;
-    timeLimit = 3;
+    public discs: Disc[] = [];
+    public players: Player[] = [];
+    public stadium: Stadium;
 
-    initScores() {
+    public startPlaying(): void {
+        if (this.playing) {
+            return;
+        }
+
+        this.initScores();
+        this.createPlayerDiscs();
+
+        this.timer = 0;
+        this.playing = true;
+
+        this.kickOffState();
+    }
+
+    public initScores(): void {
         this.stadium.teams.forEach(team => {
             this.scores.set(team.name, 0);
         });
     }
 
-    public scoresEqual() {
+    public scoresEqual(): boolean {
         const scores = this.stadium.teams.map(team => {
             return this.scores.get(team.name);
         });
@@ -66,7 +80,7 @@ export default class State {
         return scores.every(score => score == scores[0]);
     }
 
-    public update(eventApi: EventAggregator, goalsScored: GoalScored[]) {
+    public update(eventApi: EventAggregator, goalsScored: GoalScored[]): Event {
         switch (this.matchState) {
             case States.Kickoff:
                 this.discs.filter(disc => disc.isBall)
@@ -105,8 +119,8 @@ export default class State {
                     return;
                 }
 
-                for (let team of this.stadium.teams) {
-                    let score = this.scores.get(team.name);
+                for (const team of this.stadium.teams) {
+                    const score = this.scores.get(team.name);
 
                     if (score && score >= this.scoreLimit) {
                         this.matchState = States.EndGame;
@@ -131,7 +145,7 @@ export default class State {
         }
     }
 
-    public kickOffState() {
+    private kickOffState(): void {
         if (!this.playing) {
             return;
         }
@@ -146,14 +160,14 @@ export default class State {
             });
     }
 
-    private setKickOffPositions() {
+    private setKickOffPositions(): void {
         if (!this.playing) {
             return;
         }
 
         this.players.forEach(player => {
-            let disc = this.getPlayerDisc(player);
-            let team = this.stadium.getTeam(player.team);
+            const disc = this.getPlayerDisc(player);
+            const team = this.stadium.getTeam(player.team);
 
             if (!disc || !team) {
                 return;
@@ -164,7 +178,7 @@ export default class State {
         });
     }
 
-    public goalScored(goal: Goal, eventApi: EventAggregator) {
+    public goalScored(goal: Goal, eventApi: EventAggregator): void {
         const team = this.stadium.getTeam(goal.teamScored);
 
         if (this.matchState !== States.Inplay || !team) {
@@ -202,58 +216,58 @@ export default class State {
         return disc;
     }
 
-    public createPlayerDiscs() {
-        let discs: Disc[] = [];
+    private createPlayerDiscs(): void {
+        const discs: Disc[] = [];
 
-        for (let player of this.players) {
-            let disc = this.createPlayerDisc(player);
+        for (const player of this.players) {
+            const disc = this.createPlayerDisc(player);
 
             if (disc) {
                 player.discId = disc.id;
-                discs.push(disc);;
+                discs.push(disc);
             }
         }
 
         this.addDiscs(discs);
     }
 
-    addPlayers(...players: Player[]) {
+    public addPlayers(...players: Player[]): void {
         this.players = this.players.concat(players);
     }
 
-    getPlayerById(id: number): Player {
+    public getPlayerById(id: number): Player {
         return this.players.find(player => player.clientId == id);
     }
 
-    getPlayerFromDisc(discId: number): Player {
+    public getPlayerFromDisc(discId: number): Player {
         return this.players.find(player => player.discId == discId);
     }
 
-    getTeamPlayers(team: JsonTeam) {
+    public getTeamPlayers(team: JsonTeam) {
         return this.players.filter(player => player.team == team.name);
     }
 
-    getTeamScore(team: JsonTeam) {
+    public getTeamScore(team: JsonTeam) {
         return this.scores.get(team.name);
     }
 
-    addDiscs(discs: Disc[]) {
+    public addDiscs(discs: Disc[]): void {
         this.discs = this.discs.concat(discs);
     }
 
-    addDisc(disc: Disc) {
+    public addDisc(disc: Disc): void {
         this.discs.push(disc);
     }
 
-    removeDisc(disc: Disc) {
+    public removeDisc(disc: Disc): void {
         this.discs.splice(this.discs.indexOf(disc), 1);
     }
 
-    getPlayerDisc(player: Player): Disc {
+    public getPlayerDisc(player: Player): Disc {
         return this.discs.find(disc => disc.id == player.discId);
     }
 
-    addChatMessage(chatMessage: ChatMessage) {
+    public addChatMessage(chatMessage: ChatMessage) {
         this.chatMessages.push(chatMessage);
 
         if (this.chatMessages.length > this.maxChatMessages) {
@@ -261,8 +275,8 @@ export default class State {
         }
     }
 
-    clone(): State {
-        let clone = new State;
+    public clone(): State {
+        const clone = new State;
         clone.frame = this.frame;
         clone.roomName = this.roomName;
         clone.stadium = this.stadium;
@@ -281,7 +295,7 @@ export default class State {
         return clone;
     }
 
-    pack(): JsonState {
+    public pack(): JsonState {
         return {
             frame: this.frame,
             roomName: this.roomName,
@@ -298,8 +312,8 @@ export default class State {
         };
     }
 
-    static parse(json: JsonState) {
-        let state = new State;
+    public static parse(json: JsonState) {
+        const state = new State;
         state.frame = json.frame;
         state.roomName = json.roomName;
         state.stadium = Stadium.parse(json.stadium);
