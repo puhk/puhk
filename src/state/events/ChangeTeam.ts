@@ -12,8 +12,8 @@ export default class ChangeTeam extends Event {
     type = 'ChangeTeam';
     player: Player;
 
-    constructor(sender: number, data: EventData) {
-        super(sender);
+    constructor(frame: number, sender: number, data: EventData) {
+        super(frame, sender);
         this.data = data;
     }
 
@@ -55,7 +55,7 @@ export default class ChangeTeam extends Event {
         }
     }
 
-    static parse(sender: number, data: EventData) {
-        return new ChangeTeam(sender, data);
+    static parse(frame: number, sender: number, data: EventData) {
+        return new ChangeTeam(frame, sender, data);
     }
 }

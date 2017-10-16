@@ -9,8 +9,8 @@ export default class PlayerAvatar extends Event {
     data: EventData;
     type = 'PlayerAvatar';
 
-    constructor(sender: number, data: EventData) {
-        super(sender);
+    constructor(frame: number, sender: number, data: EventData) {
+        super(frame, sender);
         this.data = data;
     }
 
@@ -29,7 +29,7 @@ export default class PlayerAvatar extends Event {
         }
     }
 
-    static parse(sender: number, data: EventData) {
-        return new PlayerAvatar(sender, data);
+    static parse(frame: number, sender: number, data: EventData) {
+        return new PlayerAvatar(frame, sender, data);
     }
 }

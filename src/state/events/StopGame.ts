@@ -20,7 +20,7 @@ export default class StopGame extends Event {
         }
     }
 
-    static parse(sender: number) {
-        return new StopGame(sender);
+    static parse(frame: number, sender: number) {
+        return new StopGame(frame, sender);
     }
 }

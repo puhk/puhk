@@ -6,103 +6,84 @@ import Event from './Event';
 import Engine from '../Engine';
 
 export default class Simulator {
-    private maxStatesToRemember = 120;
-    private futureEvents: Event[] = [];
-    private states: State[] = [];
+    public events: Event[] = [];
+    private states: State[];
 
-    public constructor(private engine: Engine, private eventApi: EventAggregator) {}
+    public constructor(private engine: Engine, private eventApi: EventAggregator) { }
 
-    public advance(): State {
-        const newState = this.currentState.clone();
-        newState.events = _.remove(this.futureEvents, { frame: ++newState.frame });
+    public simulate(targetFrame: number, fromState: State): State {
+        let state = this.findStateByFrame(targetFrame);
 
-        const events = this.currentState.events;
-        this.states.unshift(newState);
-
-        for (const event of events) {
-            event.apply(newState);
-            this.eventApi.publish(event);
+        if (state) {
+            return state;
         }
 
-        const result = this.engine.run(newState, events);
+        state = this.states.includes(fromState) ? fromState : this.concreteState;
+
+        while (state.frame < targetFrame) {
+            state = this.getNextState(state);
+            this.rememberState(state);
+        }
+
+        return state;
+    }
+
+    private createNewState(state: State): State {
+        const newState = state.clone();
+        ++newState.frame;
+
+        for (const event of this.events) {
+            if (event.frame == state.frame) {
+                event.apply(newState);
+                this.eventApi.publish(event);
+            }
+        }
+
+        const result = this.engine.run(newState);
         const event = newState.update(this.eventApi, result);
 
         if (event) {
             this.addEvent(event);
         }
 
-        if (this.states.length > this.maxStatesToRemember) {
-            this.states.splice(this.maxStatesToRemember, this.states.length);
-        }
-
         return newState;
     }
 
-    public fastForward(frame: number) {
-        while (this.currentFrame < frame) {
-            this.advance();
+    private getNextState(fromState: State) {
+        const state = this.findStateByFrame(fromState.frame + 1);
+        return state || this.createNewState(fromState);
+    }
+
+    private rememberState(state: State) {
+        if (!this.findStateByFrame(state.frame)) {
+            this.states.push(state);
         }
     }
 
-    public rewind(frame: number) {
-        const index = _.findIndex(this.states, { frame });
-        this.states.splice(0, index);
+    private findStateByFrame(frame: number): State {
+        return this.states.find(state => state.frame === frame);
     }
 
-    public resetState(state: State) {
-        if (this.currentState && state.frame < this.currentFrame) {
-            this.states.forEach(state => {
-                this.futureEvents = this.futureEvents.concat(state.events);
-            });
+    public advance(): State {
+        const state = this.createNewState(this.concreteState);
+        this.makeConcrete(state);
+        return state;
+    }
+
+    public addEvent(event: Event): void {
+        if (event.frame >= this.concreteState.frame) {
+            this.events.push(event);
+            this.states = this.states.filter(state => state.frame <= event.frame);
         }
-
-        this.states.length = 0;
-        this.states.unshift(state);
     }
 
-    public clear() {
-        this.states.length = 0;
-        this.futureEvents.length = 0;
+    public makeConcrete(state: State): this {
+        this.states = [state];
+        this.events = this.events.filter(event => event.frame >= state.frame);
+        return this;
     }
 
-    public addEvent(event: Event, frame?: number) {
-        if (!frame || frame === this.currentFrame) {
-            event.frame = this.currentFrame;
-            this.currentState.events.push(event);
-            return;
-        }
-
-        if (frame > this.currentFrame) {
-            event.frame = frame;
-            this.futureEvents.push(event);
-            return;
-        }
-
-        throw new Error('Trying to add event to past frame');
-    }
-
-    public findStateFromFrame(frame: number): State {
-        return this.states.find(state => state.frame == frame);
-    }
-
-    public hasFrameInHistory(frame: number) {
-        const state = this.findStateFromFrame(frame);
-        return typeof state !== 'undefined';
-    }
-
-    public addState(state: State) {
-        this.states.unshift(state);
-    }
-
-    public get currentState(): State {
+    public get concreteState(): State {
         return this.states[0];
-    }
-
-    public get currentFrame(): number {
-        return this.currentState.frame;
-    }
-
-    public get oldestFrame(): number {
-        return this.states[this.states.length - 1].frame;
     }
 }

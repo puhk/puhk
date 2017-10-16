@@ -40,6 +40,7 @@ const joinGame = (name, avatar) => {
 };
 
 const moveToTeam = (clientId, team) => {
-    const event = new Events.ChangeTeam(controller.getMe(), { clientId, team });
+    const frame = controller.getCurrentState().frame;
+    const event = new Events.ChangeTeam(frame, controller.getMe(), { clientId, team });
     controller.addEvent(event);
 };

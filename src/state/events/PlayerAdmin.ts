@@ -10,8 +10,8 @@ export default class PlayerAdmin extends Event {
     data: EventData;
     type = 'PlayerAdmin';
 
-    constructor(sender: number, data: EventData) {
-        super(sender);
+    constructor(frame: number, sender: number, data: EventData) {
+        super(frame, sender);
         this.data = data;
     }
 
@@ -29,7 +29,7 @@ export default class PlayerAdmin extends Event {
         player.admin = this.data.isAdmin;
     }
 
-    static parse(sender: number, data: EventData) {
-        return new PlayerAdmin(sender, data);
+    static parse(frame: number, sender: number, data: EventData) {
+        return new PlayerAdmin(frame, sender, data);
     }
 }

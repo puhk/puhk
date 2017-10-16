@@ -1,8 +1,8 @@
 import { EventAggregator } from 'aurelia-event-aggregator';
 import Vec from 'victor';
 
-import * as Events from './events';
 import Event, { JsonEvent } from './Event';
+import * as Events from './events';
 import { GoalScored } from '../Engine';
 
 import Stadium, { JsonStadium, JsonTeam } from '../entities/Stadium';
@@ -19,20 +19,19 @@ export const enum States {
 }
 
 export interface JsonState {
-    frame: number,
-    roomName: string,
-    scores: [string, number][],
-    scoreLimit: number,
-    timer: number,
-    timeLimit: number,
-    playing: boolean,
-    matchState: States,
-    matchStateTimer: number,
+    frame: number;
+    roomName: string;
+    scores: [string, number][];
+    scoreLimit: number;
+    timer: number;
+    timeLimit: number;
+    playing: boolean;
+    matchState: States;
+    matchStateTimer: number;
 
-    stadium: JsonStadium,
-    discs: JsonDisc[],
-    players: JsonPlayer[],
-    events: JsonEvent[]
+    stadium: JsonStadium;
+    discs: JsonDisc[];
+    players: JsonPlayer[];
 }
 
 export default class State {
@@ -41,7 +40,6 @@ export default class State {
     playing = false;
 
     discs: Disc[] = [];
-    events: Event[] = [];
     players: Player[] = [];
     stadium: Stadium;
 
@@ -126,7 +124,7 @@ export default class State {
                 --this.matchStateTimer;
 
                 if (this.matchStateTimer <= 0) {
-                    return new Events.StopGame;
+                    return new Events.StopGame(this.frame);
                 }
 
                 break;
@@ -288,7 +286,6 @@ export default class State {
             frame: this.frame,
             roomName: this.roomName,
             discs: this.discs.map(disc => disc.pack()),
-            events: this.events.map(event => event.pack()),
             players: this.players.map(player => player.pack()),
             stadium: this.stadium.pack(),
             scores: Array.from(this.scores),
@@ -316,12 +313,6 @@ export default class State {
 
         state.players = json.players.map(obj => Player.parse(obj));
         state.discs = json.discs.map(obj => Disc.parse(obj));
-
-        state.events = json.events.map(e => {
-            let event = Events[e.eventType].parse(e.sender, e.data);
-            event.frame = e.frame;
-            return event;
-        });
 
         return state;
     }

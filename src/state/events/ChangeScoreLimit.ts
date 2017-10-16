@@ -9,8 +9,8 @@ export default class ChangeScoreLimit extends Event {
     data: EventData;
     type = 'ChangeScoreLimit';
 
-    constructor(sender: number, data: EventData) {
-        super(sender);
+    constructor(frame: number, sender: number, data: EventData) {
+        super(frame, sender);
         this.data = data;
     }
 
@@ -18,7 +18,7 @@ export default class ChangeScoreLimit extends Event {
         state.scoreLimit = this.data.limit;
     }
 
-    static parse(sender: number, data: EventData) {
-        return new ChangeScoreLimit(sender, data);
+    static parse(frame: number, sender: number, data: EventData) {
+        return new ChangeScoreLimit(frame, sender, data);
     }
 }

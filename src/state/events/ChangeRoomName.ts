@@ -9,8 +9,8 @@ export default class ChangeRoomName extends Event {
     data: EventData;
     type = 'ChangeRoomName';
 
-    constructor(sender: number, data: EventData) {
-        super(sender);
+    constructor(frame: number, sender: number, data: EventData) {
+        super(frame, sender);
         this.data = data;
     }
 
@@ -18,7 +18,7 @@ export default class ChangeRoomName extends Event {
         state.roomName = this.data.name;
     }
 
-    static parse(sender: number, data: EventData) {
-        return new ChangeRoomName(sender, data);
+    static parse(frame: number, sender: number, data: EventData) {
+        return new ChangeRoomName(frame, sender, data);
     }
 }

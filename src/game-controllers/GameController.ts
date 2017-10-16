@@ -1,7 +1,7 @@
 import MainLoop from 'mainloop.js';
 import Renderer from '../Renderer';
-import Event from '../state/Event';
 import Simulator from '../state/Simulator';
+import State from '../state/State';
 
 export default abstract class GameController {
     protected inited = false;
@@ -33,7 +33,7 @@ export default abstract class GameController {
 
         MainLoop.setDraw(() => {
             if (this.renderer) {
-                this.renderer.draw(this.simulator.currentState);
+                this.renderer.draw(this.getCurrentState());
             }
         });
     }
@@ -49,4 +49,6 @@ export default abstract class GameController {
     protected advance() {
         this.simulator.advance();
     }
+
+    protected abstract getCurrentState(): State;
 }

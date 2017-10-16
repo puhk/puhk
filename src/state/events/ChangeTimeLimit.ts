@@ -9,8 +9,8 @@ export default class ChangeTimeLimit extends Event {
     data: EventData;
     type = 'ChangeTimeLimit';
 
-    constructor(sender: number, data: EventData) {
-        super(sender);
+    constructor(frame: number, sender: number, data: EventData) {
+        super(frame, sender);
         this.data = data;
     }
 
@@ -18,7 +18,7 @@ export default class ChangeTimeLimit extends Event {
         state.timeLimit = this.data.limit;
     }
 
-    static parse(sender: number, data: EventData) {
-        return new ChangeTimeLimit(sender, data);
+    static parse(frame: number, sender: number, data: EventData) {
+        return new ChangeTimeLimit(frame, sender, data);
     }
 }

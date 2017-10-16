@@ -61,12 +61,4 @@ export default class NetworkHost extends AbstractP2PNetwork implements NetworkIn
             client.conn.send(msg);
         }
     }
-
-    public disconnect() {
-        this.peer.destroy();
-    }
-
-    public isDisconnected() {
-        return this.peer.destroyed;
-    }
 }

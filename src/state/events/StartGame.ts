@@ -17,7 +17,7 @@ export default class StartGame extends Event {
         state.kickOffState();
     }
 
-    static parse(sender: number) {
-        return new StartGame(sender);
+    static parse(frame: number, sender: number) {
+        return new StartGame(frame, sender);
     }
 }

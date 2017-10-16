@@ -1,18 +1,27 @@
 import { autobind } from 'core-decorators';
+
 import { NetworkGameController, PlayerInfo } from './NetworkGameController';
-import { Message, EventMsg, InitMsg } from '../network/NetworkInterface';
+import { Message, EventMsg, InitMsg, SyncMsg, PingMsg, PongMsg } from '../network/NetworkInterface';
 import NetworkHost from '../network/p2p/NetworkHost';
+import State from '../state/State';
 import * as Events from '../state/events';
+import parseEvent from '../state/events/parse-event';
 
 export default class HostGameController extends NetworkGameController {
     private nextSync: number = null;
-    private msgHandlers = { 'event': this.msgEvent };
-    private static syncInterval = 1000 / 10;
+    private syncFrequency = 100;
+    private msgHandlers = {
+        'event': this.handleEventMsg,
+        'ping': this.handlePingMsg
+    };
+
     protected network: NetworkHost;
 
     public hostGame(player: PlayerInfo): Promise<HostGameController> {
         this.network.on('client:joined', this.clientJoined);
         this.network.on('client:msg', this.handleMsg);
+
+        setInterval(this.sendSync, this.syncFrequency);
 
         if (this.network.isOpen) {
             return Promise.resolve(this);
@@ -28,8 +37,8 @@ export default class HostGameController extends NetworkGameController {
     }
 
     @autobind
-    protected clientJoined(id: number) {
-        const event = new Events.PlayerJoined(this.me.id, {
+    private clientJoined(id: number) {
+        const event = new Events.PlayerJoined(this.simulator.concreteState.frame, this.me.id, {
             clientId: id,
             name: 'sock',
             avatar: ':)'
@@ -40,13 +49,14 @@ export default class HostGameController extends NetworkGameController {
 
         this.network.sendToClient(id, <InitMsg>{
             type: 'init',
-            state: this.simulator.currentState.pack(),
+            state: this.simulator.concreteState.pack(),
+            events: this.simulator.events.map(event => event.pack()),
             id
         });
     }
 
     @autobind
-    protected handleMsg(client: number, msg: Message) {
+    private handleMsg(client: number, msg: Message) {
         if (!this.msgHandlers[msg.type] || typeof this.msgHandlers[msg.type] !== 'function') {
             throw new Error(`Invalid msg type recieved: ${msg.type}`);
         }
@@ -55,21 +65,29 @@ export default class HostGameController extends NetworkGameController {
     }
 
     @autobind
-    protected msgEvent(client: number, msg: EventMsg) {
-        const event = Events[msg.event.eventType].parse(msg.event.sender, msg.event.data);
-        event.frame = msg.event.frame;
+    protected handleEventMsg(client: number, msg: EventMsg) {
+        const event = parseEvent(msg.event);
 
         // ensure client can't control other players :D
         if (event instanceof Events.Keypress) {
             event.data.clientId = client;
         }
 
-        event.frame = Math.max(event.frame, this.simulator.currentFrame);
-        this.addEvent(event, event.frame, false);
+        event.frame = Math.max(event.frame, this.simulator.concreteState.frame);
+        this.addEvent(event, false);
         this.network.broadcast(event.toMessage(), client);
     }
 
-    public createLocalPlayer(playerInfo: PlayerInfo) {
+    @autobind
+    private handlePingMsg(client: number, msg: PingMsg) {
+        this.network.sendToClient(client, <PongMsg>{
+            type: 'pong',
+            clientFrame: msg.frame,
+            hostFrame: this.simulator.concreteState.frame
+        });
+    }
+
+    private createLocalPlayer(playerInfo: PlayerInfo) {
         if (this.inited) {
             throw new Error('Game already init');
         }
@@ -79,23 +97,25 @@ export default class HostGameController extends NetworkGameController {
             ...playerInfo
         });
 
-        const event = new Events.PlayerJoined(this.me.id, {
+        const event = new Events.PlayerJoined(this.simulator.concreteState.frame, this.me.id, {
             clientId: this.me.id,
             name: this.me.name,
             avatar: this.me.avatar
         });
 
-        this.addEvent(event, null, false);
+        this.addEvent(event, false);
     }
 
-    /* private sendSync() {
-        if (!this.game.state.playing) {
-            return;
-        }
-
-        this.sendMsg(<SyncMsg>{
+    @autobind
+    private sendSync() {
+        this.network.send(<SyncMsg>{
             type: 'sync',
-            state: this.simulator.currentState.pack()
+            state: this.simulator.concreteState.pack(),
+            events: this.simulator.events.map(event => event.pack())
         });
-    } */
+    }
+
+    protected getCurrentState(): State {
+        return this.simulator.concreteState;
+    }
 }

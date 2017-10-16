@@ -14,7 +14,8 @@ export default abstract class Event {
     type: string;
     frame: number;
 
-    constructor(sender?: number) {
+    constructor(frame: number, sender?: number) {
+        this.frame = frame;
         this.sender = sender;
     }
 
@@ -38,5 +39,9 @@ export default abstract class Event {
             type: 'event',
             event: this.pack()
         };
+    }
+
+    shouldPredict() {
+        return false;
     }
 }

@@ -17,7 +17,7 @@ export default class Engine {
     private state: State;
     private prevBallPositions = new Map<number, Vec>();
 
-    public run(state: State, events: Event[]) {
+    public run(state: State) {
         this.state = state;
         return state.playing ? this.update() : [];
     }

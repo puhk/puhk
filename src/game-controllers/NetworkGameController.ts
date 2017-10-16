@@ -35,7 +35,7 @@ export abstract class NetworkGameController extends GameController {
         this.keyboard
             .bindTo(element)
             .setCallback((key, state) => {
-                const event = new Keypress(this.me.id, { clientId: this.me.id, key, state });
+                const event = new Keypress(this.getCurrentState().frame, this.me.id, { clientId: this.me.id, key, state });
                 this.addEvent(event);
             });
     }
@@ -45,8 +45,8 @@ export abstract class NetworkGameController extends GameController {
         this.network.disconnect();
     }
 
-    public addEvent(event: Event, frame?: number, send: boolean = true) {
-        this.simulator.addEvent(event, frame);
+    public addEvent(event: Event, send: boolean = true) {
+        this.simulator.addEvent(event);
 
         if (send) {
             this.network.send(event.toMessage());
@@ -54,11 +54,13 @@ export abstract class NetworkGameController extends GameController {
     }
 
     public start() {
-        this.addEvent(new StartGame(this.me.id));
+        const event = new StartGame(this.getCurrentState().frame, this.me.id);
+        this.addEvent(event);
     }
 
     public stop() {
-        this.addEvent(new StopGame(this.me.id));
+        const event = new StopGame(this.getCurrentState().frame, this.me.id);
+        this.addEvent(event);
     }
 
     public getMe() {

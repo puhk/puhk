@@ -57,7 +57,7 @@ const createController = <T extends NetworkGameController, N extends NetworkInte
     const simulator = new Simulator(engine, eventApi);
 
     const state = createStateFromStadium(Stadium.parse(classic));
-    simulator.addState(state);
+    simulator.makeConcrete(state);
 
     return new Controller(
         simulator,

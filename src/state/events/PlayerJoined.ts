@@ -12,8 +12,8 @@ export default class PlayerJoined extends Event {
     type = 'PlayerJoined';
     player: Player;
 
-    constructor(sender: number, data: EventData) {
-        super(sender);
+    constructor(frame: number, sender: number, data: EventData) {
+        super(frame, sender);
         this.data = data;
     }
 
@@ -24,7 +24,7 @@ export default class PlayerJoined extends Event {
         state.addPlayers(this.player);
     }
 
-    static parse(sender: number, data: EventData) {
-        return new PlayerJoined(sender, data);
+    static parse(frame: number, sender: number, data: EventData) {
+        return new PlayerJoined(frame, sender, data);
     }
 }

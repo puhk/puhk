@@ -15,8 +15,8 @@ export default class ChangeStadium extends Event {
     stadium: Stadium;
     type = 'ChangeStadium';
 
-    constructor(sender: number, data: EventData) {
-        super(sender);
+    constructor(frame: number, sender: number, data: EventData) {
+        super(frame, sender);
         this.data = data;
     }
 
@@ -36,8 +36,8 @@ export default class ChangeStadium extends Event {
         return { stadium: this.data.stadium.pack() };
     }
 
-    static parse(sender: number, data: JsonEventData) {
+    static parse(frame: number, sender: number, data: JsonEventData) {
         let stadium = Stadium.parse(data.stadium);
-        return new ChangeStadium(sender, { stadium });
+        return new ChangeStadium(frame, sender, { stadium });
     }
 }

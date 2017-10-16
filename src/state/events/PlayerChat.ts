@@ -11,8 +11,8 @@ export default class PlayerChat extends Event {
     message: ChatMessage;
     type = 'PlayerChat';
 
-    constructor(sender: number, data: EventData) {
-        super(sender);
+    constructor(frame: number, sender: number, data: EventData) {
+        super(frame, sender);
         this.data = data;
     }
 
@@ -21,7 +21,7 @@ export default class PlayerChat extends Event {
         state.addChatMessage(this.message);
     }
 
-    static parse(sender: number, data: EventData) {
-        return new PlayerChat(sender, data);
+    static parse(frame: number, sender: number, data: EventData) {
+        return new PlayerChat(frame, sender, data);
     }
 }

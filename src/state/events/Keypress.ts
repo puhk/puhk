@@ -12,8 +12,8 @@ export default class Keypress extends Event {
     data: EventData;
     type = 'Keypress';
 
-    constructor(sender: number, data: EventData) {
-        super(sender);
+    constructor(frame: number, sender: number, data: EventData) {
+        super(frame, sender);
         this.data = data;
     }
 
@@ -27,7 +27,11 @@ export default class Keypress extends Event {
         player.keys[this.data.key] = this.data.state;
     }
 
-    static parse(sender: number, data: EventData) {
-        return new Keypress(sender, data);
+    shouldPredict() {
+        return true;
+    }
+
+    static parse(frame: number, sender: number, data: EventData) {
+        return new Keypress(frame, sender, data);
     }
 }
