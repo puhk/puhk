@@ -52,7 +52,7 @@ export default class Disc extends AbstractPositionalEntity {
     }
 
     clone(): Disc {
-        let clone = new Disc(this.position.clone(), this.radius, {
+        const clone = new Disc(this.position.clone(), this.radius, {
             id: this.id,
             color: this.color,
             damping: this.damping,
@@ -83,7 +83,7 @@ export default class Disc extends AbstractPositionalEntity {
     }
 
     static parse(obj: JsonDisc): Disc {
-        let disc = new Disc(Vec.fromArray(obj.pos), obj.radius, {
+        const disc = new Disc(Vec.fromArray(obj.pos), obj.radius, {
             id: obj.id,
             color: obj.color,
             damping: obj.damping,
