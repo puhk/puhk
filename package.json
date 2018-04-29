@@ -10,7 +10,7 @@
     "build:dist": "cross-env NODE_ENV=production webpack --progress --colors",
     "build:cjs": "tsc --module commonjs --outDir build/cjs --declaration",
     "build:es6": "tsc --outDir build/es6 --declaration",
-    "start": "cross-env NODE_ENV=development yarn run webpack-dev-server -- --inline --progress --profile --watch"
+    "start": "cross-env NODE_ENV=development webpack-dev-server --inline --progress --profile --watch"
   },
   "dependencies": {
     "aurelia-event-aggregator": "^1.0.1",
