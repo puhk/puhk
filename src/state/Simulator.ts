@@ -49,12 +49,12 @@ export default class Simulator {
         return newState;
     }
 
-    private getNextState(fromState: State) {
+    private getNextState(fromState: State): State {
         const state = this.findStateByFrame(fromState.frame + 1);
         return state || this.createNewState(fromState);
     }
 
-    private rememberState(state: State) {
+    private rememberState(state: State): void {
         if (!this.findStateByFrame(state.frame)) {
             this.states.push(state);
         }
