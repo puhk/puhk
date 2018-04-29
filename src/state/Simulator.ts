@@ -12,13 +12,13 @@ export default class Simulator {
     public constructor(private engine: Engine, private eventApi: EventAggregator) { }
 
     public simulate(targetFrame: number, fromState: State): State {
-        let state = this.findStateByFrame(targetFrame);
+        const targetState = this.findStateByFrame(targetFrame);
 
-        if (state) {
-            return state;
+        if (targetState) {
+            return targetState;
         }
 
-        state = this.states.includes(fromState) ? fromState : this.concreteState;
+        let state = this.states.includes(fromState) ? fromState : this.concreteState;
 
         while (state.frame < targetFrame) {
             state = this.getNextState(state);
