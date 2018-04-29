@@ -28,6 +28,11 @@ export default class Simulator {
         return state;
     }
 
+    private getNextState(fromState: State): State {
+        const state = this.findStateByFrame(fromState.frame + 1);
+        return state || this.createNewState(fromState);
+    }
+
     private createNewState(state: State): State {
         const newState = state.clone();
         ++newState.frame;
@@ -47,11 +52,6 @@ export default class Simulator {
         }
 
         return newState;
-    }
-
-    private getNextState(fromState: State): State {
-        const state = this.findStateByFrame(fromState.frame + 1);
-        return state || this.createNewState(fromState);
     }
 
     private rememberState(state: State): void {
