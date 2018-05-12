@@ -1,5 +1,5 @@
 import { autobind } from 'core-decorators';
-import _ from 'lodash';
+import maxBy from 'lodash/maxBy';
 
 import { NetworkController, PlayerInfo } from 'controller/NetworkController';
 import { Message, InitMsg, EventMsg, SyncMsg, PingMsg, PongMsg } from 'network/NetworkInterface';
@@ -70,7 +70,7 @@ export default class ClientController extends NetworkController {
         this.simulator.events = msg.events.map(parseEvent);
         this.currentState = state;
 
-        Disc.nextDiscId = _.maxBy(state.discs, disc => disc.id).id + 1;
+        Disc.nextDiscId = maxBy(state.discs, disc => disc.id).id + 1;
 
         const newState = this.simulator.advance();
         const player = newState.getPlayerById(msg.id);

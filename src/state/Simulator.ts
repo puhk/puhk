@@ -1,5 +1,4 @@
 import { EventAggregator } from 'aurelia-event-aggregator';
-import _ from 'lodash';
 
 import State from 'state/State';
 import { Event } from 'state/event';
