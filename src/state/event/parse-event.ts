@@ -1,7 +1,7 @@
 import * as Events from '.';
 import { JsonEvent, Event, EventClass } from 'state/event';
 
-interface CustomParseableEvent extends EventClass {
+export interface CustomParseableEvent extends EventClass {
     parse(event: JsonEvent): Event;
 }
 
