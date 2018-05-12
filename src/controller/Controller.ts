@@ -3,7 +3,7 @@ import Renderer from 'Renderer';
 import Simulator from 'state/Simulator';
 import State from 'state/State';
 
-export default abstract class GameController {
+export default abstract class Controller {
     protected inited = false;
 
     public constructor(protected simulator: Simulator, protected renderer?: Renderer) {}

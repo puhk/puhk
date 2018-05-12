@@ -1,4 +1,4 @@
-import GameController from 'game-controllers/GameController';
+import Controller from 'controller/Controller';
 import Keyboard from 'Keyboard';
 import Renderer from 'Renderer';
 import { NetworkInterface } from 'network/NetworkInterface';
@@ -8,15 +8,15 @@ import Simulator from 'state/Simulator';
 import toMessage from 'state/event/to-message';
 
 export interface PlayerInfo {
-    name: string,
-    avatar: string | number
+    name: string;
+    avatar: string | number;
 }
 
 export interface LocalPlayerInfo extends PlayerInfo {
-    id: number
+    id: number;
 }
 
-export abstract class NetworkGameController extends GameController {
+export abstract class NetworkController extends Controller {
     protected me: LocalPlayerInfo = {
         id: -1,
         name: '',

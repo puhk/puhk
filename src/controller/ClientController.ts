@@ -1,7 +1,7 @@
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import { NetworkGameController, PlayerInfo } from 'game-controllers/NetworkGameController';
+import { NetworkController, PlayerInfo } from 'controller/NetworkController';
 import { Message, InitMsg, EventMsg, SyncMsg, PingMsg, PongMsg } from 'network/NetworkInterface';
 import NetworkClient from 'network/p2p/NetworkClient';
 import Disc from 'entities/Disc';
@@ -10,7 +10,7 @@ import { Event } from 'state/event';
 import parseEvent from 'state/event/parse-event';
 import toMessage from 'state/event/to-message';
 
-export default class ClientGameController extends NetworkGameController {
+export default class ClientController extends NetworkController {
     private currentState: State;
     private framesSinceLastSync = 0;
     private pings: number[] = [];

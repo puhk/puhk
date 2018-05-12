@@ -1,6 +1,6 @@
 import { autobind } from 'core-decorators';
 
-import { NetworkGameController, PlayerInfo } from 'game-controllers/NetworkGameController';
+import { NetworkController, PlayerInfo } from 'controller/NetworkController';
 import { Message, EventMsg, InitMsg, SyncMsg, PingMsg, PongMsg } from 'network/NetworkInterface';
 import NetworkHost from 'network/p2p/NetworkHost';
 import State from 'state/State';
@@ -9,7 +9,7 @@ import parseEvent from 'state/event/parse-event';
 import packEvent from 'state/event/pack';
 import toMessage from 'state/event/to-message';
 
-export default class HostGameController extends NetworkGameController {
+export default class HostGameController extends NetworkController {
     private nextSync: number = null;
     private syncFrequency = 100;
     private msgHandlers = {

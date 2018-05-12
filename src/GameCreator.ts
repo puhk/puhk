@@ -6,9 +6,9 @@ import Renderer from 'Renderer';
 import Simulator from 'state/Simulator';
 import State from 'state/State';
 
-import { NetworkGameController, PlayerInfo } from 'game-controllers/NetworkGameController';
-import ClientGameController from 'game-controllers/ClientGameController';
-import HostGameController from 'game-controllers/HostGameController';
+import { NetworkController, PlayerInfo } from 'controller/NetworkController';
+import ClientController from 'controller/ClientController';
+import HostController from 'controller/HostController';
 
 import { NetworkInterface } from 'network/NetworkInterface';
 import { Config } from 'network/p2p/AbstractP2PNetwork';
@@ -48,7 +48,7 @@ const createStateFromStadium = (stadium: Stadium) => {
     return state;
 };
 
-const createController = <T extends NetworkGameController, N extends NetworkInterface>(
+const createController = <T extends NetworkController, N extends NetworkInterface>(
     Controller: ControllerConstructor<T>,
     Network: new(opts: Config) => N,
     { host, path, renderer }: Opts
@@ -68,11 +68,11 @@ const createController = <T extends NetworkGameController, N extends NetworkInte
 }
 
 export function host(opts: Opts) {
-    const controller = createController(HostGameController, NetworkHost, opts);
+    const controller = createController(HostController, NetworkHost, opts);
     return controller.hostGame(opts.player);
 };
 
 export function join(opts: ClientOps) {
-    const controller = createController(ClientGameController, NetworkClient, opts);
+    const controller = createController(ClientController, NetworkClient, opts);
     return controller.join(opts.roomId, opts.player);
 };
