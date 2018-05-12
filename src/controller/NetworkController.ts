@@ -2,9 +2,9 @@ import Controller from 'controller/Controller';
 import Keyboard from 'Keyboard';
 import Renderer from 'Renderer';
 import { NetworkInterface } from 'network/NetworkInterface';
-import { Event } from 'state/Event';
-import { Keypress, StartGame, StopGame } from 'state/event/events';
 import Simulator from 'state/Simulator';
+import { Event } from 'state/event';
+import { Keypress, StartGame, StopGame } from 'state/event/events';
 import toMessage from 'state/event/to-message';
 
 export interface PlayerInfo {

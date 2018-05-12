@@ -6,19 +6,19 @@ export interface Message {
 }
 
 export interface SyncMsg extends Message {
-    type: 'sync',
+    type: 'sync';
     state: JsonState;
 }
 
 export interface InitMsg extends Message {
-    type: 'init',
+    type: 'init';
     id: number;
     state: JsonState;
     events: JsonEvent[];
 }
 
 export interface EventMsg extends Message {
-    type: 'event',
+    type: 'event';
     event: JsonEvent;
 }
 
