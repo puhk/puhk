@@ -1,14 +1,10 @@
-import Event from '../Event';
+import { Event } from '../Event';
 import State from '../State';
 
-export default class StartGame extends Event {
-    type = 'StartGame';
+export default class StartGame implements Event {
+    public constructor(public frame: number, public sender?: number) { }
 
-    apply(state: State) {
+    public apply(state: State) {
         state.startPlaying();
-    }
-
-    static parse(frame: number, sender: number) {
-        return new StartGame(frame, sender);
     }
 }

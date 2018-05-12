@@ -1,5 +1,4 @@
 import State from './State';
-import { EventMsg } from '../network/NetworkInterface';
 
 export interface JsonEvent {
     eventType: string,
@@ -8,40 +7,14 @@ export interface JsonEvent {
     data: any
 }
 
-export default abstract class Event {
-    data: any = null;
-    sender: number;
-    type: string;
+export interface EventClass {
+    new (frame: number, sender?: number, data?: any): Event;
+}
+
+export interface Event {
     frame: number;
-
-    constructor(frame: number, sender?: number) {
-        this.frame = frame;
-        this.sender = sender;
-    }
-
-    abstract apply(state: State): void;
-
-    pack(): JsonEvent {
-        return {
-            eventType: this.type,
-            frame: this.frame,
-            sender: this.sender,
-            data: this.getData()
-        };
-    }
-
-    getData() {
-        return this.data;
-    }
-
-    toMessage(): EventMsg {
-        return {
-            type: 'event',
-            event: this.pack()
-        };
-    }
-
-    shouldPredict() {
-        return false;
-    }
+    sender?: number;
+    data?: any;
+    apply(state: State): any;
+    shouldPredict?: boolean;
 }

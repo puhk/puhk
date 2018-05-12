@@ -1,32 +1,28 @@
 import Player from '../../entities/Player';
-import Event from '../Event';
+import { Event } from '../Event';
 import State from '../State';
 
 export interface EventData {
-    clientId: number,
-    team: string
+    clientId: number;
+    team: string;
 }
 
-export default class ChangeTeam extends Event {
-    data: EventData;
-    type = 'ChangeTeam';
+export interface ApplyResult {
     player: Player;
+}
 
-    constructor(frame: number, sender: number, data: EventData) {
-        super(frame, sender);
-        this.data = data;
-    }
+export default class ChangeTeam implements Event {
+    public constructor(public frame: number, public sender: number, public data: EventData) { }
 
-    apply(state: State) {
-        let player = state.getPlayerById(this.data.clientId);
+    public apply(state: State): ApplyResult {
+        const player = state.getPlayerById(this.data.clientId);
 
         if (!player) {
             return;
         }
 
-        this.player = player;
-        let currentDisc = state.getPlayerDisc(this.player);
-        let team = state.stadium.getTeam(this.data.team);
+        const currentDisc = state.getPlayerDisc(player);
+        const team = state.stadium.getTeam(this.data.team);
 
         // check team exists if not specs
         if (this.data.team !== null && !state.stadium.getTeam(this.data.team)) {
@@ -34,28 +30,26 @@ export default class ChangeTeam extends Event {
         }
 
         // player already on team?
-        if (this.player.team === this.data.team) {
+        if (player.team === this.data.team) {
             return;
         }
 
-        this.player.team = this.data.team;
+        player.team = this.data.team;
 
         if (currentDisc) {
             state.removeDisc(currentDisc);
-            this.player.discId = null;
+            player.discId = null;
         }
 
         if (state.playing && this.data.team !== null) {
-            let disc = state.createPlayerDisc(this.player);
+            const disc = state.createPlayerDisc(player);
 
             if (disc) {
-                this.player.discId = disc.id;
+                player.discId = disc.id;
                 state.addDisc(disc);
             }
         }
-    }
 
-    static parse(frame: number, sender: number, data: EventData) {
-        return new ChangeTeam(frame, sender, data);
+        return { player };
     }
 }

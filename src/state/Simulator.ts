@@ -2,7 +2,7 @@ import { EventAggregator } from 'aurelia-event-aggregator';
 import _ from 'lodash';
 
 import State from './State';
-import Event from './Event';
+import { Event } from './Event';
 import Engine from '../Engine';
 
 export default class Simulator {

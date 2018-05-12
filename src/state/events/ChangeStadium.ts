@@ -1,26 +1,25 @@
-import Event from '../Event';
+import { Event } from '../Event';
 import State from '../State';
 import Stadium, { JsonStadium } from '../../entities/Stadium';
 
 export interface EventData {
-    stadium: Stadium
-}
-
-export interface JsonEventData {
-    stadium: JsonStadium
-}
-
-export default class ChangeStadium extends Event {
-    data: EventData;
     stadium: Stadium;
-    type = 'ChangeStadium';
+}
 
-    constructor(frame: number, sender: number, data: EventData) {
-        super(frame, sender);
-        this.data = data;
-    }
+export interface JsonEvent {
+    frame: number;
+    sender: number;
+    data: {
+        stadium: JsonStadium;
+    };
+}
 
-    apply(state: State) {
+export default class ChangeStadium implements Event {
+    private stadium: Stadium;
+
+    public constructor(public frame: number, public sender: number, public data: EventData) {}
+
+    public apply(state: State) {
         if (state.playing) {
             throw new Error('Cant change stadium while game playing');
         }
@@ -32,12 +31,8 @@ export default class ChangeStadium extends Event {
         this.stadium = this.data.stadium;
     }
 
-    getData(): JsonEventData {
-        return { stadium: this.data.stadium.pack() };
-    }
-
-    static parse(frame: number, sender: number, data: JsonEventData) {
-        let stadium = Stadium.parse(data.stadium);
-        return new ChangeStadium(frame, sender, { stadium });
+    static parse(event: JsonEvent) {
+        let stadium = Stadium.parse(event.data.stadium);
+        return new String('ddsada');
     }
 }

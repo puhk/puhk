@@ -1,24 +1,14 @@
-import Event from '../Event';
+import { Event } from '../Event';
 import State from '../State';
 
 export interface EventData {
-    limit: number
+    limit: number;
 }
 
-export default class ChangeScoreLimit extends Event {
-    data: EventData;
-    type = 'ChangeScoreLimit';
+export default class ChangeScoreLimit implements Event {
+    public constructor(public frame: number, public sender: number, public data: EventData) {}
 
-    constructor(frame: number, sender: number, data: EventData) {
-        super(frame, sender);
-        this.data = data;
-    }
-
-    apply(state: State) {
+    public apply(state: State) {
         state.scoreLimit = this.data.limit;
-    }
-
-    static parse(frame: number, sender: number, data: EventData) {
-        return new ChangeScoreLimit(frame, sender, data);
     }
 }

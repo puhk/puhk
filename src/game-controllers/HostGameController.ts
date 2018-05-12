@@ -6,6 +6,8 @@ import NetworkHost from '../network/p2p/NetworkHost';
 import State from '../state/State';
 import * as Events from '../state/events';
 import parseEvent from '../state/events/parse-event';
+import packEvent from '../state/events/pack';
+import toMessage from '../state/events/to-message';
 
 export default class HostGameController extends NetworkGameController {
     private nextSync: number = null;
@@ -45,12 +47,12 @@ export default class HostGameController extends NetworkGameController {
         });
 
         this.simulator.addEvent(event);
-        this.network.broadcast(event.toMessage(), id);
+        this.network.broadcast(toMessage(event), id);
 
         this.network.sendToClient(id, <InitMsg>{
             type: 'init',
             state: this.simulator.concreteState.pack(),
-            events: this.simulator.events.map(event => event.pack()),
+            events: this.simulator.events.map(event => packEvent(event)),
             id
         });
     }
@@ -75,7 +77,7 @@ export default class HostGameController extends NetworkGameController {
 
         event.frame = Math.max(event.frame, this.simulator.concreteState.frame);
         this.addEvent(event, false);
-        this.network.broadcast(event.toMessage(), client);
+        this.network.broadcast(toMessage(event), client);
     }
 
     @autobind
@@ -111,7 +113,7 @@ export default class HostGameController extends NetworkGameController {
         this.network.send(<SyncMsg>{
             type: 'sync',
             state: this.simulator.concreteState.pack(),
-            events: this.simulator.events.map(event => event.pack())
+            events: this.simulator.events.map(event => packEvent(event))
         });
     }
 

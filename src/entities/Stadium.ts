@@ -4,6 +4,7 @@ import Background, { JsonBackground } from './Background';
 import Disc, { JsonDisc } from './Disc';
 import Goal, { JsonGoal } from './Goal';
 import Segment, { JsonSegment } from './Segment';
+import { Packable } from './Packable';
 
 export interface JsonStadium {
     name: string,
@@ -33,7 +34,7 @@ export interface JsonPlayerPhysics {
 
 export type CameraConstraints = [number, number];
 
-export default class Stadium {
+export default class Stadium implements Packable {
     name: string;
     cameraConstraints: CameraConstraints = [0, 0];
     backgrounds: Background[] = [];

@@ -1,26 +1,19 @@
-import Event from '../Event';
+import { Event } from '../Event';
 import State from '../State';
+import { Disc } from 'entities';
 
-export default class StopGame extends Event {
-    type = 'StopGame';
+export default class StopGame implements Event {
+    public constructor(public frame: number, public sender?: number) { }
 
-    apply(state: State) {
+    public apply(state: State) {
         if (!state.playing) {
             return;
         }
 
+        state.players.map(state.getPlayerDisc)
+            .filter(disc => disc instanceof Disc)
+            .forEach(state.removeDisc);
+
         state.playing = false;
-
-        for (let player of state.players) {
-            let disc = state.getPlayerDisc(player);
-
-            if (disc) {
-                state.removeDisc(disc);
-            }
-        }
-    }
-
-    static parse(frame: number, sender: number) {
-        return new StopGame(frame, sender);
     }
 }

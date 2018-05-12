@@ -1,24 +1,14 @@
-import Event from '../Event';
+import { Event } from '../Event';
 import State from '../State';
 
 export interface EventData {
-    name: string
+    name: string;
 }
 
-export default class ChangeRoomName extends Event {
-    data: EventData;
-    type = 'ChangeRoomName';
+export default class ChangeRoomName implements Event {
+    public constructor(public frame: number, public sender: number, public data: EventData) {}
 
-    constructor(frame: number, sender: number, data: EventData) {
-        super(frame, sender);
-        this.data = data;
-    }
-
-    apply(state: State) {
+    public apply(state: State) {
         state.roomName = this.data.name;
-    }
-
-    static parse(frame: number, sender: number, data: EventData) {
-        return new ChangeRoomName(frame, sender, data);
     }
 }

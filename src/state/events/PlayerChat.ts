@@ -1,27 +1,22 @@
 import ChatMessage from '../../entities/ChatMessage';
-import Event from '../Event';
+import { Event } from '../Event';
 import State from '../State';
 
 export interface EventData {
-    message: string
+    message: string;
 }
 
-export default class PlayerChat extends Event {
-    data: EventData;
+export interface ApplyResult {
     message: ChatMessage;
-    type = 'PlayerChat';
+}
 
-    constructor(frame: number, sender: number, data: EventData) {
-        super(frame, sender);
-        this.data = data;
-    }
+export default class PlayerChat implements Event {
+    public constructor(public frame: number, public sender: number, public data: EventData) { }
 
-    apply(state: State) {
-        this.message = new ChatMessage(this.sender, this.data.message);
-        state.addChatMessage(this.message);
-    }
+    public apply(state: State): ApplyResult {
+        const message = new ChatMessage(this.sender, this.data.message);
+        state.addChatMessage(message);
 
-    static parse(frame: number, sender: number, data: EventData) {
-        return new PlayerChat(frame, sender, data);
+        return { message };
     }
 }

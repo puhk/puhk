@@ -6,8 +6,9 @@ import { Message, InitMsg, EventMsg, SyncMsg, PingMsg, PongMsg } from '../networ
 import NetworkClient from '../network/p2p/NetworkClient';
 import Disc from '../entities/Disc';
 import State from '../state/State';
-import Event from '../state/Event';
+import { Event } from '../state/Event';
 import parseEvent from '../state/events/parse-event';
+import toMessage from '../state/events/to-message';
 
 export default class ClientGameController extends NetworkGameController {
     private currentState: State;
@@ -44,12 +45,12 @@ export default class ClientGameController extends NetworkGameController {
     }
 
     public addEvent(event: Event, send: boolean = true) {
-        if (event.shouldPredict()) {
+        if (event.shouldPredict) {
             this.simulator.addEvent(event);
         }
 
         if (send) {
-            this.network.send(event.toMessage());
+            this.network.send(toMessage(event));
         }
     }
 

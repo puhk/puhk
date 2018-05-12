@@ -1,7 +1,7 @@
 import { EventAggregator } from 'aurelia-event-aggregator';
 import Vec from 'victor';
 
-import Event, { JsonEvent } from './Event';
+import { JsonEvent, Event } from './Event';
 import * as Events from './events';
 import { GoalScored } from '../Engine';
 
@@ -263,7 +263,7 @@ export default class State {
         this.discs.splice(this.discs.indexOf(disc), 1);
     }
 
-    public getPlayerDisc(player: Player): Disc {
+    public getPlayerDisc(player: Player) {
         return this.discs.find(disc => disc.id == player.discId);
     }
 

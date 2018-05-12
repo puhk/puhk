@@ -5,7 +5,6 @@ import Goal from './entities/Goal';
 import Line from './entities/Line';
 import Segment from './entities/Segment';
 import Player from './entities/Player';
-import Event from './state/Event';
 import State from './state/State';
 
 export interface GoalScored {

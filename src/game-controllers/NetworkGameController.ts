@@ -2,9 +2,10 @@ import GameController from './GameController';
 import Keyboard from '../Keyboard';
 import Renderer from '../Renderer';
 import { NetworkInterface } from '../network/NetworkInterface';
-import Event from '../state/Event';
+import { Event } from '../state/Event';
 import { Keypress, StartGame, StopGame } from '../state/events';
 import Simulator from '../state/Simulator';
+import toMessage from '../state/events/to-message';
 
 export interface PlayerInfo {
     name: string,
@@ -49,7 +50,7 @@ export abstract class NetworkGameController extends GameController {
         this.simulator.addEvent(event);
 
         if (send) {
-            this.network.send(event.toMessage());
+            this.network.send(toMessage(event));
         }
     }
 

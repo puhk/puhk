@@ -1,6 +1,20 @@
 import * as Events from '.';
-import Event, { JsonEvent } from '../Event';
+import { JsonEvent, Event, EventClass } from '../Event';
 
-export default function parseEvent(event: JsonEvent): Event {
-    return Events[event.eventType].parse(event.frame, event.sender, event.data);
-};
+interface CustomParseableEvent extends EventClass {
+    parse(event: JsonEvent): Event;
+}
+
+export default function parseEvent(jsonEvent: JsonEvent): Event {
+    const eventClass: EventClass = Events[jsonEvent.eventType];
+
+    if (hasCustomParse(eventClass)) {
+        return eventClass.parse(jsonEvent);
+    }
+
+    return new eventClass(jsonEvent.frame, jsonEvent.sender, jsonEvent.data);
+}
+
+export function hasCustomParse(eventClass: EventClass): eventClass is CustomParseableEvent {
+    return eventClass.hasOwnProperty('parse');
+}
