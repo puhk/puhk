@@ -1,13 +1,13 @@
-import { Keys } from '../Keyboard';
+import { Keys } from 'Keyboard';
 
 export interface JsonPlayer {
-    clientId: number,
-    name: string,
-    admin: boolean,
-    avatar: string | number,
-    team: string,
-    discId: number,
-    keys: Keys
+    clientId: number;
+    name: string;
+    admin: boolean;
+    avatar: string | number;
+    team: string;
+    discId: number;
+    keys: Keys;
 }
 
 export default class Player {

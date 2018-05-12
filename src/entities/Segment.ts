@@ -1,10 +1,10 @@
 import Vec from 'victor';
-import Line from './Line';
+import Line from 'entities/Line';
 
 export interface JsonSegment {
-    p0: number[],
-    p1: number[],
-    bounce?: number
+    p0: number[];
+    p1: number[];
+    bounce?: number;
 }
 
 export default class Segment extends Line {

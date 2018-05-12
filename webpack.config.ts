@@ -28,7 +28,8 @@ let config: webpack.Configuration = {
     }]
   },
   resolve: {
-    extensions: ['.ts', '.js', '.json']
+    extensions: ['.ts', '.js', '.json'],
+    modules: ['src', 'node_modules']
   },
   plugins: []
 };

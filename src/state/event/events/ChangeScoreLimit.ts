@@ -1,5 +1,5 @@
-import { Event } from '..';
-import State from '../../State';
+import { Event } from 'state/event';
+import State from 'state/State';
 
 export interface EventData {
     limit: number;

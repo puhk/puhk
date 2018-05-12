@@ -1,13 +1,13 @@
 import { autobind } from 'core-decorators';
 
-import { NetworkGameController, PlayerInfo } from './NetworkGameController';
-import { Message, EventMsg, InitMsg, SyncMsg, PingMsg, PongMsg } from '../network/NetworkInterface';
-import NetworkHost from '../network/p2p/NetworkHost';
-import State from '../state/State';
-import * as Events from '../state/event/events';
-import parseEvent from '../state/event/parse-event';
-import packEvent from '../state/event/pack';
-import toMessage from '../state/event/to-message';
+import { NetworkGameController, PlayerInfo } from 'game-controllers/NetworkGameController';
+import { Message, EventMsg, InitMsg, SyncMsg, PingMsg, PongMsg } from 'network/NetworkInterface';
+import NetworkHost from 'network/p2p/NetworkHost';
+import State from 'state/State';
+import * as Events from 'state/event/events';
+import parseEvent from 'state/event/parse-event';
+import packEvent from 'state/event/pack';
+import toMessage from 'state/event/to-message';
 
 export default class HostGameController extends NetworkGameController {
     private nextSync: number = null;

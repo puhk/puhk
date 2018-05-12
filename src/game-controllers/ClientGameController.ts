@@ -1,14 +1,14 @@
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import { NetworkGameController, PlayerInfo } from './NetworkGameController';
-import { Message, InitMsg, EventMsg, SyncMsg, PingMsg, PongMsg } from '../network/NetworkInterface';
-import NetworkClient from '../network/p2p/NetworkClient';
-import Disc from '../entities/Disc';
-import State from '../state/State';
-import { Event } from '../state/event';
-import parseEvent from '../state/event/parse-event';
-import toMessage from '../state/event/to-message';
+import { NetworkGameController, PlayerInfo } from 'game-controllers/NetworkGameController';
+import { Message, InitMsg, EventMsg, SyncMsg, PingMsg, PongMsg } from 'network/NetworkInterface';
+import NetworkClient from 'network/p2p/NetworkClient';
+import Disc from 'entities/Disc';
+import State from 'state/State';
+import { Event } from 'state/event';
+import parseEvent from 'state/event/parse-event';
+import toMessage from 'state/event/to-message';
 
 export default class ClientGameController extends NetworkGameController {
     private currentState: State;

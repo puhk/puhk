@@ -1,9 +1,9 @@
 import { EventAggregator } from 'aurelia-event-aggregator';
 import _ from 'lodash';
 
-import State from './State';
-import { Event } from './Event';
-import Engine from '../Engine';
+import State from 'state/State';
+import { Event } from 'state/event';
+import Engine from 'Engine';
 
 export default class Simulator {
     public events: Event[] = [];

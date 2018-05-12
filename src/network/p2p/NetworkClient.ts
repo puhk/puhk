@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import { AbstractP2PNetwork, Config } from './AbstractP2PNetwork';
-import { NetworkInterface, Message } from '../NetworkInterface';
-import NetworkClientInterface from '../NetworkClientInterface';
+import { NetworkInterface, Message } from 'network/NetworkInterface';
+import NetworkClientInterface from 'network/NetworkClientInterface';
+import { AbstractP2PNetwork, Config } from 'network/p2p/AbstractP2PNetwork';
 
 declare const Peer: any;
 

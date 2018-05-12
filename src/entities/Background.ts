@@ -5,10 +5,10 @@ export type PitchTypes =
     'hockey';
 
 export interface JsonBackground {
-    pos: number[],
-    width: number,
-    height: number,
-    type: PitchTypes
+    pos: number[];
+    width: number;
+    height: number;
+    type: PitchTypes;
 }
 
 export default class Background {

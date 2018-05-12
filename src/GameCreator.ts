@@ -1,22 +1,22 @@
 import { EventAggregator } from 'aurelia-event-aggregator';
 
-import Engine from './Engine';
-import Keyboard from './Keyboard';
-import Renderer from './Renderer';
-import Simulator from './state/Simulator';
-import State from './state/State';
+import Engine from 'Engine';
+import Keyboard from 'Keyboard';
+import Renderer from 'Renderer';
+import Simulator from 'state/Simulator';
+import State from 'state/State';
 
-import { NetworkGameController, PlayerInfo } from './game-controllers/NetworkGameController';
-import ClientGameController from './game-controllers/ClientGameController';
-import HostGameController from './game-controllers/HostGameController';
+import { NetworkGameController, PlayerInfo } from 'game-controllers/NetworkGameController';
+import ClientGameController from 'game-controllers/ClientGameController';
+import HostGameController from 'game-controllers/HostGameController';
 
-import { NetworkInterface } from './network/NetworkInterface';
-import { Config } from './network/p2p/AbstractP2PNetwork';
-import NetworkHost from './network/p2p/NetworkHost';
-import NetworkClient from './network/p2p/NetworkClient';
+import { NetworkInterface } from 'network/NetworkInterface';
+import { Config } from 'network/p2p/AbstractP2PNetwork';
+import NetworkHost from 'network/p2p/NetworkHost';
+import NetworkClient from 'network/p2p/NetworkClient';
 
-import Stadium from './entities/Stadium';
-import classic from './stadiums/classic';
+import Stadium from 'entities/Stadium';
+import classic from 'stadiums/classic';
 
 export interface Opts extends Config {
     player: PlayerInfo;

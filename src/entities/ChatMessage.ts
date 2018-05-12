@@ -1,6 +1,6 @@
 export interface JsonChatMessage {
-    playerId: number,
-    msg: string
+    playerId: number;
+    msg: string;
 }
 
 export default class ChatMessage {

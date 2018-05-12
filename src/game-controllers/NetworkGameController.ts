@@ -1,11 +1,11 @@
-import GameController from './GameController';
-import Keyboard from '../Keyboard';
-import Renderer from '../Renderer';
-import { NetworkInterface } from '../network/NetworkInterface';
-import { Event } from '../state/Event';
-import { Keypress, StartGame, StopGame } from '../state/event/events';
-import Simulator from '../state/Simulator';
-import toMessage from '../state/event/to-message';
+import GameController from 'game-controllers/GameController';
+import Keyboard from 'Keyboard';
+import Renderer from 'Renderer';
+import { NetworkInterface } from 'network/NetworkInterface';
+import { Event } from 'state/Event';
+import { Keypress, StartGame, StopGame } from 'state/event/events';
+import Simulator from 'state/Simulator';
+import toMessage from 'state/event/to-message';
 
 export interface PlayerInfo {
     name: string,

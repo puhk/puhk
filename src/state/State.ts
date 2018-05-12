@@ -1,15 +1,15 @@
 import { EventAggregator } from 'aurelia-event-aggregator';
 import Vec from 'victor';
 
-import { JsonEvent, Event } from './Event';
-import * as Events from './event/events';
-import { GoalScored } from '../Engine';
+import { GoalScored } from 'Engine';
+import { JsonEvent, Event } from 'state/event';
+import * as Events from 'state/event/events';
 
-import Stadium, { JsonStadium, JsonTeam } from '../entities/Stadium';
-import ChatMessage from '../entities/ChatMessage';
-import Disc, { JsonDisc } from '../entities/Disc';
-import Goal from '../entities/Goal';
-import Player, { JsonPlayer } from '../entities/Player';
+import Stadium, { JsonStadium, JsonTeam } from 'entities/Stadium';
+import ChatMessage from 'entities/ChatMessage';
+import Disc, { JsonDisc } from 'entities/Disc';
+import Goal from 'entities/Goal';
+import Player, { JsonPlayer } from 'entities/Player';
 
 export const enum States {
     Kickoff = 0,

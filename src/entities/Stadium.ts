@@ -1,35 +1,35 @@
 import Vec from 'victor';
 
-import Background, { JsonBackground } from './Background';
-import Disc, { JsonDisc } from './Disc';
-import Goal, { JsonGoal } from './Goal';
-import Segment, { JsonSegment } from './Segment';
-import { Packable } from './Packable';
+import Background, { JsonBackground } from 'entities/Background';
+import Disc, { JsonDisc } from 'entities/Disc';
+import Goal, { JsonGoal } from 'entities/Goal';
+import Segment, { JsonSegment } from 'entities/Segment';
+import { Packable } from 'entities/Packable';
 
 export interface JsonStadium {
-    name: string,
-    cameraConstraints: CameraConstraints,
-    backgrounds: JsonBackground[],
-    discs: JsonDisc[],
-    goals: JsonGoal[],
-    player: JsonPlayerPhysics,
-    segments: JsonSegment[],
-    teams: JsonTeam[]
+    name: string;
+    cameraConstraints: CameraConstraints;
+    backgrounds: JsonBackground[];
+    discs: JsonDisc[];
+    goals: JsonGoal[];
+    player: JsonPlayerPhysics;
+    segments: JsonSegment[];
+    teams: JsonTeam[];
 }
 
 export interface JsonTeam {
-    name: string,
-    color: string,
-    kickOffPos?: [number, number]
+    name: string;
+    color: string;
+    kickOffPos?: [number, number];
 }
 
 export interface JsonPlayerPhysics {
-    acceleration: number,
-    damping: number,
-    kickingAcceleration: number,
-    kickStrength: number,
-    invMass: number,
-    radius: number
+    acceleration: number;
+    damping: number;
+    kickingAcceleration: number;
+    kickStrength: number;
+    invMass: number;
+    radius: number;
 }
 
 export type CameraConstraints = [number, number];

@@ -1,4 +1,4 @@
-import State from '../State';
+import State from 'state/State';
 
 export interface JsonEvent {
     eventType: string;

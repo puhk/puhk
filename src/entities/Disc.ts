@@ -1,23 +1,23 @@
 import Vec from 'victor';
-import AbstractPositionalEntity from './AbstractPositionalEntity';
+import AbstractPositionalEntity from 'entities/AbstractPositionalEntity';
 
 export interface JsonDisc {
-    id: number,
-    pos: number[],
-    velocity: number[],
-    ball?: boolean,
-    color: string,
-    damping: number,
-    invMass: number,
-    radius: number,
-    text: string
+    id: number;
+    pos: number[];
+    velocity: number[];
+    ball?: boolean;
+    color: string;
+    damping: number;
+    invMass: number;
+    radius: number;
+    text: string;
 }
 
 export interface opts {
-    id?: number,
-    color?: string,
-    damping?: number,
-    invMass?: number
+    id?: number;
+    color?: string;
+    damping?: number;
+    invMass?: number;
 }
 
 export default class Disc extends AbstractPositionalEntity {

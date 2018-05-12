@@ -1,13 +1,11 @@
 import Vec from 'victor';
-import Line from './Line';
+import Line from 'entities/Line';
 
 export interface JsonGoal {
-    p0: number[],
-    p1: number[],
-    teamScored: string
+    p0: number[];
+    p1: number[];
+    teamScored: string;
 }
-
-import { JsonSegment } from './Segment';
 
 export default class Goal extends Line {
     teamScored: string;
