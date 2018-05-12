@@ -4,10 +4,10 @@ import { NetworkGameController, PlayerInfo } from './NetworkGameController';
 import { Message, EventMsg, InitMsg, SyncMsg, PingMsg, PongMsg } from '../network/NetworkInterface';
 import NetworkHost from '../network/p2p/NetworkHost';
 import State from '../state/State';
-import * as Events from '../state/events';
-import parseEvent from '../state/events/parse-event';
-import packEvent from '../state/events/pack';
-import toMessage from '../state/events/to-message';
+import * as Events from '../state/event/events';
+import parseEvent from '../state/event/parse-event';
+import packEvent from '../state/event/pack';
+import toMessage from '../state/event/to-message';
 
 export default class HostGameController extends NetworkGameController {
     private nextSync: number = null;

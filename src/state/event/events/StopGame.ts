@@ -1,5 +1,5 @@
-import { Event } from '../Event';
-import State from '../State';
+import { Event } from '..';
+import State from '../../State';
 import { Disc } from 'entities';
 
 export default class StopGame implements Event {

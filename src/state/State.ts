@@ -2,7 +2,7 @@ import { EventAggregator } from 'aurelia-event-aggregator';
 import Vec from 'victor';
 
 import { JsonEvent, Event } from './Event';
-import * as Events from './events';
+import * as Events from './event/events';
 import { GoalScored } from '../Engine';
 
 import Stadium, { JsonStadium, JsonTeam } from '../entities/Stadium';

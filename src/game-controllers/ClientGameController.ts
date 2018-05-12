@@ -6,9 +6,9 @@ import { Message, InitMsg, EventMsg, SyncMsg, PingMsg, PongMsg } from '../networ
 import NetworkClient from '../network/p2p/NetworkClient';
 import Disc from '../entities/Disc';
 import State from '../state/State';
-import { Event } from '../state/Event';
-import parseEvent from '../state/events/parse-event';
-import toMessage from '../state/events/to-message';
+import { Event } from '../state/event';
+import parseEvent from '../state/event/parse-event';
+import toMessage from '../state/event/to-message';
 
 export default class ClientGameController extends NetworkGameController {
     private currentState: State;

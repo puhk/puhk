@@ -1,10 +1,10 @@
-import State from './State';
+import State from '../State';
 
 export interface JsonEvent {
-    eventType: string,
-    frame: number,
-    sender: number,
-    data: any
+    eventType: string;
+    frame: number;
+    sender: number;
+    data: any;
 }
 
 export interface EventClass {

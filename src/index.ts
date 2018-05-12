@@ -1,6 +1,6 @@
 import * as Entities from './entities';
 import { JsonStadium } from './entities/Stadium';
-import * as Events from './state/events';
+import * as Events from './state/event/events';
 import big from './stadiums/big';
 import classic from './stadiums/classic';
 

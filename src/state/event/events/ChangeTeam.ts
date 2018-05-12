@@ -1,6 +1,6 @@
-import Player from '../../entities/Player';
-import { Event } from '../Event';
-import State from '../State';
+import { Event } from '..';
+import State from '../../State';
+import Player from '../../../entities/Player';
 
 export interface EventData {
     clientId: number;

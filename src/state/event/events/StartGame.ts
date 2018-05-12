@@ -1,5 +1,5 @@
-import { Event } from '../Event';
-import State from '../State';
+import { Event } from '..';
+import State from '../../State';
 
 export default class StartGame implements Event {
     public constructor(public frame: number, public sender?: number) { }
