@@ -2,13 +2,13 @@ import { EventAggregator } from 'aurelia-event-aggregator';
 
 import State from 'state/State';
 import { Event } from 'state/event';
-import Engine from 'Engine';
+import update from 'Engine';
 
 export default class Simulator {
     public events: Event[] = [];
-    private states: State[];
+    private states: State[] = [];
 
-    public constructor(private engine: Engine, private eventApi: EventAggregator) { }
+    public constructor(private eventApi: EventAggregator) { }
 
     public simulate(targetFrame: number, fromState: State): State {
         const targetState = this.findStateByFrame(targetFrame);
@@ -43,8 +43,8 @@ export default class Simulator {
             }
         }
 
-        const result = this.engine.run(newState);
-        const event = newState.update(this.eventApi, result);
+        const goalsScored = state.playing ? update(state) : [];
+        const event = newState.update(this.eventApi, goalsScored);
 
         if (event) {
             this.addEvent(event);

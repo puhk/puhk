@@ -1,6 +1,5 @@
 import { EventAggregator } from 'aurelia-event-aggregator';
 
-import Engine from 'Engine';
 import Keyboard from 'Keyboard';
 import Renderer from 'Renderer';
 import Simulator from 'state/Simulator';
@@ -51,10 +50,9 @@ const createController = <T extends NetworkController, N extends NetworkInterfac
     Network: new(opts: Config) => N,
     { host, path, renderer }: Opts
 ) => {
-    const engine = new Engine;
-    const simulator = new Simulator(engine, eventApi);
-
     const state = createStateFromStadium(Stadium.parse(classic));
+
+    const simulator = new Simulator(eventApi);
     simulator.makeConcrete(state);
 
     return new Controller(
