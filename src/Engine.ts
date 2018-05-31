@@ -1,15 +1,14 @@
 import Vec from 'victor';
 
 import Disc from 'entities/Disc';
-import Goal from 'entities/Goal';
 import Line from 'entities/Line';
-import Segment from 'entities/Segment';
 import Player from 'entities/Player';
+import { JsonGoal, JsonSegment } from 'entities/Stadium';
 import State from 'state/State';
 
 export interface GoalScored {
     disc: Disc;
-    goal: Goal;
+    goal: Line<JsonGoal>;
 }
 
 export default class Engine {
@@ -177,7 +176,7 @@ export default class Engine {
         return [normal.dot(discToLine), normal];
     }
 
-    private handleSegmentCollision(disc: Disc, segment: Segment) {
+    private handleSegmentCollision(disc: Disc, segment: Line<JsonSegment>) {
         const result = this.discDistanceToLine(disc, segment);
 
         if (result === false) {
@@ -202,14 +201,14 @@ export default class Engine {
         const movement = normal.dot(disc.velocity);
 
         if (movement < 0) {
-            const bounceFactor = movement * (disc.bounce * segment.bounce + 1);
+            const bounceFactor = movement * (disc.bounce * (segment.data.bounce || 1) + 1);
             const bounce = normal.clone().multiplyScalar(bounceFactor);
 
             disc.velocity.subtract(bounce);
         }
     }
 
-    private checkGoal(ball: Disc, goal: Goal) {
+    private checkGoal(ball: Disc, goal: Line<JsonGoal>) {
         if (!this.prevBallPositions.has(ball.id)) {
             return false;
         }

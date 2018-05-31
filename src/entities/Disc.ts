@@ -12,13 +12,6 @@ export interface JsonDisc {
     text: string;
 }
 
-/* export interface opts {
-    id?: number;
-    color?: string;
-    damping?: number;
-    invMass?: number;
-} */
-
 export default class Disc {
     public id: number;
     public bounce = 0.5;

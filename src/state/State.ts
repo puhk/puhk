@@ -5,11 +5,11 @@ import { GoalScored } from 'Engine';
 import { JsonEvent, Event } from 'state/event';
 import * as Events from 'state/event/events';
 
-import Stadium, { JsonStadium, JsonTeam } from 'entities/Stadium';
 import ChatMessage from 'entities/ChatMessage';
 import Disc, { JsonDisc } from 'entities/Disc';
-import Goal from 'entities/Goal';
+import Line from 'entities/Line';
 import Player, { JsonPlayer } from 'entities/Player';
+import Stadium, { JsonGoal, JsonStadium, JsonTeam } from 'entities/Stadium';
 
 export const enum States {
     Kickoff = 0,
@@ -179,8 +179,8 @@ export default class State {
         });
     }
 
-    public goalScored(goal: Goal, eventApi: EventAggregator): void {
-        const team = this.stadium.getTeam(goal.teamScored);
+    public goalScored(goal: Line<JsonGoal>, eventApi: EventAggregator): void {
+        const team = this.stadium.getTeam(goal.data.teamScored);
 
         if (this.matchState !== States.Inplay || !team) {
             return;
@@ -204,11 +204,13 @@ export default class State {
             return;
         }
 
-        const disc = new Disc(new Vec(0, 0), this.stadium.playerPhysics.radius, {
-            color: team.color,
-            damping: this.stadium.playerPhysics.damping,
-            invMass: this.stadium.playerPhysics.invMass
-        });
+        const disc = new Disc(
+            new Vec(0, 0),
+            this.stadium.playerPhysics.radius,
+            team.color,
+            this.stadium.playerPhysics.damping,
+            this.stadium.playerPhysics.invMass
+        );
 
         disc.kickStrength = this.stadium.playerPhysics.kickStrength;
         // disc.isMe = player.clientId == this.me.id;

@@ -2,8 +2,7 @@ import Vec from 'victor';
 
 import Background, { JsonBackground } from 'entities/Background';
 import Disc, { JsonDisc } from 'entities/Disc';
-import Goal, { JsonGoal } from 'entities/Goal';
-import Segment, { JsonSegment } from 'entities/Segment';
+import Line from 'entities/Line';
 import { Packable } from 'entities/Packable';
 
 export interface JsonStadium {
@@ -32,14 +31,26 @@ export interface JsonPlayerPhysics {
     radius: number;
 }
 
+export interface JsonGoal {
+    p0: [number, number];
+    p1: [number, number];
+    teamScored: string;
+}
+
+export interface JsonSegment {
+    p0: [number, number];
+    p1: [number, number];
+    bounce?: number;
+}
+
 export type CameraConstraints = [number, number];
 
 export default class Stadium implements Packable {
     public cameraConstraints: CameraConstraints = [0, 0];
     public backgrounds: Background[] = [];
     public discs: Disc[] = [];
-    public goals: Goal[] = [];
-    public segments: Segment[] = [];
+    public goals: Line<JsonGoal>[] = [];
+    public segments: Line<JsonSegment>[] = [];
     public teams: JsonTeam[] = [];
     public playerPhysics!: JsonPlayerPhysics;
 
@@ -74,8 +85,8 @@ export default class Stadium implements Packable {
 
         stadium.backgrounds = json.backgrounds.map(obj => Background.parse(obj));
         stadium.discs = json.discs.map(obj => Disc.parse(obj));
-        stadium.goals = json.goals.map(obj => Goal.parse(obj));
-        stadium.segments = json.segments.map(obj => Segment.parse(obj));
+        stadium.goals = json.goals.map(obj => Line.parse(obj));
+        stadium.segments = json.segments.map(obj => Line.parse(obj));
 
         return stadium;
     }

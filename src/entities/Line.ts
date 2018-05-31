@@ -1,7 +1,14 @@
 import Vec from 'victor';
+import omit from 'lodash/omit';
 
-export default class Line {
-    public constructor(public p0: Vec, public p1: Vec) {}
+interface JsonObj {
+    p0: [number, number];
+    p1: [number, number];
+    [key: string]: any;
+}
+
+export default class Line<T extends object = {}> {
+    public constructor(public p0: Vec, public p1: Vec, public data: T) {}
 
     public draw(ctx: CanvasRenderingContext2D) {
         ctx.beginPath();
@@ -11,5 +18,13 @@ export default class Line {
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
         ctx.closePath();
         ctx.stroke();
+    }
+
+    public pack() {
+        return this.data;
+    }
+
+    public static parse<T extends JsonObj>(obj: T) {
+        return new Line(Vec.fromArray(obj.p0), Vec.fromArray(obj.p1), obj);
     }
 }
