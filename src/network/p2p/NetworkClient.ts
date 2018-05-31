@@ -12,7 +12,7 @@ export enum States {
 
 export default class NetworkClient extends AbstractP2PNetwork implements NetworkClientInterface {
     private hostConn: any;
-    private state: States;
+    private state: States = States.Unconnected;
     private static CONNECT_TIMEOUT = 10000;
 
     public constructor({ host, path }: Config) {
@@ -30,7 +30,7 @@ export default class NetworkClient extends AbstractP2PNetwork implements Network
         });
 
         return new Promise((resolve, reject) => {
-            let timeout = setTimeout(() => reject(), NetworkClient.CONNECT_TIMEOUT);
+            let timeout: number | null = window.setTimeout(() => reject(), NetworkClient.CONNECT_TIMEOUT);
 
             this.hostConn.on('data', (msg: Message) => {
                 if (timeout && this.state == States.Connecting) {

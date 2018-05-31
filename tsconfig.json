@@ -4,8 +4,7 @@
     "target": "es2016",
     "baseUrl": "./src",
     "sourceMap": false,
-    "noImplicitAny": true,
-    // "strictNullChecks": true,
+    "strict": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "suppressImplicitAnyIndexErrors": true

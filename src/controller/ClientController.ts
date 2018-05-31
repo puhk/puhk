@@ -11,14 +11,14 @@ import parseEvent from 'state/event/parse-event';
 import toMessage from 'state/event/to-message';
 
 export default class ClientController extends NetworkController {
-    private currentState: State;
+    private currentState?: State;
     private framesSinceLastSync = 0;
     private pings: number[] = [];
-    private pingInterval: number;
+    private pingInterval: number = 0;
     private pingFrequency = 500;
     private frameSamples: number[] = [];
     private maxFrameSamples = 10;
-    protected network: NetworkClient;
+    protected network!: NetworkClient;
 
     private msgHandlers = {
         'init': this.handleInitMsg,
@@ -32,7 +32,6 @@ export default class ClientController extends NetworkController {
 
         this.network.on('host:disconnect', () => {
             window.clearInterval(this.pingInterval);
-            this.pingInterval = null;
         });
 
         const createInterval = () => {
@@ -73,7 +72,7 @@ export default class ClientController extends NetworkController {
         Disc.nextDiscId = maxBy(state.discs, disc => disc.id).id + 1;
 
         const newState = this.simulator.advance();
-        const player = newState.getPlayerById(msg.id);
+        const player = newState.getPlayerById(msg.id)!;
         const myDisc = newState.getPlayerDisc(player);
 
         if (myDisc) {
@@ -113,7 +112,7 @@ export default class ClientController extends NetworkController {
 
     @autobind
     private sendPingMsg() {
-        this.network.send(<PingMsg>{
+        this.currentState && this.network.send(<PingMsg>{
             type: 'ping',
             frame: this.currentState.frame
         });
@@ -129,6 +128,10 @@ export default class ClientController extends NetworkController {
     }
 
     protected advance() {
+        if (!this.inited || !this.currentState) {
+            return;
+        }
+
         const estimatedHostFrame = this.simulator.concreteState.frame + this.framesSinceLastSync;
         const frameLead = percentile(this.frameSamples.slice().sort(), 0.9);
         const targetFrame = Math.min(estimatedHostFrame + frameLead + 1, this.simulator.concreteState.frame + 300);
@@ -137,7 +140,7 @@ export default class ClientController extends NetworkController {
         ++this.framesSinceLastSync;
     }
 
-    protected getCurrentState(): State {
+    protected getCurrentState(): State | undefined {
         return this.currentState;
     }
 }

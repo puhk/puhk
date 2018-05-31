@@ -11,7 +11,7 @@ export interface EventData {
 export default class Keypress implements Event {
     public shouldPredict = true;
 
-    public constructor(public frame: number, public sender: number, public data: EventData) { }
+    public constructor(public frame: number, public sender: number, public data: EventData) {}
 
     public apply(state: State) {
         const player = state.getPlayerById(this.data.clientId);

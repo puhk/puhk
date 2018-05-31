@@ -7,7 +7,7 @@ export interface EventData {
 }
 
 export default class PlayerAdmin implements Event {
-    public constructor(public frame: number, public sender: number, public data: EventData) { }
+    public constructor(public frame: number, public sender: number, public data: EventData) {}
 
     public apply(state: State) {
         if (this.data.player === -1) {

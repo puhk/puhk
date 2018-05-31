@@ -11,7 +11,7 @@ export interface ApplyResult {
 }
 
 export default class PlayerChat implements Event {
-    public constructor(public frame: number, public sender: number, public data: EventData) { }
+    public constructor(public frame: number, public sender: number, public data: EventData) {}
 
     public apply(state: State): ApplyResult {
         const message = new ChatMessage(this.sender, this.data.message);

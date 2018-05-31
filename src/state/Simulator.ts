@@ -38,8 +38,8 @@ export default class Simulator {
 
         for (const event of this.events) {
             if (event.frame == state.frame) {
-                event.apply(newState);
-                this.eventApi.publish(event);
+                const result = event.apply(newState);
+                this.eventApi.publish(event, result);
             }
         }
 
@@ -59,7 +59,7 @@ export default class Simulator {
         }
     }
 
-    private findStateByFrame(frame: number): State {
+    private findStateByFrame(frame: number): State | undefined {
         return this.states.find(state => state.frame === frame);
     }
 

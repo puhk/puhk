@@ -14,7 +14,7 @@ export interface ApplyResult {
 export default class ChangeTeam implements Event {
     public constructor(public frame: number, public sender: number, public data: EventData) { }
 
-    public apply(state: State): ApplyResult {
+    public apply(state: State): ApplyResult | undefined {
         const player = state.getPlayerById(this.data.clientId);
 
         if (!player) {

@@ -39,9 +39,7 @@ interface ControllerConstructor<T> {
 export const eventApi = new EventAggregator;
 
 const createStateFromStadium = (stadium: Stadium) => {
-    let state = new State;
-
-    state.stadium = stadium;
+    const state = new State(stadium);
     state.discs = stadium.discs.map(disc => disc.clone());
     state.initScores();
 

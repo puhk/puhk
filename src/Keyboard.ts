@@ -10,18 +10,18 @@ const keyCodes = {
 };
 
 export interface Keys {
-    up: boolean,
-    down: boolean,
-    left: boolean,
-    right: boolean,
-    kick: boolean
+    up: boolean;
+    down: boolean;
+    left: boolean;
+    right: boolean;
+    kick: boolean;
 }
 
 export type callback = (key: keyof Keys, state: boolean) => void;
 
 export default class Keyboard {
-    private element: HTMLElement;
-    private callback: callback;
+    private element?: HTMLElement | null;
+    private callback?: callback;
 
     private keyDown: Keys = {
         up: false,
@@ -62,12 +62,15 @@ export default class Keyboard {
             return;
         }
 
-        let key = this.codeToKey(e.keyCode);
+        const key = this.codeToKey(e.keyCode);
         e.preventDefault();
 
         if (typeof this.keyDown[key] != 'undefined' && this.keyDown[key] !== state) {
             this.keyDown[key] = state;
-            this.callback(key, state);
+
+            if (typeof this.callback === 'function') {
+                this.callback(key, state);
+            }
         }
     }
 

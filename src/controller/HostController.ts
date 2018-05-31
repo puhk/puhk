@@ -10,7 +10,6 @@ import packEvent from 'state/event/pack';
 import toMessage from 'state/event/to-message';
 
 export default class HostGameController extends NetworkController {
-    private nextSync: number = null;
     private syncFrequency = 100;
     private msgHandlers = {
         'event': this.handleEventMsg,

@@ -15,8 +15,6 @@ export interface JsonEvent {
 }
 
 export default class ChangeStadium implements Event {
-    private stadium: Stadium;
-
     public constructor(public frame: number, public sender: number, public data: EventData) {}
 
     public apply(state: State) {
@@ -24,15 +22,16 @@ export default class ChangeStadium implements Event {
             throw new Error('Cant change stadium while game playing');
         }
 
-        state.stadium = this.data.stadium;
-        state.discs = this.data.stadium.discs.map(disc => disc.clone());
+        const { stadium } = this.data;
+        state.stadium = stadium;
+        state.discs = stadium.discs.map(disc => disc.clone());
         state.initScores();
 
-        this.stadium = this.data.stadium;
+        return { stadium };
     }
 
     static parse(event: JsonEvent) {
-        let stadium = Stadium.parse(event.data.stadium);
-        return new String('ddsada');
+        const stadium = Stadium.parse(event.data.stadium);
+        return new ChangeStadium(event.frame, event.sender, { stadium });
     }
 }

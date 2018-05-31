@@ -1,15 +1,9 @@
 import Vec from 'victor';
 
 export default class Line {
-    p0: Vec;
-    p1: Vec;
+    public constructor(public p0: Vec, public p1: Vec) {}
 
-    constructor(p0: Vec, p1: Vec) {
-        this.p0 = p0;
-        this.p1 = p1;
-    }
-
-    draw(ctx: CanvasRenderingContext2D) {
+    public draw(ctx: CanvasRenderingContext2D) {
         ctx.beginPath();
         ctx.moveTo(this.p0.x, this.p0.y);
         ctx.lineTo(this.p1.x, this.p1.y);

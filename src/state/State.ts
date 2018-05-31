@@ -50,7 +50,8 @@ export default class State {
 
     public discs: Disc[] = [];
     public players: Player[] = [];
-    public stadium: Stadium;
+
+    public constructor(public stadium: Stadium) {}
 
     public startPlaying(): void {
         if (this.playing) {
@@ -80,7 +81,7 @@ export default class State {
         return scores.every(score => score == scores[0]);
     }
 
-    public update(eventApi: EventAggregator, goalsScored: GoalScored[]): Event {
+    public update(eventApi: EventAggregator, goalsScored: GoalScored[]): Event | undefined {
         switch (this.matchState) {
             case States.Kickoff:
                 this.discs.filter(disc => disc.isBall)
@@ -185,14 +186,14 @@ export default class State {
             return;
         }
 
-        this.scores.set(team.name, this.scores.get(team.name) + 1);
+        this.scores.set(team.name, (this.scores.get(team.name) || 0) + 1);
         this.matchState = States.GoalScored;
         this.matchStateTimer = 150;
 
         eventApi.publish('goalScored', { state: this, goal });
     }
 
-    public createPlayerDisc(player: Player): Disc {
+    public createPlayerDisc(player: Player): Disc | undefined {
         if (!player.team) {
             return;
         }
@@ -235,11 +236,11 @@ export default class State {
         this.players = this.players.concat(players);
     }
 
-    public getPlayerById(id: number): Player {
+    public getPlayerById(id: number): Player | undefined {
         return this.players.find(player => player.clientId == id);
     }
 
-    public getPlayerFromDisc(discId: number): Player {
+    public getPlayerFromDisc(discId: number): Player | undefined {
         return this.players.find(player => player.discId == discId);
     }
 
@@ -276,10 +277,9 @@ export default class State {
     }
 
     public clone(): State {
-        const clone = new State;
+        const clone = new State(this.stadium);
         clone.frame = this.frame;
         clone.roomName = this.roomName;
-        clone.stadium = this.stadium;
         clone.scores = new Map(this.scores);
         clone.scoreLimit = this.scoreLimit;
         clone.timer = this.timer;
@@ -313,10 +313,9 @@ export default class State {
     }
 
     public static parse(json: JsonState) {
-        const state = new State;
+        const state = new State(Stadium.parse(json.stadium));
         state.frame = json.frame;
         state.roomName = json.roomName;
-        state.stadium = Stadium.parse(json.stadium);
         state.scores = new Map(json.scores);
         state.scoreLimit = json.scoreLimit;
         state.timer = json.timer;

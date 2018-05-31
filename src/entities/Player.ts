@@ -6,18 +6,16 @@ export interface JsonPlayer {
     admin: boolean;
     avatar: string | number;
     team: string;
-    discId: number;
+    discId: number | null;
     keys: Keys;
 }
 
 export default class Player {
-    clientId: number;
-    name = '';
-    admin = false;
-    avatar = '';
-    team: string;
-    discId: number;
-    keys: Keys = {
+    public admin = false;
+    public avatar = '';
+    public team = '';
+    public discId: number | null = null;
+    public keys: Keys = {
         up: false,
         down: false,
         left: false,
@@ -25,10 +23,7 @@ export default class Player {
         kick: false
     };
 
-    constructor(clientId: number, name: string) {
-        this.clientId = clientId;
-        this.name = name;
-
+    public constructor(public clientId: number, public name: string) {
         if (this.clientId == -1) {
             this.admin = true;
         }
@@ -61,7 +56,7 @@ export default class Player {
     }
 
     public static parse(obj: JsonPlayer) {
-        let player = new Player(obj.clientId, obj.name);
+        const player = new Player(obj.clientId, obj.name);
         player.admin = obj.admin;
         player.setAvatar(obj.avatar);
         player.team = obj.team;

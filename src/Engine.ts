@@ -13,16 +13,14 @@ export interface GoalScored {
 }
 
 export default class Engine {
-    private state: State;
     private prevBallPositions = new Map<number, Vec>();
 
-    public run(state: State) {
-        this.state = state;
-        return state.playing ? this.update() : [];
+    public run(state: State): GoalScored[] {
+        return state.playing ? this.update(state) : [];
     }
 
-    private update() {
-        const stadium = this.state.stadium;
+    private update(state: State): GoalScored[] {
+        const stadium = state.stadium;
         const goalsScored: GoalScored[] = [];
 
         const applyPlayerMovement = (disc: Disc, player: Player) => {
@@ -52,8 +50,8 @@ export default class Engine {
             }
         };
 
-        this.state.discs.forEach((disc, i) => {
-            const player = this.state.getPlayerFromDisc(disc.id);
+        state.discs.forEach((disc, i) => {
+            const player = state.getPlayerFromDisc(disc.id);
 
             if (player) {
                 applyPlayerMovement(disc, player);
@@ -63,22 +61,22 @@ export default class Engine {
             disc.velocity.multiplyScalar(disc.damping);
         });
 
-        this.state.discs.sort((a, b) => {
+        state.discs.sort((a, b) => {
             return a.isBall ? 1 : -1;
         });
 
-        this.state.discs.forEach((disc, i1) => {
-            this.state.discs.forEach((disc2, i2) => {
+        state.discs.forEach((disc, i1) => {
+            state.discs.forEach((disc2, i2) => {
                 if (disc2 == disc || i1 >= i2) {
                     return;
                 }
 
-                this.handleCircleCollision(disc, disc2);
+                this.handleCircleCollision(state, disc, disc2);
             });
 
-            this.state.stadium.segments.forEach(segment => {
+            state.stadium.segments.forEach(segment => {
                 // quick hack until collision masks to prevent player/segment collision
-                if (this.state.getPlayerFromDisc(disc.id)) {
+                if (state.getPlayerFromDisc(disc.id)) {
                     return;
                 }
 
@@ -89,7 +87,7 @@ export default class Engine {
                 return;
             }
 
-            this.state.stadium.goals.forEach(goal => {
+            state.stadium.goals.forEach(goal => {
                 if (this.checkGoal(disc, goal)) {
                     goalsScored.push({ disc, goal });
                 }
@@ -101,11 +99,11 @@ export default class Engine {
         return goalsScored;
     }
 
-    private handleCircleCollision(disc: Disc, disc2: Disc) {
+    private handleCircleCollision(state: State, disc: Disc, disc2: Disc) {
         const distSq = disc.position.distanceSq(disc2.position);
 
         if (disc2.isBall && disc.position.distance(disc2.position) <= disc.radius + disc2.radius + 4) {
-            const player = this.state.getPlayerFromDisc(disc.id);
+            const player = state.getPlayerFromDisc(disc.id);
 
             if (player && player.keys.kick) {
                 this.kick(disc, disc2);
@@ -217,7 +215,7 @@ export default class Engine {
         }
 
         const distBall = this.discDistanceToLine(ball, goal);
-        const prevPos = this.prevBallPositions.get(ball.id);
+        const prevPos = this.prevBallPositions.get(ball.id)!;
         const prevDist = this.discDistanceToLine(new Disc(prevPos), goal);
 
         if (distBall === false || prevDist === false) {

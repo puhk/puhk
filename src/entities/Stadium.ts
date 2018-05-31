@@ -20,7 +20,7 @@ export interface JsonStadium {
 export interface JsonTeam {
     name: string;
     color: string;
-    kickOffPos?: [number, number];
+    kickOffPos: [number, number];
 }
 
 export interface JsonPlayerPhysics {
@@ -35,28 +35,25 @@ export interface JsonPlayerPhysics {
 export type CameraConstraints = [number, number];
 
 export default class Stadium implements Packable {
-    name: string;
-    cameraConstraints: CameraConstraints = [0, 0];
-    backgrounds: Background[] = [];
-    discs: Disc[] = [];
-    goals: Goal[] = [];
-    segments: Segment[] = [];
-    teams: JsonTeam[];
-    playerPhysics: JsonPlayerPhysics;
+    public cameraConstraints: CameraConstraints = [0, 0];
+    public backgrounds: Background[] = [];
+    public discs: Disc[] = [];
+    public goals: Goal[] = [];
+    public segments: Segment[] = [];
+    public teams: JsonTeam[] = [];
+    public playerPhysics!: JsonPlayerPhysics;
 
-    constructor(name: string) {
-        this.name = name;
-    }
+    constructor(public name: string) {}
 
-    getTeam(name: string): JsonTeam {
+    public getTeam(name: string): JsonTeam | undefined {
         return this.teams.find(team => team.name == name);
     }
 
-    getTeams() {
+    public getTeams() {
         return this.teams;
     }
 
-    pack(): JsonStadium {
+    public pack(): JsonStadium {
         return {
             name: this.name,
             cameraConstraints: this.cameraConstraints,
@@ -69,8 +66,8 @@ export default class Stadium implements Packable {
         };
     }
 
-    static parse(json: JsonStadium) {
-        let stadium = new Stadium(json.name);
+    public static parse(json: JsonStadium) {
+        const stadium = new Stadium(json.name);
         stadium.cameraConstraints = json.cameraConstraints;
         stadium.teams = json.teams;
         stadium.playerPhysics = json.player;

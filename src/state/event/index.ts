@@ -3,8 +3,8 @@ import State from 'state/State';
 export interface JsonEvent {
     eventType: string;
     frame: number;
-    sender: number;
-    data: any;
+    sender?: number;
+    data?: any;
 }
 
 export interface EventClass {
@@ -15,6 +15,6 @@ export interface Event {
     frame: number;
     sender?: number;
     data?: any;
-    apply(state: State): any;
+    apply(state: State): object | void;
     shouldPredict?: boolean;
 }

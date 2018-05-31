@@ -3,6 +3,5 @@
     "**/node_modules": true,
     "**/build": true
   },
-  "typescript.tsdk": "node_modules\\typescript\\lib",
-  "autoimport.filesToScan": "./src/**/*.{ts,tsx}"
+  "typescript.tsdk": "node_modules\\typescript\\lib"
 }
