@@ -69,7 +69,11 @@ export default class ClientController extends NetworkController {
         this.simulator.events = msg.events.map(parseEvent);
         this.currentState = state;
 
-        Disc.nextDiscId = maxBy(state.discs, disc => disc.id).id + 1;
+        const lastDisc = maxBy(state.discs, 'id');
+
+        if (lastDisc) {
+            Disc.nextDiscId = lastDisc.id + 1;
+        }
 
         const newState = this.simulator.advance();
         const player = newState.getPlayerById(msg.id)!;

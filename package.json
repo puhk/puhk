@@ -34,7 +34,7 @@
     "cross-env": "^3.1.4",
     "html-webpack-plugin": "^2.28.0",
     "ts-node": "^3.2.0",
-    "typescript": "^2.5.3",
+    "typescript": "^2.9.0",
     "webpack": "^2.6.1",
     "webpack-dev-server": "^2.3.0"
   }

@@ -16,7 +16,7 @@ export default class HostGameController extends NetworkController {
         'ping': this.handlePingMsg
     };
 
-    protected network: NetworkHost;
+    protected network!: NetworkHost;
 
     public hostGame(player: PlayerInfo): Promise<HostGameController> {
         this.network.on('client:joined', this.clientJoined);
