@@ -10,7 +10,7 @@ export default function handleCircleCollision(state: State, disc: Disc, disc2: D
         if (player && player.keys.kick) {
             kick(disc, disc2);
             player.keys.kick = false;
-            disc.kicking = false;
+            disc.borderFlash = false;
         }
     }
 

@@ -16,8 +16,8 @@ export default class Disc {
     public id: number;
     public bounce = 0.5;
     public kickStrength = 5;
-    public kicking = false;
-    public isMe = false;
+    public borderFlash = false;
+    public hasOutline = false;
     public isBall = false;
     public text = '';
     public velocity = new Vec(0, 0);
@@ -50,7 +50,7 @@ export default class Disc {
         );
 
         clone.velocity = this.velocity.clone();
-        clone.isMe = this.isMe;
+        clone.hasOutline = this.hasOutline;
         clone.isBall = this.isBall;
         clone.text = this.text;
 
@@ -98,12 +98,12 @@ export default class Disc {
         ctx.arc(x, y, this.radius, 0, 2 * Math.PI);
         ctx.fillStyle = this.color;
         ctx.lineWidth = 2;
-        ctx.strokeStyle = this.kicking ? '#fff' : '#000';
+        ctx.strokeStyle = this.borderFlash ? '#fff' : '#000';
         ctx.fill();
         ctx.closePath();
         ctx.stroke();
 
-        if (this.isMe) {
+        if (this.hasOutline) {
             ctx.beginPath();
             ctx.arc(x, y, this.radius + 10, 0, 2 * Math.PI);
             ctx.lineWidth = 3;

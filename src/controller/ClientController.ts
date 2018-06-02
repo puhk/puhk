@@ -76,7 +76,7 @@ export default class ClientController extends NetworkController {
         const myDisc = newState.getPlayerDisc(player);
 
         if (myDisc) {
-            myDisc.isMe = true;
+            myDisc.hasOutline = true;
         }
 
         this.setMe({

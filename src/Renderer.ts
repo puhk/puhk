@@ -114,7 +114,7 @@ export default class Renderer {
         }
 
         const ball = state.discs.find(disc => disc.isBall);
-        const player = state.discs.find(disc => disc.isMe);
+        const player = state.discs.find(disc => disc.hasOutline);
         const target = this.calculateTarget(ball, player);
 
         const diff = target.clone().subtract(this.cameraPos);
