@@ -20,7 +20,7 @@ export default class Disc {
     public isMe = false;
     public isBall = false;
     public text = '';
-    public velocity: Vec;
+    public velocity = new Vec(0, 0);
 
     public static nextDiscId = 0;
 
@@ -33,10 +33,6 @@ export default class Disc {
         id?: number
     ) {
         this.id = typeof id !== 'undefined' ? id : Disc.nextDiscId++;
-        this.velocity = new Vec(0, 0);
-        this.color = color;
-        this.damping = damping;
-        this.invMass = invMass;
     }
 
     public get mass(): number {
