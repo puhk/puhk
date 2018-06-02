@@ -1,8 +1,8 @@
 import { EventAggregator } from 'aurelia-event-aggregator';
 
+import update from 'engine';
 import State from 'state/State';
 import { Event } from 'state/event';
-import update from 'Engine';
 
 export default class Simulator {
     public events: Event[] = [];
