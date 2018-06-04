@@ -1,7 +1,7 @@
 import MainLoop from 'mainloop.js';
-import Renderer from 'Renderer';
-import Simulator from 'state/Simulator';
-import State from 'state/State';
+import Renderer from '@src/Renderer';
+import Simulator from '@src/state/Simulator';
+import State from '@src/state/State';
 
 export default abstract class Controller {
     protected inited = false;

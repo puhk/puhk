@@ -1,7 +1,7 @@
-import { Event } from 'state/event';
-import State from 'state/State';
-import Player from 'entities/Player';
-import { PlayerInfo } from 'controller/NetworkController'
+import { Event } from '@src/state/event';
+import State from '@src/state/State';
+import { PlayerInfo } from '@src/controller/NetworkController'
+import Player from '@src/entities/Player';
 
 export interface EventData extends PlayerInfo {
     clientId: number;

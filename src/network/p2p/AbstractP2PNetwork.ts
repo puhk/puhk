@@ -1,5 +1,5 @@
 import { EventEmitter } from 'eventemitter3';
-import { NetworkInterface, Message } from 'network/NetworkInterface';
+import { NetworkInterface, Message } from '@src/network/NetworkInterface';
 
 export interface Config {
     host: string;

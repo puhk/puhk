@@ -1,6 +1,6 @@
-import { NetworkInterface, Message } from 'network/NetworkInterface';
-import NetworkClientInterface from 'network/NetworkClientInterface';
-import { AbstractP2PNetwork, Config } from 'network/p2p/AbstractP2PNetwork';
+import { NetworkInterface, Message } from '@src/network/NetworkInterface';
+import NetworkClientInterface from '@src/network/NetworkClientInterface';
+import { AbstractP2PNetwork, Config } from '@src/network/p2p/AbstractP2PNetwork';
 
 declare const Peer: any;
 

@@ -1,12 +1,12 @@
 import Vec from 'victor';
 
-import handleCircleCollision from 'engine/circle-collision';
-import { discDistanceToLine, handleDiscSegmentCollision } from 'engine/segment-collision';
-import Disc from 'entities/Disc';
-import Line from 'entities/Line';
-import Player from 'entities/Player';
-import { JsonGoal } from 'entities/Stadium';
-import State from 'state/State';
+import handleCircleCollision from '@src/engine/circle-collision';
+import { discDistanceToLine, handleDiscSegmentCollision } from '@src/engine/segment-collision';
+import Disc from '@src/entities/Disc';
+import Line from '@src/entities/Line';
+import Player from '@src/entities/Player';
+import { JsonGoal } from '@src/entities/Stadium';
+import State from '@src/state/State';
 
 export interface GoalScored {
     disc: Disc;
@@ -41,10 +41,14 @@ export default function update(state: State): GoalScored[] {
             move.y += 1;
         }
 
+        if (move.lengthSq() === 0) {
+            return move;
+        }
+
         return move.normalize().multiplyScalar(accel);
     };
 
-    state.discs.forEach((disc, i) => {
+    state.discs.forEach(disc => {
         const player = state.getPlayerFromDisc(disc.id);
 
         if (player) {
@@ -55,7 +59,7 @@ export default function update(state: State): GoalScored[] {
         disc.velocity.multiplyScalar(disc.damping);
     });
 
-    state.discs.sort((a, b) => a.isBall ? 1 : -1);
+    state.discs.sort(a => a.isBall ? 1 : -1);
 
     state.discs.forEach((disc, i1) => {
         state.discs.forEach((disc2, i2) => {

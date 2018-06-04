@@ -1,6 +1,6 @@
 import { autobind } from 'core-decorators';
-import { NetworkInterface, Message } from 'network/NetworkInterface';
-import { AbstractP2PNetwork, Config } from 'network/p2p/AbstractP2PNetwork';
+import { NetworkInterface, Message } from '@src/network/NetworkInterface';
+import { AbstractP2PNetwork, Config } from '@src/network/p2p/AbstractP2PNetwork';
 
 interface Client {
     id: number;

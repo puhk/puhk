@@ -1,13 +1,13 @@
 import { autobind } from 'core-decorators';
 
-import { NetworkController, PlayerInfo } from 'controller/NetworkController';
-import { Message, EventMsg, InitMsg, SyncMsg, PingMsg, PongMsg } from 'network/NetworkInterface';
-import NetworkHost from 'network/p2p/NetworkHost';
-import State from 'state/State';
-import * as Events from 'state/event/events';
-import parseEvent from 'state/event/parse-event';
-import packEvent from 'state/event/pack';
-import toMessage from 'state/event/to-message';
+import { NetworkController, PlayerInfo } from '@src/controller/NetworkController';
+import { Message, EventMsg, InitMsg, SyncMsg, PingMsg, PongMsg } from '@src/network/NetworkInterface';
+import NetworkHost from '@src/network/p2p/NetworkHost';
+import State from '@src/state/State';
+import * as Events from '@src/state/event/events';
+import parseEvent from '@src/state/event/parse-event';
+import packEvent from '@src/state/event/pack';
+import toMessage from '@src/state/event/to-message';
 
 export default class HostGameController extends NetworkController {
     private syncFrequency = 100;

@@ -1,8 +1,8 @@
 import { EventAggregator } from 'aurelia-event-aggregator';
 
-import update from 'engine';
-import State from 'state/State';
-import { Event } from 'state/event';
+import update from '@src/engine';
+import State from '@src/state/State';
+import { Event } from '@src/state/event';
 
 export default class Simulator {
     public events: Event[] = [];
@@ -43,7 +43,7 @@ export default class Simulator {
             }
         }
 
-        const goalsScored = state.playing ? update(state) : [];
+        const goalsScored = newState.playing ? update(newState) : [];
         const event = newState.update(this.eventApi, goalsScored);
 
         if (event) {

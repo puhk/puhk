@@ -1,6 +1,6 @@
 import mapValues from 'lodash/mapValues';
-import { Event, JsonEvent } from 'state/event';
-import { isPackable } from 'entities/Packable';
+import { isPackable } from '@src/entities/Packable';
+import { Event, JsonEvent } from '@src/state/event';
 
 export default function pack(event: Event): JsonEvent {
     const mapper = (value: any) => isPackable(value) ? value.pack() : value;

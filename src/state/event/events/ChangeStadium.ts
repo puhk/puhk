@@ -1,6 +1,6 @@
-import { Event } from 'state/event';
-import State from 'state/State';
-import Stadium, { JsonStadium } from 'entities/Stadium';
+import { Event } from '@src/state/event';
+import State from '@src/state/State';
+import Stadium, { JsonStadium } from '@src/entities/Stadium';
 
 export interface EventData {
     stadium: Stadium;

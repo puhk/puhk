@@ -1,21 +1,21 @@
 import { EventAggregator } from 'aurelia-event-aggregator';
 
-import Keyboard from 'Keyboard';
-import Renderer from 'Renderer';
-import Simulator from 'state/Simulator';
-import State from 'state/State';
+import Keyboard from '@src/Keyboard';
+import Renderer from '@src/Renderer';
+import Simulator from '@src/state/Simulator';
+import State from '@src/state/State';
 
-import { NetworkController, PlayerInfo } from 'controller/NetworkController';
-import ClientController from 'controller/ClientController';
-import HostController from 'controller/HostController';
+import { NetworkController, PlayerInfo } from '@src/controller/NetworkController';
+import ClientController from '@src/controller/ClientController';
+import HostController from '@src/controller/HostController';
 
-import { NetworkInterface } from 'network/NetworkInterface';
-import { Config } from 'network/p2p/AbstractP2PNetwork';
-import NetworkHost from 'network/p2p/NetworkHost';
-import NetworkClient from 'network/p2p/NetworkClient';
+import { NetworkInterface } from '@src/network/NetworkInterface';
+import { Config } from '@src/network/p2p/AbstractP2PNetwork';
+import NetworkHost from '@src/network/p2p/NetworkHost';
+import NetworkClient from '@src/network/p2p/NetworkClient';
 
-import Stadium from 'entities/Stadium';
-import classic from 'stadiums/classic';
+import Stadium from '@src/entities/Stadium';
+import classic from '@src/stadiums/classic';
 
 export interface Opts extends Config {
     player: PlayerInfo;

@@ -2,6 +2,7 @@ import path = require('path');
 import webpack = require('webpack');
 import HtmlWebpackPlugin = require('html-webpack-plugin');
 import { TsConfigPathsPlugin } from 'awesome-typescript-loader';
+import { getConfigFileParsingDiagnostics } from 'typescript';
 
 const ENV = process.env.NODE_ENV && process.env.NODE_ENV.toLowerCase() || 'development';
 
@@ -29,7 +30,8 @@ let config: webpack.Configuration = {
   },
   resolve: {
     extensions: ['.ts', '.js', '.json'],
-    modules: ['src', 'node_modules']
+    modules: ['src', 'node_modules'],
+    plugins: [new TsConfigPathsPlugin]
   },
   plugins: []
 };
@@ -71,6 +73,6 @@ if (ENV === 'development') {
   });
 }
 
-// config.plugins.push(new TsConfigPathsPlugin);
+// config.resolve.plugins = ];
 
 export default config;

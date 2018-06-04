@@ -1,6 +1,6 @@
-import { Event, JsonEvent } from 'state/event';
-import pack from 'state/event/pack';
-import { EventMsg } from 'network/NetworkInterface';
+import { EventMsg } from '@src/network/NetworkInterface';
+import { Event } from '@src/state/event';
+import pack from '@src/state/event/pack';
 
 export default function toMessage(event: Event): EventMsg {
     return {

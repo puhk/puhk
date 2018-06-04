@@ -1,5 +1,5 @@
-import { JsonEvent } from 'state/event';
-import { JsonState } from 'state/State';
+import { JsonEvent } from '@src/state/event';
+import { JsonState } from '@src/state/State';
 
 export interface Message {
     type: string;

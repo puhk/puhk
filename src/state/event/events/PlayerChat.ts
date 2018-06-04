@@ -1,6 +1,6 @@
-import { Event } from 'state/event';
-import State from 'state/State';
-import ChatMessage from 'entities/ChatMessage';
+import { Event } from '@src/state/event';
+import State from '@src/state/State';
+import ChatMessage from '@src/entities/ChatMessage';
 
 export interface EventData {
     message: string;

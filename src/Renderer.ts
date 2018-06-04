@@ -1,7 +1,7 @@
 import Vec from 'victor';
 
-import State from 'state/State';
-import Disc from 'entities/Disc';
+import State from '@src/state/State';
+import Disc from '@src/entities/Disc';
 
 export default class Renderer {
     private canvas: HTMLCanvasElement;

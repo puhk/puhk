@@ -1,9 +1,9 @@
 import Vec from 'victor';
 
-import Background, { JsonBackground } from 'entities/Background';
-import Disc, { JsonDisc } from 'entities/Disc';
-import Line from 'entities/Line';
-import { Packable } from 'entities/Packable';
+import Background, { JsonBackground } from '@src/entities/Background';
+import Disc, { JsonDisc } from '@src/entities/Disc';
+import Line from '@src/entities/Line';
+import { Packable } from '@src/entities/Packable';
 
 export interface JsonStadium {
     name: string;

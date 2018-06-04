@@ -1,4 +1,4 @@
-import { Keys } from 'Keyboard';
+import { Keys } from '@src/Keyboard';
 
 export interface JsonPlayer {
     clientId: number;
