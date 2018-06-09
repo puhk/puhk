@@ -14,7 +14,7 @@ export default class StopGame implements Event {
 
         state.players.map(state.getPlayerDisc)
             .filter(isDisc)
-            .forEach(state.removeDisc);
+            .forEach(disc => state.removeDisc(disc));
 
         state.playing = false;
     }
