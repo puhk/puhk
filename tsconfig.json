@@ -7,7 +7,6 @@
     "strict": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "suppressImplicitAnyIndexErrors": true,
     "paths": {
       "@src/*": [
         "src/*"
