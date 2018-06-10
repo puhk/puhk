@@ -1,7 +1,10 @@
 import State from '@src/state/State';
+import * as Events from '@src/state/event/events';
+
+export type EventNames = keyof typeof Events;
 
 export interface JsonEvent {
-    eventType: string;
+    eventType: EventNames;
     frame: number;
     sender?: number;
     data?: any;
