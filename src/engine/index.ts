@@ -18,10 +18,8 @@ export default function update(state: State): GoalScored[] {
     const stadium = state.stadium;
     let goalsScored: GoalScored[] = [];
 
-    const applyPlayerMovement = (disc: Disc, player: Player) => {
-        disc.borderFlash = player.keys.kick;
-
-        const accel = stadium.playerPhysics[disc.borderFlash ? 'kickingAcceleration' : 'acceleration'];
+    const applyPlayerMovement = (player: Player) => {
+        const accel = stadium.playerPhysics[player.keys.kick ? 'kickingAcceleration' : 'acceleration'];
         const move = new Vec(0, 0);
 
         if (player.keys.left) {
@@ -51,7 +49,8 @@ export default function update(state: State): GoalScored[] {
         const player = state.getPlayerFromDisc(disc.id);
 
         if (player) {
-            disc.velocity.add(applyPlayerMovement(disc, player));
+            disc.borderFlash = player.keys.kick;
+            disc.velocity.add(applyPlayerMovement(player));
         }
 
         disc.position.add(disc.velocity);
