@@ -1,9 +1,9 @@
 import Vec from 'victor';
 import Disc from '@src/entities/Disc';
 import Line from '@src/entities/Line';
-import { JsonSegment } from '@src/entities/Stadium';
+import { Segment } from '@src/entities/Stadium';
 
-export function handleDiscSegmentCollision(disc: Disc, segment: Line<JsonSegment>) {
+export function handleDiscSegmentCollision(disc: Disc, segment: Segment) {
     const result = discDistanceToLine(disc, segment);
 
     if (result === false) {

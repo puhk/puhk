@@ -1,5 +1,3 @@
-import Vec from 'victor';
-
 import Background, { JsonBackground } from '@src/entities/Background';
 import Disc, { JsonDisc } from '@src/entities/Disc';
 import Line from '@src/entities/Line';
@@ -43,14 +41,16 @@ export interface JsonSegment {
     bounce?: number;
 }
 
+export type Goal = Line<JsonGoal>;
+export type Segment = Line<JsonSegment>;
 export type CameraConstraints = [number, number];
 
 export default class Stadium implements Packable {
     public cameraConstraints: CameraConstraints = [0, 0];
     public backgrounds: Background[] = [];
     public discs: Disc[] = [];
-    public goals: Line<JsonGoal>[] = [];
-    public segments: Line<JsonSegment>[] = [];
+    public goals: Goal[] = [];
+    public segments: Segment[] = [];
     public teams: JsonTeam[] = [];
     public playerPhysics!: JsonPlayerPhysics;
 

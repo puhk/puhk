@@ -7,9 +7,8 @@ import * as Events from '@src/state/event/events';
 
 import ChatMessage from '@src/entities/ChatMessage';
 import Disc, { JsonDisc } from '@src/entities/Disc';
-import Line from '@src/entities/Line';
 import Player, { JsonPlayer } from '@src/entities/Player';
-import Stadium, { JsonGoal, JsonStadium, JsonTeam } from '@src/entities/Stadium';
+import Stadium, { JsonStadium, JsonTeam, Goal } from '@src/entities/Stadium';
 
 export const enum States {
     Kickoff = 0,
@@ -179,7 +178,7 @@ export default class State {
         });
     }
 
-    public goalScored(goal: Line<JsonGoal>, eventApi: EventAggregator): void {
+    public goalScored(goal: Goal, eventApi: EventAggregator): void {
         const team = this.stadium.getTeam(goal.data.teamScored);
 
         if (this.matchState !== States.Inplay || !team) {

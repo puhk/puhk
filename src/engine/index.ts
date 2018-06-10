@@ -3,14 +3,13 @@ import Vec from 'victor';
 import handleCircleCollision from '@src/engine/circle-collision';
 import { discDistanceToLine, handleDiscSegmentCollision } from '@src/engine/segment-collision';
 import Disc from '@src/entities/Disc';
-import Line from '@src/entities/Line';
 import Player from '@src/entities/Player';
-import { JsonGoal } from '@src/entities/Stadium';
+import { Goal } from '@src/entities/Stadium';
 import State from '@src/state/State';
 
 export interface GoalScored {
     disc: Disc;
-    goal: Line<JsonGoal>;
+    goal: Goal;
 }
 
 const prevBallPositions = new Map<number, Vec>();
@@ -96,7 +95,7 @@ export default function update(state: State): GoalScored[] {
     return goalsScored;
 }
 
-function checkGoal(ball: Disc, goal: Line<JsonGoal>) {
+function checkGoal(ball: Disc, goal: Goal) {
     if (!prevBallPositions.has(ball.id)) {
         return false;
     }

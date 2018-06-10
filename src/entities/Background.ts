@@ -1,8 +1,6 @@
 import Vec from 'victor';
 
-export type PitchTypes =
-    'grass' |
-    'hockey';
+export type PitchTypes = 'grass' | 'hockey';
 
 export interface JsonBackground {
     pos: number[];
