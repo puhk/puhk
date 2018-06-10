@@ -1,7 +1,7 @@
 import { autobind } from 'core-decorators';
 
 import { NetworkController, PlayerInfo } from '@src/controller/NetworkController';
-import { Message, EventMsg, InitMsg, SyncMsg, PingMsg, PongMsg } from '@src/network/NetworkInterface';
+import { MessageType, EventMsg, InitMsg, SyncMsg, PingMsg, PongMsg } from '@src/network/NetworkInterface';
 import NetworkHost from '@src/network/p2p/NetworkHost';
 import State from '@src/state/State';
 import * as Events from '@src/state/event/events';
@@ -11,16 +11,13 @@ import toMessage from '@src/state/event/to-message';
 
 export default class HostGameController extends NetworkController {
     private syncFrequency = 100;
-    private msgHandlers = {
-        'event': this.handleEventMsg,
-        'ping': this.handlePingMsg
-    };
 
     protected network!: NetworkHost;
 
     public hostGame(player: PlayerInfo): Promise<HostGameController> {
         this.network.on('client:joined', this.clientJoined);
-        this.network.on('client:msg', this.handleMsg);
+        this.network.on(`client:msg:${MessageType.Event}`, this.handleEventMsg);
+        this.network.on(`client:msg:${MessageType.Ping}`, this.handlePingMsg);
 
         setInterval(this.sendSync, this.syncFrequency);
 
@@ -48,21 +45,12 @@ export default class HostGameController extends NetworkController {
         this.simulator.addEvent(event);
         this.network.broadcast(toMessage(event), id);
 
-        this.network.sendToClient(id, <InitMsg>{
-            type: 'init',
+        this.network.sendToClient(id, {
+            type: MessageType.Init,
             state: this.simulator.concreteState.pack(),
             events: this.simulator.events.map(event => packEvent(event)),
             id
         });
-    }
-
-    @autobind
-    private handleMsg(client: number, msg: Message) {
-        if (!this.msgHandlers[msg.type] || typeof this.msgHandlers[msg.type] !== 'function') {
-            throw new Error(`Invalid msg type recieved: ${msg.type}`);
-        }
-
-        this.msgHandlers[msg.type](client, msg);
     }
 
     @autobind
@@ -81,8 +69,8 @@ export default class HostGameController extends NetworkController {
 
     @autobind
     private handlePingMsg(client: number, msg: PingMsg) {
-        this.network.sendToClient(client, <PongMsg>{
-            type: 'pong',
+        this.network.sendToClient(client, {
+            type: MessageType.Pong,
             clientFrame: msg.frame,
             hostFrame: this.simulator.concreteState.frame
         });
@@ -109,10 +97,9 @@ export default class HostGameController extends NetworkController {
 
     @autobind
     private sendSync() {
-        this.network.send(<SyncMsg>{
-            type: 'sync',
-            state: this.simulator.concreteState.pack(),
-            events: this.simulator.events.map(event => packEvent(event))
+        this.network.send({
+            type: MessageType.Sync,
+            state: this.simulator.concreteState.pack()
         });
     }
 

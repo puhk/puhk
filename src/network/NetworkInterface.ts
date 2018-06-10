@@ -1,37 +1,48 @@
 import { JsonEvent } from '@src/state/event';
 import { JsonState } from '@src/state/State';
 
-export interface Message {
-    type: string;
+export enum MessageType {
+    Sync = 'sync',
+    Init = 'init',
+    Event = 'event',
+    Ping = 'ping',
+    Pong = 'pong',
 }
 
-export interface SyncMsg extends Message {
-    type: 'sync';
+export interface SyncMsg {
+    type: MessageType.Sync;
     state: JsonState;
 }
 
-export interface InitMsg extends Message {
-    type: 'init';
+export interface InitMsg {
+    type: MessageType.Init;
     id: number;
     state: JsonState;
     events: JsonEvent[];
 }
 
-export interface EventMsg extends Message {
-    type: 'event';
+export interface EventMsg {
+    type: MessageType.Event;
     event: JsonEvent;
 }
 
-export interface PingMsg extends Message {
-    type: 'ping';
+export interface PingMsg {
+    type: MessageType.Ping;
     frame: number;
 }
 
-export interface PongMsg extends Message {
-    type: 'pong';
+export interface PongMsg {
+    type: MessageType.Pong;
     clientFrame: number;
     hostFrame: number;
 }
+
+export type Message =
+    SyncMsg |
+    InitMsg |
+    EventMsg |
+    PingMsg |
+    PongMsg;
 
 export interface NetworkInterface {
     send(msg: Message): void;

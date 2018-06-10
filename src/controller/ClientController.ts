@@ -2,7 +2,7 @@ import { autobind } from 'core-decorators';
 import maxBy from 'lodash/maxBy';
 
 import { NetworkController, PlayerInfo } from '@src/controller/NetworkController';
-import { Message, InitMsg, EventMsg, SyncMsg, PingMsg, PongMsg } from '@src/network/NetworkInterface';
+import { InitMsg, EventMsg, SyncMsg, PingMsg, PongMsg, MessageType } from '@src/network/NetworkInterface';
 import NetworkClient from '@src/network/p2p/NetworkClient';
 import Disc from '@src/entities/Disc';
 import State from '@src/state/State';
@@ -20,15 +20,11 @@ export default class ClientController extends NetworkController {
     private maxFrameSamples = 10;
     protected network!: NetworkClient;
 
-    private msgHandlers = {
-        'init': this.handleInitMsg,
-        'event': this.handleEventMsg,
-        'sync': this.handleSyncMsg,
-        'pong': this.handlePongMsg
-    };
-
     public join(roomId: string, player: PlayerInfo) {
-        this.network.on('host:msg', this.handleMsg);
+        this.network.on(`host:msg:${MessageType.Init}`, this.handleInitMsg);
+        this.network.on(`host:msg:${MessageType.Event}`, this.handleEventMsg);
+        this.network.on(`host:msg:${MessageType.Sync}`, this.handleSyncMsg);
+        this.network.on(`host:msg:${MessageType.Pong}`, this.handlePongMsg);
 
         this.network.on('host:disconnect', () => {
             window.clearInterval(this.pingInterval);
@@ -51,15 +47,6 @@ export default class ClientController extends NetworkController {
         if (send) {
             this.network.send(toMessage(event));
         }
-    }
-
-    @autobind
-    private handleMsg(msg: Message) {
-        if (!this.msgHandlers[msg.type] || typeof this.msgHandlers[msg.type] !== 'function') {
-            throw new Error(`Invalid msg type recieved: ${msg.type}`);
-        }
-
-        this.msgHandlers[msg.type](msg);
     }
 
     @autobind
@@ -116,8 +103,8 @@ export default class ClientController extends NetworkController {
 
     @autobind
     private sendPingMsg() {
-        this.currentState && this.network.send(<PingMsg>{
-            type: 'ping',
+        this.currentState && this.network.send({
+            type: MessageType.Ping,
             frame: this.currentState.frame
         });
     }

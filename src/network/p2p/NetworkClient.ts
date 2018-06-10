@@ -1,4 +1,4 @@
-import { NetworkInterface, Message } from '@src/network/NetworkInterface';
+import { Message } from '@src/network/NetworkInterface';
 import NetworkClientInterface from '@src/network/NetworkClientInterface';
 import { AbstractP2PNetwork, Config } from '@src/network/p2p/AbstractP2PNetwork';
 
@@ -12,7 +12,7 @@ export enum States {
 
 export default class NetworkClient extends AbstractP2PNetwork implements NetworkClientInterface {
     private hostConn: any;
-    private state: States = States.Unconnected;
+    private state = States.Unconnected;
     private static CONNECT_TIMEOUT = 10000;
 
     public constructor({ host, path }: Config) {
@@ -39,7 +39,7 @@ export default class NetworkClient extends AbstractP2PNetwork implements Network
                     resolve();
                 }
 
-                this.emit('host:msg', msg);
+                this.emit(`host:msg:${msg.type}`, msg);
             });
         });
     }
