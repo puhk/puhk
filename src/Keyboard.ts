@@ -1,14 +1,5 @@
 import { autobind } from 'core-decorators';
 
-const keyCodes = {
-    37: 'left',
-    38: 'up',
-    39: 'right',
-    40: 'down',
-    32: 'kick',
-    88: 'kick'
-};
-
 export interface Keys {
     up: boolean;
     down: boolean;
@@ -18,6 +9,15 @@ export interface Keys {
 }
 
 export type callback = (key: keyof Keys, state: boolean) => void;
+
+const keyCodes = new Map<number, keyof Keys>([
+    [37, 'left'],
+    [38, 'up'],
+    [39, 'right'],
+    [40, 'down'],
+    [32, 'kick'],
+    [88, 'kick']
+]);
 
 export default class Keyboard {
     private element?: HTMLElement | null;
@@ -58,19 +58,22 @@ export default class Keyboard {
     }
 
     private setKey(e: KeyboardEvent, state: boolean) {
-        if (!keyCodes[e.keyCode]) {
+        const key = keyCodes.get(e.keyCode);
+
+        if (!key) {
             return;
         }
 
-        const key = this.codeToKey(e.keyCode);
         e.preventDefault();
 
-        if (typeof this.keyDown[key] != 'undefined' && this.keyDown[key] !== state) {
-            this.keyDown[key] = state;
+        if (this.keyDown[key] === state) {
+            return;
+        }
 
-            if (typeof this.callback === 'function') {
-                this.callback(key, state);
-            }
+        this.keyDown[key] = state;
+
+        if (this.callback) {
+            this.callback(key, state);
         }
     }
 
@@ -82,10 +85,6 @@ export default class Keyboard {
     @autobind
     protected keyUpHandler(e: KeyboardEvent) {
         this.setKey(e, false);
-    }
-
-    private codeToKey(code: number): keyof Keys {
-        return keyCodes[code];
     }
 
     public isDown(key: keyof Keys): boolean {
