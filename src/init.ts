@@ -63,12 +63,10 @@ const createController = <T extends NetworkController, N extends NetworkInterfac
     );
 }
 
-export function host(opts: Opts) {
-    const controller = createController(HostController, NetworkHost, opts);
-    return controller.hostGame(opts.player);
-};
+export const host = (opts: Opts) =>
+    createController(HostController, NetworkHost, opts)
+        .hostGame(opts.player);
 
-export function join(opts: ClientOps) {
-    const controller = createController(ClientController, NetworkClient, opts);
-    return controller.join(opts.roomId, opts.player);
-};
+export const join = (opts: ClientOps) =>
+    createController(ClientController, NetworkClient, opts)
+        .join(opts.roomId, opts.player);
