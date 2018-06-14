@@ -55,9 +55,9 @@
   dependencies:
     "@types/source-map" "*"
 
-"@types/victor@^0.2.28":
-  version "0.2.28"
-  resolved "https://registry.yarnpkg.com/@types/victor/-/victor-0.2.28.tgz#8d4f404f203049188f65787e49af33d7fa648757"
+"@types/victor@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@types/victor/-/victor-1.1.0.tgz#c540809e2efb94ef60e293495cfad1614d14ec87"
 
 "@types/webpack-env@^1.13.0":
   version "1.13.0"

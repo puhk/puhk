@@ -140,7 +140,7 @@ export default class Renderer {
 
             if (player) {
                 const diff = player.position.clone().subtract(ball.position);
-                target.add((<any>diff).divideScalar(2));
+                target.add(diff.divideScalar(2));
             }
         } else if (player) {
             target = player.position.clone();
@@ -151,6 +151,6 @@ export default class Renderer {
 
     private resetCamera() {
         this.ctx.translate(this.cameraPos.x, this.cameraPos.y);
-        (<any>this.cameraPos).zero();
+        this.cameraPos.zero();
     }
 }
