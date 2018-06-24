@@ -12,4 +12,5 @@ export { host, join } from './init';
 export { default as Renderer } from './Renderer';
 export { default as State } from './state/State';
 export { default as Background } from './entities/Background';
+export { Goal } from './entities/Stadium';
 export { Entities, Events, defaultStadiums };
