@@ -38,12 +38,12 @@ export default class State {
     private maxChatMessages = 50;
     private matchState: States = States.Kickoff;
     private matchStateTimer = 0;
-    private scores: Map<string, number> = new Map;
     private timer = 0;
 
     public frame = 0;
     public roomName = '';
     public playing = false;
+    public scores: Map<string, number> = new Map;
     public scoreLimit = 3;
     public timeLimit = 3;
 
