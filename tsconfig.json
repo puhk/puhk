@@ -7,11 +7,6 @@
     "strict": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "paths": {
-      "@src/*": [
-        "src/*"
-      ]
-    }
   },
   "include": [
     "src/**/*"

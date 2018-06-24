@@ -1,5 +1,5 @@
-import { JsonEvent, Event, EventClass } from '@src/state/event';
-import * as Events from '@src/state/event/events';
+import { JsonEvent, Event, EventClass } from './index';
+import * as Events from './events';
 
 interface CustomParseableEvent extends EventClass {
     parse(event: JsonEvent): Event;

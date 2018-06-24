@@ -1,6 +1,6 @@
-import { Keys } from '@src/Keyboard';
-import { Event } from '@src/state/event';
-import State from '@src/state/State';
+import { Event } from '..';
+import State from '../../State';
+import { Keys } from '../../../Keyboard';
 
 export interface EventData {
     clientId: number;

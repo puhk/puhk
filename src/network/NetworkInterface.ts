@@ -1,5 +1,5 @@
-import { JsonEvent } from '@src/state/event';
-import { JsonState } from '@src/state/State';
+import { JsonEvent } from '../state/event';
+import { JsonState } from '../state/State';
 
 export enum MessageType {
     Sync = 'sync',

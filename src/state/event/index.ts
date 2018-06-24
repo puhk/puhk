@@ -1,5 +1,5 @@
-import State from '@src/state/State';
-import * as Events from '@src/state/event/events';
+import * as Events from './events';
+import State from '../State';
 
 export type EventNames = keyof typeof Events;
 

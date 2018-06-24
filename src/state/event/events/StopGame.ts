@@ -1,6 +1,6 @@
-import { Event } from '@src/state/event';
-import State from '@src/state/State';
-import Disc from '@src/entities/Disc';
+import { Event } from '..';
+import State from '../../State';
+import Disc from '../../../entities/Disc';
 
 const isDisc = (disc?: Disc): disc is Disc => disc instanceof Disc;
 

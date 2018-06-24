@@ -1,7 +1,7 @@
-import Background, { JsonBackground } from '@src/entities/Background';
-import Disc, { JsonDisc } from '@src/entities/Disc';
-import Line from '@src/entities/Line';
-import { Packable } from '@src/entities/Packable';
+import Background, { JsonBackground } from './Background';
+import Disc, { JsonDisc } from './Disc';
+import Line from './Line';
+import { Packable } from './Packable';
 
 export interface JsonStadium {
     name: string;

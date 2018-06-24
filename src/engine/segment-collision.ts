@@ -1,7 +1,7 @@
 import Vec from 'victor';
-import Disc from '@src/entities/Disc';
-import Line from '@src/entities/Line';
-import { Segment } from '@src/entities/Stadium';
+import Disc from '../entities/Disc';
+import Line from '../entities/Line';
+import { Segment } from '../entities/Stadium';
 
 export function handleDiscSegmentCollision(disc: Disc, segment: Segment) {
     const result = discDistanceToLine(disc, segment);

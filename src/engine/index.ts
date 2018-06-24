@@ -1,11 +1,11 @@
 import Vec from 'victor';
 
-import handleCircleCollision from '@src/engine/circle-collision';
-import { discDistanceToLine, handleDiscSegmentCollision } from '@src/engine/segment-collision';
-import Disc from '@src/entities/Disc';
-import Player from '@src/entities/Player';
-import { Goal } from '@src/entities/Stadium';
-import State from '@src/state/State';
+import handleCircleCollision from './circle-collision';
+import { discDistanceToLine, handleDiscSegmentCollision } from './segment-collision';
+import Disc from '../entities/Disc';
+import Player from '../entities/Player';
+import { Goal } from '../entities/Stadium';
+import State from '../state/State';
 
 export interface GoalScored {
     disc: Disc;

@@ -1,5 +1,5 @@
-import Disc from '@src/entities/Disc';
-import State from '@src/state/State';
+import Disc from '../entities/Disc';
+import State from '../state/State';
 
 export default function handleCircleCollision(state: State, disc: Disc, disc2: Disc) {
     const distSq = disc.position.distanceSq(disc2.position);

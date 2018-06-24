@@ -1,14 +1,14 @@
 import { autobind } from 'core-decorators';
 import maxBy from 'lodash/maxBy';
 
-import { NetworkController, PlayerInfo } from '@src/controller/NetworkController';
-import { InitMsg, EventMsg, SyncMsg, PingMsg, PongMsg, MessageType } from '@src/network/NetworkInterface';
-import NetworkClient from '@src/network/p2p/NetworkClient';
-import Disc from '@src/entities/Disc';
-import State from '@src/state/State';
-import { Event } from '@src/state/event';
-import parseEvent from '@src/state/event/parse-event';
-import toMessage from '@src/state/event/to-message';
+import { NetworkController, PlayerInfo } from './NetworkController';
+import { InitMsg, EventMsg, SyncMsg, PongMsg, MessageType } from '../network/NetworkInterface';
+import NetworkClient from '../network/p2p/NetworkClient';
+import Disc from '../entities/Disc';
+import State from '../state/State';
+import { Event } from '../state/event';
+import parseEvent from '../state/event/parse-event';
+import toMessage from '../state/event/to-message';
 
 export default class ClientController extends NetworkController {
     private currentState?: State;

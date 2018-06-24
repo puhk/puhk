@@ -1,5 +1,4 @@
 import Vec from 'victor';
-import omit from 'lodash/omit';
 
 interface JsonObj {
     p0: [number, number];

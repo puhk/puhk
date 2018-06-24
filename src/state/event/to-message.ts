@@ -1,6 +1,6 @@
-import { EventMsg, MessageType } from '@src/network/NetworkInterface';
-import { Event } from '@src/state/event';
-import pack from '@src/state/event/pack';
+import { Event } from './index';
+import pack from './pack';
+import { EventMsg, MessageType } from '../../network/NetworkInterface';
 
 export default function toMessage(event: Event): EventMsg {
     return {
