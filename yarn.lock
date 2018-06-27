@@ -40,19 +40,16 @@
     "@types/node" "*"
     "@types/react" "*"
 
-"@types/react-hot-loader@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@types/react-hot-loader/-/react-hot-loader-3.0.1.tgz#d15e3af68595c5d6c5576cfcc18e28d578924fce"
+"@types/react-hot-loader@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@types/react-hot-loader/-/react-hot-loader-4.1.0.tgz#8e072b44331ad0182918228c5d2bf514646760de"
   dependencies:
+    "@types/node" "*"
     "@types/react" "*"
 
-"@types/react@*":
-  version "15.0.24"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-15.0.24.tgz#8a75299dc37906df327c18ca918bf97a55e7123b"
-
-"@types/react@^16.4.1":
-  version "16.4.1"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.4.1.tgz#c53bbfb4a78933db587da085ac60dbf5fcf73f8f"
+"@types/react@*", "@types/react@^16.4.3":
+  version "16.4.3"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.4.3.tgz#c7009925dd9a7a2e1c2ef05c653f37005706dec8"
   dependencies:
     csstype "^2.2.0"
 
