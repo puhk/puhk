@@ -1,6 +1,9 @@
 import Vec from 'victor';
 
-export type PitchTypes = 'grass' | 'hockey';
+enum PitchTypes {
+    grass = 'grass',
+    hockey = 'hockey',
+}
 
 export interface JsonBackground {
     pos: number[];
@@ -10,7 +13,7 @@ export interface JsonBackground {
 }
 
 export default class Background {
-    private static images = new Map<PitchTypes, HTMLImageElement>();
+    public static images: Partial<Record<PitchTypes, HTMLImageElement>> = {};
 
     public constructor(
         private pos: Vec,
@@ -20,7 +23,7 @@ export default class Background {
     ) {}
 
     public draw(ctx: CanvasRenderingContext2D) {
-        const image = Background.images.get(this.type);
+        const image = Background.images[this.type];
 
         if (!(image instanceof HTMLImageElement) || !image.complete) {
             return;

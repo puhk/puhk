@@ -4,7 +4,7 @@ export interface JsonChatMessage {
 }
 
 export default class ChatMessage {
-    public constructor(private playerId: number, private msg: string) {}
+    public constructor(public playerId: number, public msg: string) {}
 
     public pack(): JsonChatMessage {
         return {
