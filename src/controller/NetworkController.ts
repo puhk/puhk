@@ -24,7 +24,7 @@ export abstract class NetworkController extends Controller {
     };
 
     public constructor(
-        protected simulator: Simulator,
+        public simulator: Simulator,
         protected network: NetworkInterface,
         protected keyboard: Keyboard,
         protected renderer?: Renderer

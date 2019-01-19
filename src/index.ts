@@ -10,7 +10,9 @@ const defaultStadiums: Entities.Stadium[] = [
 
 export { host, join } from './init';
 export { default as Renderer } from './Renderer';
-export { default as State } from './state/State';
+export { NetworkController } from './controller/NetworkController'
 export { default as Background } from './entities/Background';
 export { Goal } from './entities/Stadium';
+export { default as State } from './state/State';
+export { Event } from './state/event';
 export { Entities, Events, defaultStadiums };
