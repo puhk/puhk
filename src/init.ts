@@ -1,5 +1,3 @@
-import { EventAggregator } from 'aurelia-event-aggregator';
-
 import Keyboard from './Keyboard';
 import Renderer from './Renderer';
 import Simulator from './state/Simulator';
@@ -35,8 +33,6 @@ interface ControllerConstructor<T> {
     ): T
 }
 
-export const eventApi = new EventAggregator;
-
 const createStateFromStadium = (stadium: Stadium) => {
     const state = new State(stadium);
     state.discs = stadium.discs.map(disc => disc.clone());
@@ -52,7 +48,7 @@ const createController = <T extends NetworkController, N extends NetworkInterfac
 ) => {
     const state = createStateFromStadium(Stadium.parse(classic));
 
-    const simulator = new Simulator(eventApi);
+    const simulator = new Simulator;
     simulator.makeConcrete(state);
 
     return new Controller(

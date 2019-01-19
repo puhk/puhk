@@ -1,5 +1,3 @@
-import { EventAggregator } from 'aurelia-event-aggregator';
-
 import State from './State';
 import { Event } from './event';
 import update from '../engine';
@@ -7,8 +5,6 @@ import update from '../engine';
 export default class Simulator {
     public events: Event[] = [];
     private states: State[] = [];
-
-    public constructor(private eventApi: EventAggregator) { }
 
     public simulate(targetFrame: number, fromState: State): State {
         const targetState = this.findStateByFrame(targetFrame);
@@ -36,15 +32,11 @@ export default class Simulator {
         const newState = state.clone();
         ++newState.frame;
 
-        for (const event of this.events) {
-            if (event.frame == state.frame) {
-                const result = event.apply(newState);
-                this.eventApi.publish(event, result);
-            }
-        }
+        this.events.filter(e => e.frame === state.frame)
+            .forEach(e => e.apply(newState));
 
         const goalsScored = newState.playing ? update(newState) : [];
-        const event = newState.update(this.eventApi, goalsScored);
+        const event = newState.update(goalsScored);
 
         if (event) {
             this.addEvent(event);

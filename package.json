@@ -13,7 +13,6 @@
     "start": "cross-env NODE_ENV=development webpack-dev-server --inline --progress --profile --watch"
   },
   "dependencies": {
-    "aurelia-event-aggregator": "^1.0.1",
     "core-decorators": "^0.19.0",
     "eventemitter3": "^2.0.3",
     "lodash": "^4.17.3",

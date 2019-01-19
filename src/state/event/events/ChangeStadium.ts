@@ -26,8 +26,6 @@ export default class ChangeStadium implements Event {
         state.stadium = stadium;
         state.discs = stadium.discs.map(disc => disc.clone());
         state.initScores();
-
-        return { stadium };
     }
 
     static parse(event: JsonEvent) {

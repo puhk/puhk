@@ -7,14 +7,10 @@ export interface EventData {
     team: string;
 }
 
-export interface ApplyResult {
-    player: Player;
-}
-
 export default class ChangeTeam implements Event {
     public constructor(public frame: number, public sender: number, public data: EventData) { }
 
-    public apply(state: State): ApplyResult | undefined {
+    public apply(state: State) {
         const player = state.getPlayerById(this.data.clientId);
 
         if (!player) {
@@ -22,7 +18,6 @@ export default class ChangeTeam implements Event {
         }
 
         const currentDisc = state.getPlayerDisc(player);
-        const team = state.stadium.getTeam(this.data.team);
 
         // check team exists if not specs
         if (this.data.team !== null && !state.stadium.getTeam(this.data.team)) {
@@ -49,7 +44,5 @@ export default class ChangeTeam implements Event {
                 state.addDisc(disc);
             }
         }
-
-        return { player };
     }
 }

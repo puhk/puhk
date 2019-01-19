@@ -12,7 +12,7 @@ export default class StopGame implements Event {
             return;
         }
 
-        state.players.map(state.getPlayerDisc)
+        state.players.map(player => state.getPlayerDisc(player))
             .filter(isDisc)
             .forEach(disc => state.removeDisc(disc));
 

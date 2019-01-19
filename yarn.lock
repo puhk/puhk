@@ -221,16 +221,6 @@ asynckit@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/asynckit/-/asynckit-0.4.0.tgz#c79ed97f7f34cb8f2ba1bc9790bcc366474b4b79"
 
-aurelia-event-aggregator@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/aurelia-event-aggregator/-/aurelia-event-aggregator-1.0.1.tgz#9d7c7c1e1efe1ef3a78785e76abe80601e2d34c8"
-  dependencies:
-    aurelia-logging "^1.0.0"
-
-aurelia-logging@^1.0.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/aurelia-logging/-/aurelia-logging-1.2.0.tgz#22007dddc56fb5bbbfa3a865bd1bfc4020290ddb"
-
 awesome-typescript-loader@^3.1.3:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/awesome-typescript-loader/-/awesome-typescript-loader-3.1.3.tgz#7eb41dfb136c2ea0e099bef038dc70c45f810223"

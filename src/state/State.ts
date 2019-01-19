@@ -1,4 +1,3 @@
-import { EventAggregator } from 'aurelia-event-aggregator';
 import Vec from 'victor';
 
 import { Event } from './event';
@@ -34,12 +33,12 @@ export interface JsonState {
 }
 
 export default class State {
-    private chatMessages: ChatMessage[] = [];
     private maxChatMessages = 50;
     private matchState: States = States.Kickoff;
     private matchStateTimer = 0;
-    private timer = 0;
 
+    public chatMessages: ChatMessage[] = [];
+    public timer = 0;
     public frame = 0;
     public roomName = '';
     public playing = false;
@@ -80,7 +79,7 @@ export default class State {
         return scores.every(score => score == scores[0]);
     }
 
-    public update(eventApi: EventAggregator, goalsScored: GoalScored[]): Event | undefined {
+    public update(goalsScored: GoalScored[]): Event | undefined {
         switch (this.matchState) {
             case States.Kickoff:
                 this.discs.filter(disc => disc.isBall)
@@ -96,7 +95,7 @@ export default class State {
                 this.timer += 1 / 60;
 
                 for (const goalScored of goalsScored) {
-                    this.goalScored(goalScored.goal, eventApi);
+                    this.goalScored(goalScored.goal);
                 }
 
                 if (this.timer >= this.timeLimit * 60 && !this.scoresEqual()) {
@@ -178,7 +177,7 @@ export default class State {
         });
     }
 
-    public goalScored(goal: Goal, eventApi: EventAggregator): void {
+    public goalScored(goal: Goal): void {
         const team = this.stadium.getTeam(goal.data.teamScored);
 
         if (this.matchState !== States.Inplay || !team) {
@@ -188,8 +187,6 @@ export default class State {
         this.scores.set(team.name, (this.scores.get(team.name) || 0) + 1);
         this.matchState = States.GoalScored;
         this.matchStateTimer = 150;
-
-        eventApi.publish('goalScored', { state: this, goal });
     }
 
     public createPlayerDisc(player: Player): Disc | undefined {
