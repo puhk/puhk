@@ -1,34 +1,28 @@
 import { autobind } from 'core-decorators';
 
-export interface Keys {
-    up: boolean;
-    down: boolean;
-    left: boolean;
-    right: boolean;
-    kick: boolean;
-}
+export enum Keys { up, down, left, right, kick }
+export type KeyState = Record<Keys, boolean>;
+export type callback = (key: Keys, state: boolean) => void;
 
-export type callback = (key: keyof Keys, state: boolean) => void;
-
-const keyCodes = new Map<number, keyof Keys>([
-    [37, 'left'],
-    [38, 'up'],
-    [39, 'right'],
-    [40, 'down'],
-    [32, 'kick'],
-    [88, 'kick']
+const keyCodes = new Map([
+    [37, Keys.left],
+    [38, Keys.up],
+    [39, Keys.right],
+    [40, Keys.down],
+    [32, Keys.kick],
+    [88, Keys.kick],
 ]);
 
 export default class Keyboard {
     private element?: HTMLElement | null;
     private callback?: callback;
 
-    private keyDown: Keys = {
-        up: false,
-        down: false,
-        left: false,
-        right: false,
-        kick: false
+    private keyDown: KeyState = {
+        [Keys.up]: false,
+        [Keys.down]: false,
+        [Keys.left]: false,
+        [Keys.right]: false,
+        [Keys.kick]: false,
     };
 
     public setCallback(callback: callback) {
@@ -87,11 +81,11 @@ export default class Keyboard {
         this.setKey(e, false);
     }
 
-    public isDown(key: keyof Keys): boolean {
+    public isDown(key: Keys): boolean {
         return this.keyDown[key];
     }
 
-    public isUp(key: keyof Keys): boolean {
+    public isUp(key: Keys): boolean {
         return !this.isDown(key);
     }
 }

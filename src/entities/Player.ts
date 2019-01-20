@@ -1,4 +1,4 @@
-import { Keys } from '../Keyboard';
+import { Keys, KeyState } from '../Keyboard';
 
 export interface JsonPlayer {
     clientId: number;
@@ -7,7 +7,7 @@ export interface JsonPlayer {
     avatar: string | number;
     team: string;
     discId: number | null;
-    keys: Keys;
+    keys: KeyState;
 }
 
 export default class Player {
@@ -15,12 +15,12 @@ export default class Player {
     public avatar = '';
     public team = '';
     public discId: number | null = null;
-    public keys: Keys = {
-        up: false,
-        down: false,
-        left: false,
-        right: false,
-        kick: false
+    public keys: KeyState = {
+        [Keys.up]: false,
+        [Keys.down]: false,
+        [Keys.left]: false,
+        [Keys.right]: false,
+        [Keys.kick]: false,
     };
 
     public constructor(public clientId: number, public name: string) {
