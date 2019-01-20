@@ -29,7 +29,7 @@ export default class Background {
             return;
         }
 
-        const pattern = ctx.createPattern(image, 'repeat');
+        const pattern = ctx.createPattern(image, 'repeat')!!;
         ctx.fillStyle = pattern;
         ctx.fillRect(this.pos.x, this.pos.y, this.width, this.height);
     }
