@@ -1,3 +1,4 @@
+import update from 'immutability-helper';
 import { Event } from '..';
 import State from '../../State';
 
@@ -9,6 +10,8 @@ export default class ChangeScoreLimit implements Event {
     ) {}
 
     public apply(state: State) {
-        state.scoreLimit = this.data.limit;
+        return update(state, {
+            scoreLimit: { $set: this.data.limit }
+        });
     }
 }

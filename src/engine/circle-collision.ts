@@ -1,58 +1,99 @@
+import update from 'immutability-helper';
+import Vec from 'victor';
+import { curry } from 'lodash/fp';
+
 import Disc from '../entities/Disc';
 import State from '../state/State';
+import { getPlayerFromDisc } from '../state/funcs/player';
+import { Keys } from '../Keyboard';
 
-export default function handleCircleCollision(state: State, disc: Disc, disc2: Disc) {
+export default curry((disc: Disc, state: State, disc2: Disc) => {
     const distSq = disc.position.distanceSq(disc2.position);
 
     if (disc2.isBall && disc.position.distance(disc2.position) <= disc.radius + disc2.radius + 4) {
-        const player = state.getPlayerFromDisc(disc.id);
+        const player = getPlayerFromDisc(state, disc);
 
-        if (player && player.keys.kick) {
-            kick(disc, disc2);
-            player.keys.kick = false;
-            disc.borderFlash = false;
+        if (player && player.keys[Keys.kick]) {
+            const kickForce = kick(disc, disc2);
+
+            state = update(state, {
+                discs: {
+                    [state.discs.indexOf(disc)]: {
+                        borderFlash: { $set: false }
+                    },
+                    [state.discs.indexOf(disc2)]: {
+                        velocity: (vel: Vec) => vel.clone().add(kickForce)
+                    }
+                },
+                players: {
+                    [state.players.indexOf(player)]: {
+                        keys: {
+                            [Keys.kick]: { $set: false }
+                        }
+                    }
+                }
+            });
         }
     }
 
-    if (distSq <= Math.pow(disc.radius + disc2.radius, 2)) {
-        collideCircles(disc, disc2);
+    if (distSq > Math.pow(disc.radius + disc2.radius, 2)) {
+        return state;
     }
-}
 
-function collideCircles(disc: Disc, disc2: Disc) {
+    return collideCircles(state, disc, disc2);
+});
+
+function collideCircles(state: State, disc: Disc, disc2: Disc) {
     const diff = disc.position.clone().subtract(disc2.position);
     const direction = diff.clone().normalize();
-    const totalMass = disc.mass + disc2.mass;
 
     // reposition
     const total = disc.invMass + disc2.invMass;
     const overlap = disc.radius + disc2.radius - diff.length();
     const amount = overlap * (disc.invMass / total);
 
-    disc.position.add(direction.clone().multiplyScalar(amount));
-    disc2.position.subtract(direction.clone().multiplyScalar(overlap - amount));
+    const getIndex = (disc: Disc) => state.discs.findIndex(d => d.id === disc.id);
+
+    state = update(state, {
+        discs: {
+            [getIndex(disc)]: {
+                position: (pos: Vec) => pos.clone().add(direction.clone().multiplyScalar(amount))
+            },
+            [getIndex(disc2)]: {
+                position: (pos: Vec) => pos.clone().subtract(direction.clone().multiplyScalar(overlap - amount))
+            }
+        }
+    });
 
     // bounce?
     const speedDiff = disc.velocity.clone().subtract(disc2.velocity);
-    const dot = direction.dot(speedDiff);
+    const dotProduct = direction.dot(speedDiff);
 
-    if (dot < 0) {
-        const totalBounce = disc.bounce * disc2.bounce;
-        const bounceDir = direction.clone().multiplyScalar(dot * (totalBounce + 1));
-
-        const bounce1 = bounceDir.clone().multiplyScalar(disc.invMass / total);
-        const bounce2 = bounceDir.clone().multiplyScalar(disc2.invMass / total);
-
-        disc.velocity.subtract(bounce1);
-        disc2.velocity.add(bounce2);
+    if (dotProduct >= 0) {
+        return state;
     }
+
+    const totalBounce = disc.bounce * disc2.bounce;
+    const bounceDir = direction.clone().multiplyScalar(dotProduct * (totalBounce + 1));
+
+    const bounce1 = bounceDir.clone().multiplyScalar(disc.invMass / total);
+    const bounce2 = bounceDir.clone().multiplyScalar(disc2.invMass / total);
+
+    return update(state, {
+        discs: {
+            [getIndex(disc)]: {
+                velocity: (vel: Vec) => vel.clone().subtract(bounce1)
+            },
+            [getIndex(disc2)]: {
+                velocity: (vel: Vec) => vel.clone().add(bounce2)
+            }
+        }
+    });
 }
 
 function kick(disc: Disc, ball: Disc) {
-    const direction = ball.position.clone()
+    return ball.position.clone()
         .subtract(disc.position)
-        .normalize();
-
-    const force = direction.multiplyScalar(disc.kickStrength * ball.invMass);
-    ball.velocity.add(force);
+        .normalize()
+        .multiplyScalar(disc.kickStrength * ball.invMass);
 }

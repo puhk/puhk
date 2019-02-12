@@ -1,5 +1,7 @@
+import update from 'immutability-helper';
 import { Event } from '..';
 import State from '../../State';
+import { getPlayerById } from '../../funcs/player';
 
 export interface EventData {
     player: number;
@@ -14,12 +16,18 @@ export default class PlayerAdmin implements Event {
             throw new Error('Cant change admin of host');
         }
 
-        const player = state.getPlayerById(this.data.player);
+        const player = getPlayerById(state, this.data.player);
 
         if (!player) {
             throw new Error(`Invalid player ${this.data.player}`);
         }
 
-        player.admin = this.data.isAdmin;
+        return update(state, {
+            players: {
+                [state.players.indexOf(player)]: {
+                    admin: { $set: this.data.isAdmin }
+                }
+            }
+        });
     }
 }

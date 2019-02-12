@@ -3,7 +3,7 @@ import { autobind } from 'core-decorators';
 import { NetworkController, PlayerInfo } from './NetworkController';
 import { MessageType, EventMsg, InitMsg, SyncMsg, PingMsg, PongMsg } from '../network/NetworkInterface';
 import NetworkHost from '../network/p2p/NetworkHost';
-import State from '../state/State';
+import State, { pack } from '../state/State';
 import * as Events from '../state/event/events';
 import parseEvent from '../state/event/parse-event';
 import packEvent from '../state/event/pack';
@@ -47,7 +47,7 @@ export default class HostGameController extends NetworkController {
 
         this.network.sendToClient(id, {
             type: MessageType.Init,
-            state: this.simulator.concreteState.pack(),
+            state: pack(this.simulator.concreteState),
             events: this.simulator.events.map(event => packEvent(event)),
             id
         });
@@ -99,11 +99,11 @@ export default class HostGameController extends NetworkController {
     private sendSync() {
         this.network.send({
             type: MessageType.Sync,
-            state: this.simulator.concreteState.pack()
+            state: pack(this.simulator.concreteState)
         });
     }
 
-    protected getCurrentState(): State {
+    public getCurrentState(): State {
         return this.simulator.concreteState;
     }
 }

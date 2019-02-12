@@ -101,7 +101,7 @@ const big = <JsonStadium>{
   ],
   "discs": [
     {
-      "pos": [0,  0],
+      "pos": [0, 0],
       "ball": true,
       "color": "#FFF",
       "damping": 0.99,

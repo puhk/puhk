@@ -1,3 +1,4 @@
+import update from 'immutability-helper';
 import { Event } from '..';
 import State from '../../State';
 
@@ -9,6 +10,8 @@ export default class ChangeTimeLimit implements Event {
     public constructor(public frame: number, public sender: number, public data: EventData) {}
 
     public apply(state: State) {
-        state.timeLimit = this.data.limit;
+        return update(state, {
+            timeLimit: { $set: this.data.limit }
+        });
     }
 }

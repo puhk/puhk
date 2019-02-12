@@ -1,7 +1,7 @@
 import Keyboard from './Keyboard';
 import Renderer from './Renderer';
 import Simulator from './state/Simulator';
-import State from './state/State';
+import { createState, initScores } from './state/State';
 
 import { NetworkController, PlayerInfo } from './controller/NetworkController';
 import ClientController from './controller/ClientController';
@@ -33,13 +33,7 @@ interface ControllerConstructor<T> {
     ): T
 }
 
-const createStateFromStadium = (stadium: Stadium) => {
-    const state = new State(stadium);
-    state.discs = stadium.discs.map(disc => disc.clone());
-    state.initScores();
-
-    return state;
-};
+const createStateFromStadium = (stadium: Stadium) => initScores(createState(stadium));
 
 const createController = <T extends NetworkController, N extends NetworkInterface>(
     Controller: ControllerConstructor<T>,
@@ -47,7 +41,6 @@ const createController = <T extends NetworkController, N extends NetworkInterfac
     { host, path, renderer }: Opts
 ) => {
     const state = createStateFromStadium(Stadium.parse(classic));
-
     const simulator = new Simulator;
     simulator.makeConcrete(state);
 
@@ -57,7 +50,7 @@ const createController = <T extends NetworkController, N extends NetworkInterfac
         new Keyboard,
         renderer
     );
-}
+};
 
 export const host = (opts: Opts) =>
     createController(HostController, NetworkHost, opts)

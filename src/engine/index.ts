@@ -1,4 +1,6 @@
 import Vec from 'victor';
+import update from 'immutability-helper';
+import flatMap from 'lodash/flatMap';
 
 import handleCircleCollision from './circle-collision';
 import { discDistanceToLine, handleDiscSegmentCollision } from './segment-collision';
@@ -6,6 +8,8 @@ import Disc from '../entities/Disc';
 import Player from '../entities/Player';
 import { Goal } from '../entities/Stadium';
 import State from '../state/State';
+import { getPlayerFromDisc } from '../state/funcs/player';
+import { Keys } from '../Keyboard';
 
 export interface GoalScored {
     disc: Disc;
@@ -14,29 +18,15 @@ export interface GoalScored {
 
 const prevBallPositions = new Map<number, Vec>();
 
-export default function update(state: State): GoalScored[] {
+export default function run(state: State): [State, GoalScored[]] {
     const stadium = state.stadium;
-    let goalsScored: GoalScored[] = [];
 
     const applyPlayerMovement = (player: Player) => {
-        const accel = stadium.playerPhysics[player.keys.kick ? 'kickingAcceleration' : 'acceleration'];
-        const move = new Vec(0, 0);
-
-        if (player.keys.left) {
-            move.x -= 1;
-        }
-
-        if (player.keys.right) {
-            move.x += 1;
-        }
-
-        if (player.keys.up) {
-            move.y -= 1;
-        }
-
-        if (player.keys.down) {
-            move.y += 1;
-        }
+        const accel = stadium.playerPhysics[player.keys[Keys.kick] ? 'kickingAcceleration' : 'acceleration'];
+        const move = new Vec(
+            +player.keys[Keys.right] - +player.keys[Keys.left],
+            +player.keys[Keys.down] - +player.keys[Keys.up]
+        );
 
         if (move.lengthSq() === 0) {
             return move;
@@ -45,53 +35,69 @@ export default function update(state: State): GoalScored[] {
         return move.normalize().multiplyScalar(accel);
     };
 
-    state.discs.forEach(disc => {
-        const player = state.getPlayerFromDisc(disc.id);
+    state = state.discs.reduce((state, disc, i) => {
+        const player = getPlayerFromDisc(state, disc);
+        let velocity = disc.velocity;
 
         if (player) {
-            disc.borderFlash = player.keys.kick;
-            disc.velocity.add(applyPlayerMovement(player));
-        }
+            const movement = applyPlayerMovement(player);
 
-        disc.position.add(disc.velocity);
-        disc.velocity.multiplyScalar(disc.damping);
-    });
-
-    state.discs.sort(a => a.isBall ? 1 : -1);
-
-    state.discs.forEach((disc, i1) => {
-        state.discs.forEach((disc2, i2) => {
-            if (disc2 == disc || i1 >= i2) {
-                return;
+            if (movement.lengthSq() > 0) {
+                velocity = velocity.clone().add(movement);
             }
 
-            handleCircleCollision(state, disc, disc2);
-        });
+            state = update(state, {
+                discs: {
+                    [i]: {
+                        $merge: {
+                            borderFlash: player.keys[Keys.kick],
+                            velocity
+                        }
+                    }
+                }
+            });
+        }
 
-        state.stadium.segments.forEach(segment => {
+        return update(state, {
+            discs: {
+                [i]: {
+                    position: (pos: Vec) => pos.clone().add(velocity),
+                    velocity: (vel: Vec) => vel.clone().multiplyScalar(disc.damping)
+                }
+            }
+        });
+    }, state);
+
+    const orderedDiscs = [...state.discs].sort(a => a.isBall ? 1 : -1);
+
+    state = orderedDiscs
+        .map(disc => disc.id)
+        .reduce((state, id, i1) => {
+            const disc = orderedDiscs.find(disc => disc.id === id)!;
+            const shouldCollide = (disc2: Disc, i2: number) => disc2 !== disc && i1 < i2;
+
+            state = orderedDiscs
+                .filter(shouldCollide)
+                .reduce(handleCircleCollision(disc), state);
+
             // quick hack until collision masks to prevent player/segment collision
-            if (state.getPlayerFromDisc(disc.id)) {
-                return;
+            if (getPlayerFromDisc(state, disc)) {
+                return state;
             }
 
-            handleDiscSegmentCollision(disc, segment);
-        });
+            return state.stadium.segments.reduce(handleDiscSegmentCollision(disc), state);
+        }, state);
 
-        if (!disc.isBall) {
-            return;
-        }
-
-        goalsScored = [
-            ...goalsScored,
-            ...state.stadium.goals
-                .filter(goal => checkGoal(disc, goal))
-                .map(goal => ({ disc, goal }))
-        ];
+    const goalsScored = flatMap(state.discs, (disc: Disc) => {
+        const goalsScored = state.stadium.goals
+            .filter(goal => checkGoal(disc, goal))
+            .map(goal => ({ disc, goal }));
 
         prevBallPositions.set(disc.id, disc.position.clone());
+        return goalsScored;
     });
 
-    return goalsScored;
+    return [state, goalsScored];
 }
 
 function checkGoal(ball: Disc, goal: Goal) {

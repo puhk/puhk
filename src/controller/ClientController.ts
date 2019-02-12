@@ -5,13 +5,14 @@ import { NetworkController, PlayerInfo } from './NetworkController';
 import { InitMsg, EventMsg, SyncMsg, PongMsg, MessageType } from '../network/NetworkInterface';
 import NetworkClient from '../network/p2p/NetworkClient';
 import Disc from '../entities/Disc';
-import State from '../state/State';
+import State, { parse } from '../state/State';
 import { Event } from '../state/event';
 import parseEvent from '../state/event/parse-event';
 import toMessage from '../state/event/to-message';
+import { getPlayerById, getPlayerDisc } from '../state/funcs/player';
 
 export default class ClientController extends NetworkController {
-    private currentState?: State;
+    private currentState!: State;
     private framesSinceLastSync = 0;
     private pings: number[] = [];
     private pingInterval: number = 0;
@@ -51,7 +52,7 @@ export default class ClientController extends NetworkController {
 
     @autobind
     private handleInitMsg(msg: InitMsg) {
-        const state = State.parse(msg.state);
+        const state = parse(msg.state);
         this.simulator.makeConcrete(state);
         this.simulator.events = msg.events.map(parseEvent);
         this.currentState = state;
@@ -63,8 +64,8 @@ export default class ClientController extends NetworkController {
         }
 
         const newState = this.simulator.advance();
-        const player = newState.getPlayerById(msg.id)!;
-        const myDisc = newState.getPlayerDisc(player);
+        const player = getPlayerById(newState, msg.id)!;
+        const myDisc = getPlayerDisc(newState, player);
 
         if (myDisc) {
             myDisc.hasOutline = true;
@@ -95,7 +96,7 @@ export default class ClientController extends NetworkController {
             return;
         }
 
-        const syncState = State.parse(msg.state);
+        const syncState = parse(msg.state);
         this.simulator.makeConcrete(syncState);
         this.currentState = syncState;
         this.framesSinceLastSync = 0;
@@ -131,7 +132,7 @@ export default class ClientController extends NetworkController {
         ++this.framesSinceLastSync;
     }
 
-    protected getCurrentState(): State | undefined {
+    public getCurrentState() {
         return this.currentState;
     }
 }

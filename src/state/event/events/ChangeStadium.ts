@@ -1,5 +1,6 @@
+import update from 'immutability-helper';
 import { Event } from '..';
-import State from '../../State';
+import State, { initScores } from '../../State';
 import Stadium, { JsonStadium } from '../../../entities/Stadium';
 
 export interface EventData {
@@ -23,9 +24,14 @@ export default class ChangeStadium implements Event {
         }
 
         const { stadium } = this.data;
-        state.stadium = stadium;
-        state.discs = stadium.discs.map(disc => disc.clone());
-        state.initScores();
+        const newState = update(state, {
+            $merge: {
+                stadium,
+                discs: stadium.discs
+            }
+        });
+
+        return initScores(newState);
     }
 
     static parse(event: JsonEvent) {

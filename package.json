@@ -5,7 +5,7 @@
   "license": "MIT",
   "main": "build/cjs/index.js",
   "module": "build/es6/index.js",
-  "types": "build/cjs/index.d.ts",
+  "types": "build/es6/index.d.ts",
   "scripts": {
     "build:dist": "cross-env NODE_ENV=production webpack --progress --colors",
     "build:cjs": "tsc --module commonjs --outDir build/cjs --declaration",
@@ -15,6 +15,7 @@
   "dependencies": {
     "core-decorators": "^0.19.0",
     "eventemitter3": "^2.0.3",
+    "immutability-helper": "^2.9.0",
     "lodash": "^4.17.3",
     "mainloop.js": "^1.0.3",
     "peerjs": "^0.3.14",
@@ -33,7 +34,7 @@
     "cross-env": "^3.1.4",
     "html-webpack-plugin": "^2.28.0",
     "ts-node": "^3.2.0",
-    "typescript": "^2.9.0",
+    "typescript": "^3.2.4",
     "webpack": "^2.6.1",
     "webpack-dev-server": "^2.3.0"
   }

@@ -18,6 +18,6 @@ export interface Event {
     frame: number;
     sender?: number;
     data?: any;
-    apply(state: State): void;
+    apply(state: State): State;
     shouldPredict?: boolean;
 }

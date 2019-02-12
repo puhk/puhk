@@ -3,5 +3,5 @@ export interface Packable {
 }
 
 export function isPackable(object: any): object is Packable {
-    return typeof object.pack === 'function';
+    return object && typeof object.pack === 'function';
 }

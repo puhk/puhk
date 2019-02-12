@@ -1,3 +1,4 @@
+import update from 'immutability-helper';
 import { Event } from '..';
 import State from '../../State';
 import ChatMessage from '../../../entities/ChatMessage';
@@ -11,6 +12,9 @@ export default class PlayerChat implements Event {
 
     public apply(state: State) {
         const message = new ChatMessage(this.sender, this.data.message);
-        state.addChatMessage(message);
+
+        return update(state, {
+            chatMessages: { $push: [message] }
+        });
     }
 }

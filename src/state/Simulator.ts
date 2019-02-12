@@ -1,6 +1,7 @@
-import State from './State';
+import update from 'immutability-helper';
+import State, { runMatchState } from './State';
 import { Event } from './event';
-import update from '../engine';
+import run from '../engine';
 
 export default class Simulator {
     public events: Event[] = [];
@@ -29,20 +30,15 @@ export default class Simulator {
     }
 
     private createNewState(state: State): State {
-        const newState = state.clone();
-        ++newState.frame;
+        let newState = update(state, {
+            frame: { $set: state.frame + 1 }
+        });
 
-        this.events.filter(e => e.frame === state.frame)
-            .forEach(e => e.apply(newState));
+        newState = this.events
+            .filter(e => e.frame === state.frame)
+            .reduce((newState, e) => e.apply(newState), newState);
 
-        const goalsScored = newState.playing ? update(newState) : [];
-        const event = newState.update(goalsScored);
-
-        if (event) {
-            this.addEvent(event);
-        }
-
-        return newState;
+        return newState.playing ? runMatchState(...run(newState)) : newState;
     }
 
     private rememberState(state: State): void {

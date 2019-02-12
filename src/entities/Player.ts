@@ -5,7 +5,7 @@ export interface JsonPlayer {
     name: string;
     admin: boolean;
     avatar: string | number;
-    team: string;
+    team: string | null;
     discId: number | null;
     keys: KeyState;
 }
@@ -13,7 +13,7 @@ export interface JsonPlayer {
 export default class Player {
     public admin = false;
     public avatar = '';
-    public team = '';
+    public team: string | null = null;
     public discId: number | null = null;
     public keys: KeyState = {
         [Keys.up]: false,

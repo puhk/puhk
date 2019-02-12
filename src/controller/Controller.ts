@@ -32,10 +32,8 @@ export default abstract class Controller {
         });
 
         MainLoop.setDraw(() => {
-            const state = this.getCurrentState();
-
-            if (this.renderer && state) {
-                this.renderer.draw(state);
+            if (this.renderer) {
+                this.renderer.draw(this.getCurrentState());
             }
         });
     }
@@ -52,5 +50,5 @@ export default abstract class Controller {
         this.simulator.advance();
     }
 
-    protected abstract getCurrentState(): State | undefined;
+    public abstract getCurrentState(): State;
 }

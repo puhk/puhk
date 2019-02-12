@@ -54,7 +54,7 @@ export default class Keyboard {
     private setKey(e: KeyboardEvent, state: boolean) {
         const key = keyCodes.get(e.keyCode);
 
-        if (!key) {
+        if (typeof key === 'undefined') {
             return;
         }
 

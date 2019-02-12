@@ -1,3 +1,4 @@
+import update from 'immutability-helper';
 import { Event } from '..';
 import State from '../../State';
 import { PlayerInfo } from '../../../controller/NetworkController'
@@ -14,6 +15,8 @@ export default class PlayerJoined implements Event {
         const player = new Player(this.data.clientId, this.data.name);
         player.setAvatar(this.data.avatar);
 
-        state.addPlayers(player);
+        return update(state, {
+            players: { $push: [player] }
+        });
     }
 }
