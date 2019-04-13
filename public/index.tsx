@@ -61,12 +61,6 @@ window.join = joinGame;
 if (module.hot && typeof module.hot.accept == 'function') {
     module.hot.accept('../src/components/game', () => {
         const Game = (require('../src/components/game') as any).default;
-
-        ReactDOM.render(
-            <AppContainer>
-                <Game controller={ window.controller } renderer={ renderer } />
-            </AppContainer>,
-            document.getElementById('gameMount')
-        );
+        render(window.controller);
     });
 }
