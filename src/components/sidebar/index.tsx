@@ -1,12 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Game, Events } from 'nojball-game';
+import { Entities } from '@nojball/client';
 
 import TeamsList from './teamslist';
 import colors from '../../colors';
+import { ControllerProps } from '../component-props';
 
-export interface SidebarProps {
-    game: Game;
+export interface SidebarProps extends ControllerProps {
+    teams: Entities.JsonTeam[];
+    players: Entities.Player[];
+    scores: Map<string, number>;
+    playing: boolean;
     toggleMenu: () => void;
 }
 
@@ -46,26 +50,19 @@ const Button = styled.button`
     }
 `;
 
-export default (props: SidebarProps) => {
-    const { game } = props;
+export default React.memo((props: SidebarProps) => (
+    <Sidebar>
+        <TeamsList {...props} />
 
-    const start = () => game.start();
-    const stop = () => game.stop();
+        <div>
+            {props.playing &&
+                <Button onClick={props.toggleMenu} type="toggle">Toggle menu</Button>
+            }
 
-    return (
-        <Sidebar>
-            <TeamsList {...props} />
-
-            <div>
-                {game.state.playing &&
-                    <Button onClick={props.toggleMenu} type="toggle">Toggle menu</Button>
-                }
-
-                {game.state.playing ?
-                    <Button onClick={stop} type="stop">Stop game</Button> :
-                    <Button onClick={start} type="start">Start game</Button>
-                }
-            </div>
-        </Sidebar>
-    );
-};
+            {props.playing ?
+                <Button onClick={() => props.controller.stop()} type="stop">Stop game</Button> :
+                <Button onClick={() => props.controller.start()} type="start">Start game</Button>
+            }
+        </div>
+    </Sidebar>
+));

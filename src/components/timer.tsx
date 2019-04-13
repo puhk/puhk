@@ -1,13 +1,11 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
-import { Game } from 'nojball-game';
+import { scoresEqual } from '@nojball/client';
+import { ControllerProps } from './component-props';
 
-export interface TimerProps {
-    game: Game;
-}
-
-export interface TimerState {
+export interface TimerProps extends ControllerProps {
     timer: number;
+    timeLimit: number;
 }
 
 interface TimeProps {
@@ -41,52 +39,22 @@ const Time = styled.span`
     }
 `;
 
-export default class Timer extends React.Component<TimerProps, TimerState> {
-    state: TimerState = {
-        timer: 0
-    };
+const component = ({ controller, timer, timeLimit }: TimerProps) => {
+    const mins = Math.floor(timer / 60);
+    const seconds = Math.floor(timer % 60);
+    const time = `${mins < 10 ? '0' : ''}${mins}:${seconds < 10 ? '0' : ''}${seconds}`;
 
-    timerInterval: number;
+    const secondsLimit = timeLimit * 60;
 
-    componentDidMount() {
-        const game = this.props.game;
-
-        const updateTimer = () => {
-            this.timerInterval = requestAnimationFrame(updateTimer);
-
-            const timer = game.state.timer;
-            const currentSeconds = Math.floor(this.state.timer % 60);
-            const newSeconds = Math.floor(timer % 60);
-
-            if (Math.floor(timer) > Math.floor(this.state.timer)) {
-                this.setState({ timer });
+    return (
+        <MatchTimer>
+            {timer > secondsLimit * 60 && scoresEqual(controller.getCurrentState()) &&
+                <Overtime>overtime</Overtime>
             }
-        };
+            <Time flash={timer <= secondsLimit && timer > secondsLimit - 30}>{time}</Time>
+        </MatchTimer>
+    );
+};
 
-        this.timerInterval = requestAnimationFrame(updateTimer);
-    }
-
-    componentWillUnmount() {
-        cancelAnimationFrame(this.timerInterval);
-    }
-
-    render() {
-        const { timer } = this.state;
-        const { game } = this.props;
-
-        const mins = Math.floor(timer / 60);
-        const seconds = Math.floor(timer % 60);
-        const time = `${mins < 10 ? '0' : ''}${mins}:${seconds < 10 ? '0' : ''}${seconds}`;
-
-        const timeLimit = game.state.timeLimit * 60;
-
-        return (
-            <MatchTimer>
-                {timer > timeLimit && game.scoresEqual() &&
-                    <Overtime>overtime</Overtime>
-                }
-                <Time flash={timer <= timeLimit && timer > timeLimit - 30}>{time}</Time>
-            </MatchTimer>
-        );
-    }
-}
+const areEqual = (prevProps: TimerProps, nextProps: TimerProps) => Math.floor(nextProps.timer) === Math.floor(prevProps.timer)
+export default React.memo(component, areEqual);

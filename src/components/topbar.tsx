@@ -1,23 +1,25 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Events, Entities, State } from 'nojball-game';
 import Color from 'color';
+import { Entities } from '@nojball/client';
 
 import Timer from './timer';
-import withSubscribers, { SubscriberProps } from '../enhancers/with-subscribers';
 import ColorBlock from '../elements/color-block';
 import colors from '../colors';
+import { ControllerProps } from './component-props';
 
-interface TopBarState {
-    roomName: string,
-    scores: Map<string, number>,
-    teams: Entities.JsonTeam[]
+export interface TopbarProps extends ControllerProps {
+    teams: Entities.JsonTeam[];
+    scores: Map<string, number>;
+    roomName: string;
+    timer: number;
+    timeLimit: number;
 }
 
 interface TeamProps {
     teams: number;
     index: number;
-};
+}
 
 const Container = styled.div`
     background: ${Color(colors.bg).darken(0.2).string()};
@@ -77,50 +79,33 @@ const RoomName = styled.div`
     text-align: center;
 `;
 
-class TopBar extends React.Component<SubscriberProps, TopBarState> {
-    state: TopBarState = {
-        roomName: '',
-        scores: new Map,
-        teams: []
-    };
+const topBar = ({ controller, teams, scores, roomName, timer, timeLimit }: TopbarProps) => (
+    <Container>
+        <Scores>
+            {teams.map((team, i) =>
+                <Team teams={teams.length} index={i} key={team.name}>
+                    <TeamColor className="team-color" style={{ backgroundColor: team.color }}></TeamColor>
+                    <Score className="score">{scores.get(team.name)}</Score>
+                </Team>
+            )}
+        </Scores>
 
-    constructor(props: SubscriberProps) {
-        super(props);
+        <RoomName>{roomName}</RoomName>
 
-        this.state = {
-            roomName: props.game.state.roomName,
-            teams: props.game.state.stadium.getTeams(),
-            scores: props.game.state.scores
-        };
-    }
+        <Timer
+            controller={controller}
+            timer={timer}
+            timeLimit={timeLimit} />
+    </Container>
+);
 
-    componentDidMount() {
-        this.props.createSubscriber('goalScored', (event: { goal: Entities.Goal, state: State }) => {
-            this.setState({ scores: event.state.scores });
-        });
-
-        this.props.createSubscriber(Events.ChangeRoomName, (event: Events.ChangeRoomName) => {
-            this.setState({ roomName: event.data.name });
-        });
-    }
-
-    render() {
-        return (
-            <Container>
-                <Scores>
-                    {this.state.teams.map((team, i) =>
-                        <Team teams={this.state.teams.length} index={i} key={team.name}>
-                            <TeamColor className="team-color" style={{ backgroundColor: team.color }}></TeamColor>
-                            <Score className="score">{this.state.scores.get(team.name)}</Score>
-                        </Team>
-                    )}
-                </Scores>
-
-                <RoomName>{this.state.roomName}</RoomName>
-                <Timer game={this.props.game} />
-            </Container>
-        );
-    }
-}
-
-export default withSubscribers(TopBar);
+export default React.memo(
+    topBar,
+    (prevProps, nextProps) =>
+        prevProps.controller === nextProps.controller &&
+        prevProps.teams === nextProps.teams &&
+        prevProps.scores === nextProps.scores &&
+        prevProps.roomName === nextProps.roomName &&
+        Math.floor(prevProps.timer) === Math.floor(nextProps.timer) &&
+        prevProps.timeLimit === nextProps.timeLimit
+);

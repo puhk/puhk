@@ -1,20 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Events, Entities, State } from 'nojball-game';
-import { autobind } from 'core-decorators';
+import { Events, Entities, NetworkController } from '@nojball/client';
 
 import Player from './player';
-import withSubscribers, { SubscriberProps } from '../../enhancers/with-subscribers';
 import ColorBlock from '../../elements/color-block';
+import { ControllerProps } from '../component-props';
 
-export interface TeamProps extends SubscriberProps {
+export interface TeamProps extends ControllerProps {
+    players: Entities.Player[],
     team: Entities.JsonTeam;
+    scores: Map<string, number>,
     specs?: boolean;
-}
-
-export interface TeamState {
-    players: Entities.Player[];
-    score: number;
 }
 
 const Item = styled.li`
@@ -57,107 +53,41 @@ const Players = styled.ul`
     }
 `;
 
-class Team extends React.Component<TeamProps, TeamState> {
-    state: TeamState = {
-        players: [],
-        score: 0
-    };
+const switchTeam = (controller: NetworkController, team: Nullable<string>) => {
+    const { id } = controller.getMe();
 
-    componentDidMount() {
-        const { game, team, specs } = this.props;
+    controller.addEvent(
+        new Events.ChangeTeam(
+            controller.getCurrentState().frame,
+            id,
+            { clientId: id, team }
+        )
+    );
+};
 
-        this.initChangeTeamListener();
+export default React.memo(({ team, scores, players, specs, controller }: TeamProps) => {
+    const teamPlayers = players.filter(player => player.team === (specs ? null : team.name));
 
-        if (specs) {
-            this.initPlayerJoinedListener();
-            return;
-        }
+    return (
+        <Item>
+            <a onDoubleClick={() => switchTeam(controller, specs ? null : team.name)}>
+                <ColorBlock style={{ backgroundColor: team.color }}></ColorBlock>
+                {team.name}
+            </a>
 
-        this.setState({
-            players: game.state.getTeamPlayers(team),
-            score: game.state.getTeamScore(team)
-        });
-
-        this.initStartGameListener();
-        this.initGoalScoredSubscriber();
-    }
-
-    initChangeTeamListener() {
-        this.props.createSubscriber(Events.ChangeTeam, (event: Events.ChangeTeam) => {
-            const { player } = event;
-
-            if (player.team == this.props.team.name || (this.props.specs && !player.team)) {
-                this.setState({
-                    players: this.state.players.concat(player)
-                });
-
-                return;
+            {!specs &&
+                <Score>{scores.get(team.name)}</Score>
             }
 
-            this.setState({
-                players: this.state.players.filter(p => p.clientId !== player.clientId)
-            });
-        });
-    }
-
-    initPlayerJoinedListener() {
-        this.props.createSubscriber(Events.PlayerJoined, (event: Events.PlayerJoined) => {
-            this.setState({
-                players: this.state.players.concat(event.player)
-            });
-        });
-    }
-
-    initStartGameListener() {
-        this.props.createSubscriber(Events.StartGame, (event: Events.StartGame) => {
-            this.setState({ score: 0 });
-        });
-    }
-
-    initGoalScoredSubscriber() {
-        this.props.createSubscriber('goalScored', ({ goal, state }: { goal: Entities.Goal, state: State }) => {
-            if (goal.teamScored == this.props.team.name) {
-                this.setState({ score: this.state.score + 1 });
+            {teamPlayers.length > 0 &&
+                <Players>
+                    {teamPlayers.map(player =>
+                        <li key={player.clientId}>
+                            <Player controller={controller} player={player} />
+                        </li>
+                    )}
+                </Players>
             }
-        });
-    }
-
-    @autobind
-    switchTeam() {
-        const { id } = this.props.game.getMe();
-
-        const event = new Events.ChangeTeam(id, {
-            clientId: id,
-            team: this.props.specs ? null : this.props.team.name
-        });
-
-        this.props.game.addEvent(event);
-    }
-
-    render() {
-        return (
-            <Item>
-                <a onDoubleClick={this.switchTeam}>
-                    <ColorBlock style={{ backgroundColor: this.props.team.color }}></ColorBlock>
-                    {this.props.team.name}
-                </a>
-
-                {!this.props.specs &&
-                    <Score>{this.state.score}</Score>
-                }
-
-                {this.state.players.length > 0 &&
-                    <Players>
-                        {this.state.players.map(player =>
-                            <li key={player.clientId}>
-                                <Player game={this.props.game} player={player} />
-                            </li>
-                        )}
-                    </Players>
-                }
-            </Item>
-        );
-    }
-}
-
-export default withSubscribers(Team);
+        </Item>
+    );
+});

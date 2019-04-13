@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { createRef } from 'react';
 import styled from 'styled-components';
-import { Game, Events, Entities } from 'nojball-game';
+import { getPlayerById, Entities } from '@nojball/client';
+import { ControllerProps } from '../component-props';
 
-import withSubscribers, { SubscriberProps } from '../../enhancers/with-subscribers';
-
-export interface MessageListState {
-    messages: Entities.ChatMessage[]
+export interface MessageListProps extends ControllerProps {
+    messages: Entities.ChatMessage[];
 }
 
 const List = styled.ul`
@@ -25,30 +24,20 @@ const List = styled.ul`
     }
 `;
 
-class MessageList extends React.Component<SubscriberProps, MessageListState> {
-    element: HTMLElement;
-    state: MessageListState = {
-        messages: []
-    };
-
-    componentDidMount() {
-        this.props.createSubscriber(Events.PlayerChat, (event: Events.PlayerChat) => {
-            this.setState({
-                messages: this.props.game.state.chatMessages
-            });
-        })
-    }
+export default class MessageList extends React.PureComponent<MessageListProps> {
+    ref = createRef<HTMLElement>();
 
     componentDidUpdate() {
-        this.element.scrollTop = this.element.scrollHeight;
+        this.ref.current!.scrollTop = this.ref.current!.scrollHeight;
     }
 
     render() {
+        const gameState = this.props.controller.getCurrentState();
         return (
-            <List innerRef={el => this.element = el}>
-                {this.state.messages.map((message, i) =>
+            <List innerRef={this.ref}>
+                {this.props.messages.map((message, i) =>
                     <li key={i}>
-                        <strong>{this.props.game.state.getPlayerById(message.playerId).name}: </strong>
+                        <strong>{getPlayerById(gameState, message.playerId)!.name}: </strong>
                         <span>{message.msg}</span>
                     </li>
                 )}
@@ -56,5 +45,3 @@ class MessageList extends React.Component<SubscriberProps, MessageListState> {
         );
     }
 }
-
-export default withSubscribers(MessageList);

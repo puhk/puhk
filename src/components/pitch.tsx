@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { createRef } from 'react';
 import styled from 'styled-components';
-import { Game, Renderer } from 'nojball-game';
+import { NetworkController, Renderer } from '@nojball/client';
 import ResizeObserver from 'resize-observer-polyfill';
 
 export interface PitchProps {
-    game: Game,
-    renderer: Renderer
+    controller: NetworkController;
+    renderer: Renderer;
 }
 
 const PitchContainer = styled.div`
@@ -19,43 +19,45 @@ const PitchContainer = styled.div`
     }
 `;
 
-export default class Pitch extends React.Component<PitchProps, void> {
-    element: HTMLElement;
-    resizeObserver: ResizeObserver;
+export default class Pitch extends React.Component<PitchProps> {
+    ref = createRef<HTMLElement>();
+    resizeObserver: Nullable<ResizeObserver> = null;
 
-    constructor(props: PitchProps) {
-        super(props);
+    shouldComponentUpdate(nextProps: PitchProps) {
+        return nextProps.controller != this.props.controller || nextProps.renderer != this.props.renderer;
+    }
 
-        this.resizeObserver = new ResizeObserver((entries, observer) => {
+    componentDidMount() {
+        this.resizeObserver = new ResizeObserver(entries => {
             for (const entry of entries) {
                 const { width, height } = entry.contentRect;
 
-                props.renderer
+                this.props.renderer
                     .setWidth(width)
                     .setHeight(height)
                     .center();
             }
         });
-    }
 
-    componentDidMount() {
-        this.props.game.initKeyboard(this.element);
+        this.props.controller.initKeyboard(this.ref.current!);
 
         this.props.renderer
-            .setParent(this.element)
-            .setWidth(this.element.offsetWidth)
-            .setHeight(this.element.offsetHeight)
+            .setParent(this.ref.current!)
+            .setWidth(this.ref.current!.offsetWidth)
+            .setHeight(this.ref.current!.offsetHeight)
             .center()
             .attach();
 
-        this.resizeObserver.observe(this.element);
+        this.resizeObserver.observe(this.ref.current!);
     }
 
     componentWillUnmount() {
-        this.resizeObserver.unobserve(this.element);
+        this.resizeObserver!.unobserve(this.ref.current!);
+        this.resizeObserver = null;
+        this.props.renderer.remove();
     }
 
     render() {
-        return <PitchContainer innerRef={el => this.element = el} tabIndex={-1} />;
+        return <PitchContainer innerRef={this.ref} tabIndex={-1} />;
     }
 }

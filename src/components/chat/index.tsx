@@ -1,12 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Game } from 'nojball-game';
+import { Entities } from '@nojball/client';
 
 import Input from './input';
 import MessageList from './message-list';
+import { ControllerProps } from '../component-props';
 
-export interface ChatProps {
-    game: Game
+export interface ChatProps extends ControllerProps {
+    messages: Entities.ChatMessage[];
 }
 
 const Chat = styled.div`
@@ -27,12 +28,14 @@ const Messages = styled.div`
     padding: 5px 8px;
 `;
 
-export default ({ game }: ChatProps) => (
+const component = ({ controller, messages }: ChatProps) => (
     <Chat>
         <Messages>
-            <MessageList game={game} />
+            <MessageList controller={controller} messages={messages} />
         </Messages>
 
-        <Input game={game} />
+        <Input controller={controller} />
     </Chat>
 );
+
+export default React.memo(component);

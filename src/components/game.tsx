@@ -1,22 +1,23 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Events, Renderer } from 'nojball-game';
+import { autobind } from 'core-decorators';
+import { NetworkController, Renderer, State } from '@nojball/client';
 
 import Chat from './chat';
 import Menu from './menu';
 import Pitch from './pitch';
 import Sidebar from './sidebar';
 import TopBar from './topbar';
-import withSubscribers, { SubscriberProps } from '../enhancers/with-subscribers';
 import colors from '../colors';
 
-export interface GameProps extends SubscriberProps {
-    renderer: Renderer
+export interface GameProps {
+    controller: NetworkController;
+    renderer: Renderer;
 }
 
 interface GameState {
-    playing: boolean,
-    showMenu: boolean
+    gameState: State;
+    showMenu: boolean;
 }
 
 const GameContainer = styled.div`
@@ -52,66 +53,80 @@ const ChatContainer = styled.div`
     padding: 1%;
 `;
 
-class Game extends React.Component<GameProps, GameState> {
+class Game extends React.PureComponent<GameProps, GameState> {
+    interval: Nullable<number> = null;
+
     state: GameState = {
-        playing: false,
+        gameState: this.props.controller.getCurrentState(),
         showMenu: false
     };
 
-    constructor(props: GameProps) {
-        super(props);
-
-        this.state.playing = props.game.state.playing;
+    @autobind
+    updateState() {
+        this.setState({ gameState: this.props.controller.getCurrentState() });
     }
 
     componentDidMount() {
-        this.props.createSubscriber(Events.StartGame, () => {
-            this.setState({
-                playing: true,
-                showMenu: false
-            });
-        });
+        this.interval = window.setInterval(this.updateState, 100);
+    }
 
-        this.props.createSubscriber(Events.StopGame, () => {
-            this.setState({ playing: false });
-        });
+    componentWillUnmount() {
+        if (this.interval) {
+            window.clearInterval(this.interval);
+            this.interval = null;
+        }
     }
 
     toggleMenu = () => {
-        this.setState({
-            showMenu: !this.state.showMenu
-        });
+        this.setState(state => ({ showMenu: !state.showMenu }));
     };
 
     render() {
-        const { game } = this.props;
+        const { controller } = this.props;
+        const { gameState } = this.state;
+
+        if (!gameState) {
+            return null;
+        }
 
         return (
             <GameContainer>
                 <MainArea>
-                    {this.state.playing &&
-                        <TopBar game={game} />
+                    {gameState.playing &&
+                        <TopBar
+                            controller={controller}
+                            teams={gameState.stadium.teams}
+                            scores={gameState.scores}
+                            roomName={gameState.roomName}
+                            timer={gameState.timer}
+                            timeLimit={gameState.timeLimit} />
                     }
 
                     <Content>
-                        <Pitch game={game} renderer={this.props.renderer} />
+                        <Pitch controller={controller} renderer={this.props.renderer} />
 
-                        {(this.state.showMenu || !this.state.playing) &&
+                        {(this.state.showMenu || !gameState.playing) &&
                             <MenuContainer>
-                                <Menu game={game} />
+                                <Menu controller={controller} gameState={gameState} />
                             </MenuContainer>
                         }
                     </Content>
 
                     <ChatContainer>
-                        <Chat game={game} />
+                        <Chat controller={controller} messages={gameState.chatMessages} />
                     </ChatContainer>
                 </MainArea>
 
-                <Sidebar game={game} toggleMenu={this.toggleMenu} />
+                <Sidebar
+                    controller={controller}
+                    teams={gameState.stadium.teams}
+                    players={gameState.players}
+                    scores={gameState.scores}
+                    playing={gameState.playing}
+                    toggleMenu={this.toggleMenu} />
             </GameContainer>
         );
     }
 }
 
-export default withSubscribers(Game);
+export default Game;

@@ -1,14 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Game, Events } from 'nojball-game';
+import { Events } from '@nojball/client';
 import { autobind } from 'core-decorators';
-
-export interface InputProps {
-    game: Game
-}
+import { ControllerProps } from '../component-props';
 
 export interface InputState {
-    inputText: string
+    inputText: string;
 }
 
 const Form = styled.form`
@@ -27,7 +24,7 @@ const Form = styled.form`
     }
 `;
 
-export default class Input extends React.Component<InputProps, InputState> {
+export default class Input extends React.PureComponent<ControllerProps, InputState> {
     state: InputState = {
         inputText: ''
     };
@@ -41,9 +38,16 @@ export default class Input extends React.Component<InputProps, InputState> {
     sendMessage(event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault();
 
-        const { game } = this.props;
+        const { controller } = this.props;
         const message = this.state.inputText;
-        game.addEvent(new Events.PlayerChat(game.getMe().id, { message }));
+
+        controller.addEvent(
+            new Events.PlayerChat(
+                controller.getCurrentState().frame,
+                controller.getMe().id,
+                { message }
+            )
+        );
 
         this.setState({ inputText: '' });
     }

@@ -1,15 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Game, Events, Entities, defaultStadiums } from 'nojball-game';
-
-import withSubscribers, { SubscriberProps } from '../../enhancers/with-subscribers';
+import { Events, defaultStadiums } from '@nojball/client';
+import { StateControllerProps } from '../component-props';
 
 export interface MenuState {
-    currentStadium: Entities.Stadium,
-    roomName: string,
-    stadiums: Entities.Stadium[],
-    scoreLimit: number,
-    timeLimit: number
+    roomName: string;
 }
 
 const Container = styled.div`
@@ -59,21 +54,24 @@ const InputGroup = styled.div`
     }
 `;
 
-class Menu extends React.Component<SubscriberProps, MenuState> {
+export default class Menu extends React.Component<StateControllerProps> {
     state: MenuState = {
-        currentStadium: null,
-        stadiums: defaultStadiums,
         roomName: '',
-        scoreLimit: 0,
-        timeLimit: 0
     };
 
     changeStadium = (event: React.SyntheticEvent<HTMLSelectElement>) => {
-        const stadium = this.state.stadiums.find(stadium => stadium.name == event.currentTarget.value);
+        const stadium = defaultStadiums.find(stadium => stadium.name === event.currentTarget.value);
 
         if (stadium) {
-            const event = new Events.ChangeStadium(this.props.game.getMe().id, { stadium });
-            this.props.game.addEvent(event);
+            const { controller, gameState } = this.props;
+
+            const event = new Events.ChangeStadium(
+                gameState.frame,
+                controller.getMe().id,
+                { stadium }
+            );
+
+            controller.addEvent(event);
         }
     };
 
@@ -85,49 +83,49 @@ class Menu extends React.Component<SubscriberProps, MenuState> {
 
     changeScoreLimit = (event: React.SyntheticEvent<HTMLInputElement>) => {
         const limit = parseInt(event.currentTarget.value);
-        this.props.game.addEvent(new Events.ChangeScoreLimit(this.props.game.getMe().id, { limit }));
+        const { controller, gameState } = this.props;
+
+        controller.addEvent(
+            new Events.ChangeScoreLimit(
+                gameState.frame,
+                controller.getMe().id,
+                { limit }
+            )
+        );
     };
 
     changeTimeLimit = (event: React.SyntheticEvent<HTMLInputElement>) => {
         const limit = parseInt(event.currentTarget.value);
-        this.props.game.addEvent(new Events.ChangeTimeLimit(this.props.game.getMe().id, { limit }));
+        const { controller, gameState } = this.props;
+
+        controller.addEvent(
+            new Events.ChangeTimeLimit(
+                gameState.frame,
+                controller.getMe().id,
+                { limit }
+            )
+        );
     };
 
     setRoomName = () => {
-        if (this.state.roomName != this.props.game.state.roomName) {
-            const event = new Events.ChangeRoomName(this.props.game.getMe().id, { name: this.state.roomName });
-            this.props.game.addEvent(event);
+        if (this.state.roomName === this.props.controller.simulator.concreteState.roomName) {
+            return;
         }
+
+        const { controller, gameState } = this.props;
+
+        controller.addEvent(
+            new Events.ChangeRoomName(
+                gameState.frame,
+                controller.getMe().id,
+                { name: this.state.roomName }
+            )
+        );
     };
 
-    componentDidMount() {
-        const { game } = this.props;
-
-        this.setState({
-            currentStadium: game.state.stadium,
-            roomName: game.state.roomName,
-            scoreLimit: game.state.scoreLimit,
-            timeLimit: game.state.timeLimit
-        });
-
-        this.props.createSubscriber(Events.ChangeRoomName, (event: Events.ChangeRoomName) => {
-            this.setState({ roomName: event.data.name });
-        });
-
-        this.props.createSubscriber(Events.ChangeStadium, (event: Events.ChangeStadium) => {
-            this.setState({ currentStadium: event.stadium });
-        });
-
-        this.props.createSubscriber(Events.ChangeScoreLimit, (event: Events.ChangeScoreLimit) => {
-            this.setState({ scoreLimit: event.data.limit });
-        });
-
-        this.props.createSubscriber(Events.ChangeTimeLimit, (event: Events.ChangeTimeLimit) => {
-            this.setState({ timeLimit: event.data.limit });
-        });
-    }
-
     render() {
+        const { gameState } = this.props;
+
         return (
             <Container>
                 <SettingGroup>
@@ -161,14 +159,14 @@ class Menu extends React.Component<SubscriberProps, MenuState> {
                     <InputGroup>
                         <label>
                             <span>Time limit</span>
-                            <input type="number" min="0" onChange={this.changeTimeLimit} value={this.state.timeLimit} />
+                            <input type="number" min="0" onChange={this.changeTimeLimit} value={gameState.timeLimit} />
                         </label>
                     </InputGroup>
 
                     <InputGroup>
                         <label>
                             <span>Score limit</span>
-                            <input type="number" min="0" onChange={this.changeScoreLimit} value={this.state.scoreLimit} />
+                            <input type="number" min="0" onChange={this.changeScoreLimit} value={gameState.scoreLimit} />
                         </label>
                     </InputGroup>
 
@@ -178,10 +176,10 @@ class Menu extends React.Component<SubscriberProps, MenuState> {
 
                             <select
                                 onChange={this.changeStadium}
-                                value={(this.state.currentStadium && this.state.currentStadium.name) || ''}
-                                disabled={this.props.game.state.playing}
+                                value={(gameState.stadium && gameState.stadium.name) || ''}
+                                disabled={gameState.playing}
                             >
-                                {this.state.stadiums.map(stadium =>
+                                {defaultStadiums.map(stadium =>
                                     <option value={stadium.name} key={stadium.name}>{stadium.name}</option>
                                 )}
                             </select>
@@ -192,5 +190,3 @@ class Menu extends React.Component<SubscriberProps, MenuState> {
         );
     }
 }
-
-export default withSubscribers(Menu);

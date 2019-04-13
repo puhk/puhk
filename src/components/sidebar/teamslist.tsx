@@ -1,20 +1,24 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Game, Entities } from 'nojball-game';
+import { Entities } from '@nojball/client';
 
 import Team from './team';
+import { ControllerProps } from '../component-props';
 
-export interface TeamsListProps {
-    game: Game
+export interface TeamsListProps extends ControllerProps {
+    teams: Entities.JsonTeam[];
+    players: Entities.Player[];
+    scores: Map<string, number>;
 }
 
 export interface TeamsListState {
-    teams: Entities.JsonTeam[]
+    teams: Entities.JsonTeam[];
 }
 
-const specTeam = {
+const specTeam: Entities.JsonTeam = {
     name: 'Spectators',
-    color: '#ccc'
+    color: '#ccc',
+    kickOffPos: [0, 0],
 };
 
 const Teams = styled.ul`
@@ -24,26 +28,18 @@ const Teams = styled.ul`
     padding: 0;
 `;
 
-export default class TeamsList extends React.Component<TeamsListProps, TeamsListState> {
-    state: TeamsListState = {
-        teams: []
-    };
+const component = ({ controller, teams, players, scores }: TeamsListProps) => (
+    <Teams>
+        {[...teams, specTeam].map(team => (
+            <Team
+                controller={controller}
+                team={team}
+                players={players}
+                scores={scores}
+                key={team.name}
+                specs={team.name === 'Spectators'} />
+        ))}
+    </Teams>
+);
 
-    constructor(props: TeamsListProps) {
-        super(props);
-
-        this.state.teams = this.props.game.state.stadium.getTeams();
-    }
-
-    render() {
-        return (
-            <Teams>
-                {this.state.teams.map(team =>
-                    <Team game={this.props.game} team={team} key={team.name} />
-                )}
-
-                <Team game={this.props.game} team={specTeam} specs={true} />
-            </Teams>
-        );
-    }
-}
+export default React.memo(component);

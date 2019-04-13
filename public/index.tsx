@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
-import { host, join, Game as GameType, Renderer, Background } from 'nojball-game';
+import { host, join, NetworkController, Renderer, Background } from '@nojball/client';
 
 import Game from '../src/components/game';
 const grassImage = require('./images/grass.png') as string;
 
 interface Window {
-    game: GameType;
+    controller: NetworkController;
     host: (name: string, avatar: string) => void;
     join: (host: string, avatar: string) => void;
 }
@@ -18,39 +18,39 @@ const renderer = new Renderer;
 
 const img = new Image;
 img.src = grassImage;
-Background.images.set('grass', img);
+Background.images.grass = img;
 
-const render = (game: GameType) => {
+const render = (controller: NetworkController) => {
     ReactDOM.render(
         <AppContainer>
-            <Game game={ game } renderer={ renderer } />
+            <Game controller={ controller } renderer={ renderer } />
         </AppContainer>,
         document.getElementById('gameMount')
     );
 };
 
 const hostGame = (name: string, avatar: string) => {
-    const game = host({
+    host({
         host: 'localhost',
         path: '/p2p',
         player: { name, avatar},
         renderer
-    }).then(game => {
-        window.game = game;
-        render(game);
+    }).then(controller => {
+        window.controller = controller;
+        render(controller);
     });
 };
 
 const joinGame = (host: string, avatar: string) => {
-    const game = join({
+    join({
         host: 'localhost',
         path: '/p2p',
         player: { name, avatar },
         roomId: host,
         renderer
-    }).then(game => {
-        window.game = game;
-        render(game);
+    }).then(controller => {
+        window.controller = controller;
+        render(controller);
     });
 };
 
@@ -64,7 +64,7 @@ if (module.hot && typeof module.hot.accept == 'function') {
 
         ReactDOM.render(
             <AppContainer>
-                <Game game={ window.game } renderer={ renderer } />
+                <Game controller={ window.controller } renderer={ renderer } />
             </AppContainer>,
             document.getElementById('gameMount')
         );
