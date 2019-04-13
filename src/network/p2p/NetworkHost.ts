@@ -9,22 +9,26 @@ interface Client {
 
 declare const Peer: any;
 
+const OPEN_TIMEOUT = 10000;
+
 export default class NetworkHost extends AbstractP2PNetwork implements NetworkInterface {
     private clients: Client[] = [];
     private nextClientId = 0;
-    public isOpen = false;
+    public ready: Promise<boolean>;
 
     public constructor({ host, path }: Config) {
         super();
         this.peer = new Peer('host', { host, path });
-        this.peer.on('open', this.open);
         this.peer.on('connection', this.handleConnection);
-    }
 
-    @autobind
-    public open() {
-        this.isOpen = true;
-        this.emit('open', true);
+        this.ready = new Promise((resolve, reject) => {
+            const openTimeout = setTimeout(() => reject(), OPEN_TIMEOUT);
+
+            this.peer.on('open', () => {
+                clearTimeout(openTimeout);
+                resolve();
+            });
+        });
     }
 
     @autobind

@@ -1,7 +1,7 @@
 import { autobind } from 'core-decorators';
 
 import { NetworkController, PlayerInfo } from './NetworkController';
-import { MessageType, EventMsg, InitMsg, SyncMsg, PingMsg, PongMsg } from '../network/NetworkInterface';
+import { MessageType, EventMsg, PingMsg } from '../network/NetworkInterface';
 import NetworkHost from '../network/p2p/NetworkHost';
 import State, { pack } from '../state/State';
 import * as Events from '../state/event/events';
@@ -11,7 +11,6 @@ import toMessage from '../state/event/to-message';
 
 export default class HostGameController extends NetworkController {
     private syncFrequency = 100;
-
     protected network!: NetworkHost;
 
     public hostGame(player: PlayerInfo): Promise<HostGameController> {
@@ -21,16 +20,10 @@ export default class HostGameController extends NetworkController {
 
         setInterval(this.sendSync, this.syncFrequency);
 
-        if (this.network.isOpen) {
-            return Promise.resolve(this);
-        }
-
-        return new Promise((resolve, reject) => {
-            this.network.on('open', () => {
-                this.createLocalPlayer(player);
-                this.init();
-                resolve(this);
-            });
+        return this.network.ready.then(() => {
+            this.createLocalPlayer(player);
+            this.init();
+            return this;
         });
     }
 
