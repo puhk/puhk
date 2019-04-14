@@ -35,7 +35,7 @@ export default class ClientController extends NetworkController {
             this.pingInterval = window.setInterval(this.sendPingMsg, this.pingFrequency);
         };
 
-        return this.network.connectTo(roomId)
+        return this.network.connectTo(roomId, player)
             .then(createInterval)
             .then(() => this);
     }

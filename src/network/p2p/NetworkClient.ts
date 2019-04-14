@@ -1,6 +1,7 @@
 import { AbstractP2PNetwork, Config } from './AbstractP2PNetwork';
-import { Message } from '../NetworkInterface';
+import { Message, MessageType } from '../NetworkInterface';
 import NetworkClientInterface from '../NetworkClientInterface';
+import { PlayerInfo } from '../../controller/NetworkController';
 
 declare const Peer: any;
 
@@ -21,25 +22,46 @@ export default class NetworkClient extends AbstractP2PNetwork implements Network
         this.peer = new Peer(ident, { host, path });
     }
 
-    public connectTo(host: string): Promise<void> {
+    public connectTo(host: string, player: PlayerInfo): Promise<void> {
         this.state = States.Connecting;
-        this.hostConn = this.peer.connect(host);
-
-        this.hostConn.on('close', () => {
-            this.emit('host:disconnect');
-        });
+        this.hostConn = this.peer.connect(host, { metadata: player });
 
         return new Promise((resolve, reject) => {
-            let timeout: number | null = window.setTimeout(() => reject(), NetworkClient.CONNECT_TIMEOUT);
+            const fail = () => {
+                cancelTimeout();
+                this.state = States.Unconnected;
+                reject();
+            };
 
-            this.hostConn.on('data', (msg: Message) => {
-                if (timeout && this.state == States.Connecting) {
+            let timeout: number | null = window.setTimeout(fail, NetworkClient.CONNECT_TIMEOUT);
+
+            const cancelTimeout = () => {
+                if (timeout) {
                     clearTimeout(timeout);
                     timeout = null;
-                    resolve();
                 }
+            };
 
-                this.emit(`host:msg:${msg.type}`, msg);
+            this.hostConn.on('open', () => {
+                this.hostConn.on('data', (msg: Message) => {
+                    if (msg.type === MessageType.Init && timeout) {
+                        cancelTimeout();
+                        this.state = States.Connected;
+                        resolve();
+                    }
+
+                    this.emit(`host:msg:${msg.type}`, msg);
+                });
+            });
+
+            this.hostConn.on('close', () => {
+                fail();
+                this.emit('host:disconnect');
+            });
+
+            this.hostConn.on('error', () => {
+                fail();
+                this.emit('host:error');
             });
         });
     }

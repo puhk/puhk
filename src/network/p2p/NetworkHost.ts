@@ -14,7 +14,7 @@ const OPEN_TIMEOUT = 10000;
 export default class NetworkHost extends AbstractP2PNetwork implements NetworkInterface {
     private clients: Client[] = [];
     private nextClientId = 0;
-    public ready: Promise<boolean>;
+    public ready: Promise<void>;
 
     public constructor({ host, path }: Config) {
         super();
@@ -36,9 +36,12 @@ export default class NetworkHost extends AbstractP2PNetwork implements NetworkIn
         const id = this.nextClientId++;
 
         conn.on('open', () => {
-            const client = { id, conn };
-            this.clients.push(client);
-            this.emit('client:joined', id);
+            this.clients.push({ id, conn });
+
+            this.emit('client:joined', {
+                player: conn.metadata,
+                id
+            });
         });
 
         conn.on('data', (msg: Message) => {

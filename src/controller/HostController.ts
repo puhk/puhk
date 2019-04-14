@@ -28,11 +28,11 @@ export default class HostGameController extends NetworkController {
     }
 
     @autobind
-    private clientJoined(id: number) {
+    private clientJoined({ id, player }: { id: number, player: PlayerInfo }) {
         const event = new Events.PlayerJoined(this.simulator.concreteState.frame, this.me.id, {
             clientId: id,
-            name: 'sock',
-            avatar: ':)'
+            name: player.name,
+            avatar: player.avatar
         });
 
         this.simulator.addEvent(event);
