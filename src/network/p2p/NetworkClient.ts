@@ -1,8 +1,7 @@
+import Peer from 'peerjs';
 import { AbstractP2PNetwork, Config } from './AbstractP2PNetwork';
 import { NetworkInterface, Message, MessageType } from '../NetworkInterface';
 import { PlayerInfo } from '../../controller/NetworkController';
-
-declare const Peer: any;
 
 export enum States {
     Unconnected = 0,

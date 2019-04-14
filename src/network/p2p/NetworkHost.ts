@@ -1,4 +1,5 @@
 import { autobind } from 'core-decorators';
+import Peer from 'peerjs';
 import { AbstractP2PNetwork, Config } from './AbstractP2PNetwork';
 import { NetworkInterface, Message } from '../NetworkInterface';
 
@@ -6,8 +7,6 @@ interface Client {
     id: number;
     conn: any;
 }
-
-declare const Peer: any;
 
 const OPEN_TIMEOUT = 10000;
 

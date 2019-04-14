@@ -1,3 +1,4 @@
+import Peer from 'peerjs';
 import { EventEmitter } from 'eventemitter3';
 import { NetworkInterface, Message } from '../NetworkInterface';
 
@@ -7,7 +8,7 @@ export interface Config {
 }
 
 export abstract class AbstractP2PNetwork extends EventEmitter implements NetworkInterface {
-    protected peer: any;
+    protected peer!: Peer;
 
     public disconnect() {
         this.peer.destroy();
