@@ -9,7 +9,7 @@ const grassImage = require('./images/grass.png') as string;
 interface Window {
     controller: NetworkController;
     host: (name: string, avatar: string) => void;
-    join: (host: string, avatar: string) => void;
+    join: (host: string, name: string, avatar: string) => void;
 }
 
 declare var window: Window;
@@ -41,7 +41,7 @@ const hostGame = (name: string, avatar: string) => {
     });
 };
 
-const joinGame = (host: string, avatar: string) => {
+const joinGame = (host: string, name: string, avatar: string) => {
     join({
         host: 'localhost',
         path: '/p2p',
