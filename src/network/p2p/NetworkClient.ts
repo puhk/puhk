@@ -1,6 +1,5 @@
 import { AbstractP2PNetwork, Config } from './AbstractP2PNetwork';
-import { Message, MessageType } from '../NetworkInterface';
-import NetworkClientInterface from '../NetworkClientInterface';
+import { NetworkInterface, Message, MessageType } from '../NetworkInterface';
 import { PlayerInfo } from '../../controller/NetworkController';
 
 declare const Peer: any;
@@ -11,7 +10,7 @@ export enum States {
     Connected = 2
 }
 
-export default class NetworkClient extends AbstractP2PNetwork implements NetworkClientInterface {
+export default class NetworkClient extends AbstractP2PNetwork implements NetworkInterface {
     private hostConn: any;
     private state = States.Unconnected;
     private static CONNECT_TIMEOUT = 10000;
