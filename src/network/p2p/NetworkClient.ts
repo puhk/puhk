@@ -10,19 +10,17 @@ export enum States {
 }
 
 export default class NetworkClient extends AbstractP2PNetwork implements NetworkInterface {
-    private hostConn: any;
-    private state = States.Unconnected;
     private static CONNECT_TIMEOUT = 10000;
+    private state = States.Unconnected;
+    private hostConn?: Peer.DataConnection;
 
-    public constructor({ host, path }: Config) {
+    public constructor(protected peer: Peer) {
         super();
-        const ident = Math.random().toString(36).substring(7);
-        this.peer = new Peer(ident, { host, path });
     }
 
     public connectTo(host: string, player: PlayerInfo): Promise<void> {
         this.state = States.Connecting;
-        this.hostConn = this.peer.connect(host, { metadata: player });
+        const hostConn = this.hostConn = this.peer.connect(host, { metadata: player });
 
         return new Promise((resolve, reject) => {
             const fail = () => {
@@ -40,8 +38,8 @@ export default class NetworkClient extends AbstractP2PNetwork implements Network
                 }
             };
 
-            this.hostConn.on('open', () => {
-                this.hostConn.on('data', (msg: Message) => {
+            hostConn.on('open', () => {
+                hostConn.on('data', (msg: Message) => {
                     if (msg.type === MessageType.Init && timeout) {
                         cancelTimeout();
                         this.state = States.Connected;
@@ -52,12 +50,12 @@ export default class NetworkClient extends AbstractP2PNetwork implements Network
                 });
             });
 
-            this.hostConn.on('close', () => {
+            hostConn.on('close', () => {
                 fail();
                 this.emit('host:disconnect');
             });
 
-            this.hostConn.on('error', () => {
+            hostConn.on('error', () => {
                 fail();
                 this.emit('host:error');
             });
@@ -65,6 +63,10 @@ export default class NetworkClient extends AbstractP2PNetwork implements Network
     }
 
     public send(msg: Message) {
+        if (!this.hostConn) {
+            throw new Error('Client isnt connected');
+        }
+
         this.hostConn.send(msg);
     }
 }

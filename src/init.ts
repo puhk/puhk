@@ -1,3 +1,4 @@
+import Peer from 'peerjs';
 import Keyboard from './Keyboard';
 import Renderer from './Renderer';
 import Simulator from './state/Simulator';
@@ -35,10 +36,10 @@ interface ControllerConstructor<T> {
 
 const createStateFromStadium = (stadium: Stadium) => initScores(createState(stadium));
 
-const createController = <T extends NetworkController, N extends NetworkInterface>(
+const createController = <T extends NetworkController>(
     Controller: ControllerConstructor<T>,
-    Network: new(opts: Config) => N,
-    { host, path, renderer }: Opts
+    Network: new(peer: Peer) => NetworkInterface,
+    opts: Opts
 ) => {
     const state = createStateFromStadium(Stadium.parse(classic));
     const simulator = new Simulator;
@@ -46,10 +47,15 @@ const createController = <T extends NetworkController, N extends NetworkInterfac
 
     return new Controller(
         simulator,
-        new Network({ host, path }),
+        createNetwork(Network, opts),
         new Keyboard,
-        renderer
+        opts.renderer
     );
+};
+
+const createNetwork = (network: new(peer: Peer) => NetworkInterface, { host, path }: Opts) => {
+    const ident = Math.random().toString(36).substring(7);
+    return new network(new Peer(ident, { host, path }));
 };
 
 export const host = (opts: Opts) =>

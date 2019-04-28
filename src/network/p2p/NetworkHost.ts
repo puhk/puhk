@@ -15,9 +15,8 @@ export default class NetworkHost extends AbstractP2PNetwork implements NetworkIn
     private nextClientId = 0;
     public ready: Promise<void>;
 
-    public constructor({ host, path }: Config) {
+    public constructor(protected peer: Peer) {
         super();
-        this.peer = new Peer('host', { host, path });
         this.peer.on('connection', this.handleConnection);
 
         this.ready = new Promise((resolve, reject) => {
