@@ -38,6 +38,8 @@ const hostGame = (name: string, avatar: string) => {
     }).then(controller => {
         window.controller = controller;
         render(controller);
+    }).catch(e => {
+        console.log('failed to connect', e);
     });
 };
 
@@ -51,6 +53,8 @@ const joinGame = (host: string, name: string, avatar: string) => {
     }).then(controller => {
         window.controller = controller;
         render(controller);
+    }).catch(e => {
+        console.log('failed to connect', e);
     });
 };
 
