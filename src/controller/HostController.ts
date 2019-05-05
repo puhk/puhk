@@ -13,18 +13,16 @@ export default class HostGameController extends NetworkController {
     private syncFrequency = 100;
     protected network!: NetworkHost;
 
-    public hostGame(player: PlayerInfo): Promise<HostGameController> {
+    public hostGame(player: PlayerInfo) {
         this.network.on('client:joined', this.clientJoined);
         this.network.on(`client:msg:${MessageType.Event}`, this.handleEventMsg);
         this.network.on(`client:msg:${MessageType.Ping}`, this.handlePingMsg);
 
         setInterval(this.sendSync, this.syncFrequency);
 
-        return this.network.ready.then(() => {
-            this.createLocalPlayer(player);
-            this.init();
-            return this;
-        });
+        this.createLocalPlayer(player);
+        this.init();
+        return this;
     }
 
     @autobind

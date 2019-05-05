@@ -21,7 +21,7 @@ export default class ClientController extends NetworkController {
     private maxFrameSamples = 10;
     protected network!: NetworkClient;
 
-    public join(roomId: string, player: PlayerInfo) {
+    public async join(roomId: string, player: PlayerInfo) {
         this.network.on(`host:msg:${MessageType.Init}`, this.handleInitMsg);
         this.network.on(`host:msg:${MessageType.Event}`, this.handleEventMsg);
         this.network.on(`host:msg:${MessageType.Sync}`, this.handleSyncMsg);
@@ -31,13 +31,9 @@ export default class ClientController extends NetworkController {
             window.clearInterval(this.pingInterval);
         });
 
-        const createInterval = () => {
-            this.pingInterval = window.setInterval(this.sendPingMsg, this.pingFrequency);
-        };
-
-        return this.network.connectTo(roomId, player)
-            .then(createInterval)
-            .then(() => this);
+        await this.network.connectTo(roomId, player);
+        this.pingInterval = window.setInterval(this.sendPingMsg, this.pingFrequency);
+        return this;
     }
 
     public addEvent(event: Event, send: boolean = true) {

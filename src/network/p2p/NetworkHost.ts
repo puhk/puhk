@@ -1,6 +1,6 @@
 import { autobind } from 'core-decorators';
 import Peer from 'peerjs';
-import { AbstractP2PNetwork, Config } from './AbstractP2PNetwork';
+import { AbstractP2PNetwork } from './AbstractP2PNetwork';
 import { NetworkInterface, Message } from '../NetworkInterface';
 
 interface Client {
@@ -8,25 +8,17 @@ interface Client {
     conn: any;
 }
 
-const OPEN_TIMEOUT = 10000;
-
 export default class NetworkHost extends AbstractP2PNetwork implements NetworkInterface {
     private clients: Client[] = [];
     private nextClientId = 0;
-    public ready: Promise<void>;
 
     public constructor(protected peer: Peer) {
         super();
+    }
+
+    public init() {
         this.peer.on('connection', this.handleConnection);
-
-        this.ready = new Promise((resolve, reject) => {
-            const openTimeout = setTimeout(() => reject(), OPEN_TIMEOUT);
-
-            this.peer.on('open', () => {
-                clearTimeout(openTimeout);
-                resolve();
-            });
-        });
+        return this;
     }
 
     @autobind

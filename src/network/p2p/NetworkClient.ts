@@ -1,5 +1,5 @@
 import Peer from 'peerjs';
-import { AbstractP2PNetwork, Config } from './AbstractP2PNetwork';
+import { AbstractP2PNetwork } from './AbstractP2PNetwork';
 import { NetworkInterface, Message, MessageType } from '../NetworkInterface';
 import { PlayerInfo } from '../../controller/NetworkController';
 
@@ -23,10 +23,10 @@ export default class NetworkClient extends AbstractP2PNetwork implements Network
         const hostConn = this.hostConn = this.peer.connect(host, { metadata: player });
 
         return new Promise((resolve, reject) => {
-            const fail = () => {
+            const fail = (err?: string) => {
                 cancelTimeout();
                 this.state = States.Unconnected;
-                reject();
+                reject(err);
             };
 
             let timeout: number | null = window.setTimeout(fail, NetworkClient.CONNECT_TIMEOUT);
@@ -55,8 +55,8 @@ export default class NetworkClient extends AbstractP2PNetwork implements Network
                 this.emit('host:disconnect');
             });
 
-            hostConn.on('error', () => {
-                fail();
+            hostConn.on('error', err => {
+                fail(err);
                 this.emit('host:error');
             });
         });

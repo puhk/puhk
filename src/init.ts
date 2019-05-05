@@ -1,4 +1,4 @@
-import Peer from 'peerjs';
+import Peer, { PeerJSOption } from 'peerjs';
 import Keyboard from './Keyboard';
 import Renderer from './Renderer';
 import Simulator from './state/Simulator';
@@ -9,14 +9,13 @@ import ClientController from './controller/ClientController';
 import HostController from './controller/HostController';
 
 import { NetworkInterface } from './network/NetworkInterface';
-import { Config } from './network/p2p/AbstractP2PNetwork';
 import NetworkHost from './network/p2p/NetworkHost';
 import NetworkClient from './network/p2p/NetworkClient';
 
 import Stadium from './entities/Stadium';
 import classic from './stadiums/classic';
 
-export interface Opts extends Config {
+export interface Opts extends PeerJSOption {
     player: PlayerInfo;
     renderer?: Renderer;
 }
@@ -38,7 +37,7 @@ const createStateFromStadium = (stadium: Stadium) => initScores(createState(stad
 
 const createController = <T extends NetworkController>(
     Controller: ControllerConstructor<T>,
-    Network: new(peer: Peer) => NetworkInterface,
+    network: NetworkInterface,
     opts: Opts
 ) => {
     const state = createStateFromStadium(Stadium.parse(classic));
@@ -47,21 +46,28 @@ const createController = <T extends NetworkController>(
 
     return new Controller(
         simulator,
-        createNetwork(Network, opts),
+        network,
         new Keyboard,
         opts.renderer
     );
 };
 
-const createNetwork = (network: new(peer: Peer) => NetworkInterface, { host, path }: Opts) => {
-    const ident = Math.random().toString(36).substring(7);
-    return new network(new Peer(ident, { host, path }));
+const createPeer = (opts: PeerJSOption): Promise<Peer> => {
+    return new Promise((resolve, reject) => {
+        const peer = new Peer(opts);
+        peer.on('open', () => resolve(peer));
+        peer.on('error', err => reject(err));
+    });
 };
 
-export const host = (opts: Opts) =>
-    createController(HostController, NetworkHost, opts)
-        .hostGame(opts.player);
+export const host = async (opts: Opts): Promise<HostController> => {
+    const peer = await createPeer(opts);
+    const network = new NetworkHost(peer).init();
+    return createController(HostController, network, opts).hostGame(opts.player);
+};
 
-export const join = (opts: ClientOps) =>
-    createController(ClientController, NetworkClient, opts)
-        .join(opts.roomId, opts.player);
+export const join = async (opts: ClientOps): Promise<ClientController> => {
+    const peer = await createPeer(opts);
+    const network = new NetworkClient(peer);
+    return createController(ClientController, network, opts).join(opts.roomId, opts.player);
+};
