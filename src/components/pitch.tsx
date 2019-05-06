@@ -2,6 +2,8 @@ import React, { createRef } from 'react';
 import styled from 'styled-components';
 import { NetworkController, Renderer } from '@nojball/client';
 import ResizeObserver from 'resize-observer-polyfill';
+import Color from 'color';
+import colors from '../colors';
 
 export interface PitchProps {
     controller: NetworkController;
@@ -9,6 +11,7 @@ export interface PitchProps {
 }
 
 const PitchContainer = styled.div`
+    background: ${Color(colors.bg).lighten(0.4).toString()};
     height: 100%;
     position: relative;
     outline: none;
