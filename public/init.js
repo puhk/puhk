@@ -26,11 +26,11 @@ const hostGame = (name, avatar) => {
     });
 };
 
-const joinGame = (name, avatar) => {
+const joinGame = (host, name, avatar) => {
     join({
         host: 'localhost',
         path: 'p2p',
-        roomId: 'host',
+        roomId: host,
         player: { name, avatar },
         renderer
     }).then(res => {
