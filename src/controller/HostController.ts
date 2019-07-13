@@ -9,7 +9,7 @@ import parseEvent from '../state/event/parse-event';
 import packEvent from '../state/event/pack';
 import toMessage from '../state/event/to-message';
 
-export default class HostGameController extends NetworkController {
+export default class HostController extends NetworkController {
     private syncFrequency = 100;
     protected network!: NetworkHost;
 
