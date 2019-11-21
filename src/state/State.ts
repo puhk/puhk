@@ -5,7 +5,6 @@ import kickOffHandler from './matchstate-handlers/kick-off-handler';
 import inPlayHandler from './matchstate-handlers/in-play-handler';
 import goalScoredHandler from './matchstate-handlers/goal-scored-handler';
 import endGameHandler from './matchstate-handlers/end-game-handler';
-import { GoalScored } from '../engine';
 import ChatMessage from '../entities/ChatMessage';
 import Disc, { JsonDisc } from '../entities/Disc';
 import Player, { JsonPlayer } from '../entities/Player';
@@ -66,7 +65,7 @@ export const initScores = (state: State) => {
     return update(state, { scores: { $add: scores } });
 };
 
-type StateHandler = (state: State, goalsScored: GoalScored[]) => State;
+type StateHandler = (state: State, previousState: State) => State;
 const matchStateHandlers: Record<MatchStates, StateHandler> = {
     [MatchStates.Kickoff]: kickOffHandler,
     [MatchStates.Inplay]: inPlayHandler,
@@ -74,7 +73,7 @@ const matchStateHandlers: Record<MatchStates, StateHandler> = {
     [MatchStates.EndGame]: endGameHandler,
 };
 
-export const runMatchState = (state: State, goalsScored: GoalScored[]) => matchStateHandlers[state.matchState](state, goalsScored);
+export const runMatchState = (state: State, previousState: State) => matchStateHandlers[state.matchState](state, previousState);
 
 export const parse = (json: JsonState) => {
     const state = createState(Stadium.parse(json.stadium));

@@ -38,7 +38,7 @@ export default class Simulator {
             .filter(e => e.frame === state.frame)
             .reduce((newState, e) => e.apply(newState), newState);
 
-        return newState.playing ? runMatchState(...run(newState)) : newState;
+        return newState.playing ? runMatchState(run(newState), state) : newState;
     }
 
     private rememberState(state: State): void {

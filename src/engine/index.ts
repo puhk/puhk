@@ -1,21 +1,15 @@
 import Vec from 'victor';
 import update from 'immutability-helper';
-import flatMap from 'lodash/flatMap';
 import flow from 'lodash/fp/flow';
 
 import handleCircleCollision from './circle-collision';
-import { discDistanceToLine, handleDiscSegmentCollision } from './segment-collision';
+import { handleDiscSegmentCollision } from './segment-collision';
 import Disc from '../entities/Disc';
 import Player from '../entities/Player';
-import Stadium, { Goal } from '../entities/Stadium';
+import Stadium from '../entities/Stadium';
 import State from '../state/State';
 import { getPlayerFromDisc } from '../state/funcs/player';
 import { Keys } from '../Keyboard';
-
-export interface GoalScored {
-    disc: Disc;
-    goal: Goal;
-}
 
 const calculatePlayerMovementVector = (player: Player, stadium: Stadium) => {
     const accel = stadium.playerPhysics[player.keys[Keys.kick] ? 'kickingAcceleration' : 'acceleration'];
@@ -88,38 +82,5 @@ const collideDiscs = (state: State): State => {
         }, state);
 };
 
-const updateDiscPositions = flow(applyDiscsMovement, collideDiscs);
-
-const prevBallPositions = new Map<number, Vec>();
-
-const calculateGoalsScored = (state: State) => {
-    return flatMap(state.discs, (disc: Disc) => {
-        const goalsScored = state.stadium.goals
-            .filter(goal => checkGoal(disc, goal))
-            .map(goal => ({ disc, goal }));
-
-        prevBallPositions.set(disc.id, disc.position.clone());
-        return goalsScored;
-    });
-}
-
-export default function run(state: State): [State, GoalScored[]] {
-    const updatedState = updateDiscPositions(state);
-    return [updatedState, calculateGoalsScored(updatedState)];
-}
-
-function checkGoal(ball: Disc, goal: Goal) {
-    if (!prevBallPositions.has(ball.id)) {
-        return false;
-    }
-
-    const distBall = discDistanceToLine(ball, goal);
-    const prevPos = prevBallPositions.get(ball.id)!;
-    const prevDist = discDistanceToLine(new Disc(prevPos), goal);
-
-    if (distBall === false || prevDist === false) {
-        return false;
-    }
-
-    return (prevDist[0] > 0 && distBall[0] < 0) || (prevDist[0] < 0 && distBall[0] > 0);
-}
+const runPhysics = flow(applyDiscsMovement, collideDiscs);
+export default runPhysics;
