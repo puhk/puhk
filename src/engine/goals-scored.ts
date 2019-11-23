@@ -10,7 +10,7 @@ export interface GoalScored {
     goal: Goal;
 }
 
-const checkGoal = (ball: Disc, goal: Goal, previousBall?: Disc) => {
+const hasBallCrossedGoalLine = (ball: Disc, goal: Goal, previousBall?: Disc) => {
     if (!previousBall) {
         return false;
     }
@@ -33,7 +33,7 @@ export default function calculateGoalsScored(newState: State, previousState: Sta
     return flatMap(newState.discs, (disc: Disc) => {
         const previousDisc = findDiscFromPreviousState(previousState, disc);
         return newState.stadium.goals
-            .filter(goal => checkGoal(disc, goal, previousDisc))
+            .filter(goal => hasBallCrossedGoalLine(disc, goal, previousDisc))
             .map(goal => ({ disc, goal }));
     });
 }
