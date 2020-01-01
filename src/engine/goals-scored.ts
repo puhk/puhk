@@ -16,7 +16,7 @@ const hasBallCrossedGoalLine = (ball: Disc, goal: Goal, previousBall?: Disc) => 
     }
 
     const distBall = discDistanceToLine(ball, goal);
-    const prevDist = discDistanceToLine(new Disc(previousBall.position), goal);
+    const prevDist = discDistanceToLine(previousBall, goal);
 
     if (distBall === false || prevDist === false) {
         return false;
