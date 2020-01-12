@@ -51,5 +51,11 @@
     "hooks": {
       "pre-commit": "pretty-quick --staged"
     }
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "useTabs": true,
+    "singleQuote": true,
+    "printWidth": 120
   }
 }
