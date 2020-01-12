@@ -1,22 +1,22 @@
 import update from 'immutability-helper';
 import { Event } from '..';
 import State from '../../State';
-import { PlayerInfo } from '../../../controller/NetworkController'
+import { PlayerInfo } from '../../../controller/NetworkController';
 import Player from '../../../entities/Player';
 
 export interface EventData extends PlayerInfo {
-    clientId: number;
+	clientId: number;
 }
 
 export default class PlayerJoined implements Event {
-    public constructor(public frame: number, public sender: number, public data: EventData) {}
+	public constructor(public frame: number, public sender: number, public data: EventData) {}
 
-    public apply(state: State) {
-        const player = new Player(this.data.clientId, this.data.name);
-        player.setAvatar(this.data.avatar);
+	public apply(state: State) {
+		const player = new Player(this.data.clientId, this.data.name);
+		player.setAvatar(this.data.avatar);
 
-        return update(state, {
-            players: { $push: [player] }
-        });
-    }
+		return update(state, {
+			players: { $push: [player] },
+		});
+	}
 }

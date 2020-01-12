@@ -4,37 +4,37 @@ import State from '../../State';
 import { getPlayerById, getPlayerDisc } from '../../funcs/player';
 
 export interface EventData {
-    avatar: string;
+	avatar: string;
 }
 
 export default class PlayerAvatar implements Event {
-    public constructor(public frame: number, public sender: number, public data: EventData) {}
+	public constructor(public frame: number, public sender: number, public data: EventData) {}
 
-    public apply(state: State) {
-        const player = getPlayerById(state, this.sender);
+	public apply(state: State) {
+		const player = getPlayerById(state, this.sender);
 
-        if (!player) {
-            throw new Error(`Can't set avatar for player ${this.sender}`);
-        }
+		if (!player) {
+			throw new Error(`Can't set avatar for player ${this.sender}`);
+		}
 
-        const spec: Spec<typeof state> = {
-            players: {
-                [state.players.indexOf(player)]: {
-                    avatar: { $set: this.data.avatar }
-                }
-            }
-        };
+		const spec: Spec<typeof state> = {
+			players: {
+				[state.players.indexOf(player)]: {
+					avatar: { $set: this.data.avatar },
+				},
+			},
+		};
 
-        const disc = getPlayerDisc(state, player);
+		const disc = getPlayerDisc(state, player);
 
-        if (disc) {
-            spec.discs = {
-                [state.discs.indexOf(disc)]: {
-                    text: { $set: player.avatar }
-                }
-            };
-        }
+		if (disc) {
+			spec.discs = {
+				[state.discs.indexOf(disc)]: {
+					text: { $set: player.avatar },
+				},
+			};
+		}
 
-        return update(state, spec);
-    }
+		return update(state, spec);
+	}
 }
