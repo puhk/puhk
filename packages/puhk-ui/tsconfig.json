@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "moduleResolution": "node",
+    "jsx": "react",
+    "baseUrl": "./",
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true
+  },
+  "include": [
+    "./src/**/*",
+    "./custom-types/**/*.d.ts"
+  ]
+}
