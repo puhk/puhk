@@ -1,11 +1,11 @@
 body {
-    margin: 0;
+	margin: 0;
 }
 
 #mount {
-    height: 100vh;
+	height: 100vh;
 }
 
 canvas {
-    display: block;
+	display: block;
 }

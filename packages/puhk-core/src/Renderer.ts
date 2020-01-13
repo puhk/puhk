@@ -94,9 +94,12 @@ export default class Renderer {
 		this.ctx.fillStyle = '#718c5a';
 		(<any>this.ctx.fillRect)(...area);
 
-		[...state.stadium.backgrounds, ...state.stadium.segments, ...state.stadium.goals, ...state.discs].forEach(object =>
-			object.draw(this.ctx)
-		);
+		[
+			...state.stadium.backgrounds,
+			...state.stadium.segments,
+			...state.stadium.goals,
+			...state.discs,
+		].forEach(object => object.draw(this.ctx));
 
 		this.firstRender = false;
 	}

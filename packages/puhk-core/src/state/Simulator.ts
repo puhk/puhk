@@ -34,7 +34,9 @@ export default class Simulator {
 			frame: { $set: state.frame + 1 },
 		});
 
-		newState = this.events.filter(e => e.frame === state.frame).reduce((newState, e) => e.apply(newState), newState);
+		newState = this.events
+			.filter(e => e.frame === state.frame)
+			.reduce((newState, e) => e.apply(newState), newState);
 
 		return newState.playing ? runMatchState(run(newState), state) : newState;
 	}

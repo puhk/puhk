@@ -7,62 +7,69 @@ import colors from '../../colors';
 import { ControllerProps } from '../component-props';
 
 export interface SidebarProps extends ControllerProps {
-    teams: Entities.JsonTeam[];
-    players: Entities.Player[];
-    scores: Map<string, number>;
-    playing: boolean;
-    toggleMenu: () => void;
+	teams: Entities.JsonTeam[];
+	players: Entities.Player[];
+	scores: Map<string, number>;
+	playing: boolean;
+	toggleMenu: () => void;
 }
 
 interface ButtonProps {
-    background: 'toggle' | 'start' | 'stop';
+	background: 'toggle' | 'start' | 'stop';
 }
 
 const Sidebar = styled.div`
-    background-color: ${colors.sidebar};
-    color: #fff;
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 10px;
+	background-color: ${colors.sidebar};
+	color: #fff;
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 10px;
 `;
 
 const buttonColors = {
-    toggle: '#2a2d30',
-    start: '#234f71',
-    stop: '#a52424'
-}
+	toggle: '#2a2d30',
+	start: '#234f71',
+	stop: '#a52424',
+};
 
 const Button = styled.button`
-    background: ${(props: ButtonProps) => buttonColors[props.background]};
-    border: 0;
-    border-radius: 3px;
-    color: white;
-    cursor: pointer;
-    display: block;
-    outline: none;
-    padding: 5px;
-    width: 100%;
+	background: ${(props: ButtonProps) => buttonColors[props.background]};
+	border: 0;
+	border-radius: 3px;
+	color: white;
+	cursor: pointer;
+	display: block;
+	outline: none;
+	padding: 5px;
+	width: 100%;
 
-    &:not(:last-child) {
-        margin-bottom: 5px;
-    }
+	&:not(:last-child) {
+		margin-bottom: 5px;
+	}
 `;
 
 export default React.memo((props: SidebarProps) => (
-    <Sidebar>
-        <TeamsList {...props} />
+	<Sidebar>
+		<TeamsList {...props} />
 
-        <div>
-            {props.playing &&
-                <Button onClick={props.toggleMenu} background="toggle">Toggle menu</Button>
-            }
+		<div>
+			{props.playing && (
+				<Button onClick={props.toggleMenu} background="toggle">
+					Toggle menu
+				</Button>
+			)}
 
-            {props.playing ?
-                <Button onClick={() => props.controller.stop()} background="stop">Stop game</Button> :
-                <Button onClick={() => props.controller.start()} background="start">Start game</Button>
-            }
-        </div>
-    </Sidebar>
+			{props.playing ? (
+				<Button onClick={() => props.controller.stop()} background="stop">
+					Stop game
+				</Button>
+			) : (
+				<Button onClick={() => props.controller.start()} background="start">
+					Start game
+				</Button>
+			)}
+		</div>
+	</Sidebar>
 ));

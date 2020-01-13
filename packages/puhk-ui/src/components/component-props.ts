@@ -1,11 +1,11 @@
 import { NetworkController, State } from '@puhk/puhk-core';
 
 export interface StateProps {
-    gameState: State;
+	gameState: State;
 }
 
 export interface ControllerProps {
-    controller: NetworkController;
+	controller: NetworkController;
 }
 
-export interface StateControllerProps extends StateProps, ControllerProps { }
+export interface StateControllerProps extends StateProps, ControllerProps {}
