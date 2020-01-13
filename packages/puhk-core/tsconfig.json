@@ -1,13 +1,6 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "moduleResolution": "node",
-    "target": "es2016",
-    "baseUrl": "./",
-    "sourceMap": false,
-    "strict": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
     "plugins": [
       {
         "transform": "ts-auto-mock/transformer",
@@ -16,9 +9,6 @@
     ]
   },
   "include": [
-    "src/**/*"
-  ],
-  "exclude":[
-    "node_modules"
+    "./src/**/*"
   ]
 }

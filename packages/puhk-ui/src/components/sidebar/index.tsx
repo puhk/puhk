@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Entities } from '@nojball/client';
+import { Entities } from '@puhk/puhk-core';
 
 import TeamsList from './teamslist';
 import colors from '../../colors';
@@ -15,7 +15,7 @@ export interface SidebarProps extends ControllerProps {
 }
 
 interface ButtonProps {
-    type: 'toggle' | 'start' | 'stop';
+    background: 'toggle' | 'start' | 'stop';
 }
 
 const Sidebar = styled.div`
@@ -35,7 +35,7 @@ const buttonColors = {
 }
 
 const Button = styled.button`
-    background: ${(props: ButtonProps) => buttonColors[props.type]};
+    background: ${(props: ButtonProps) => buttonColors[props.background]};
     border: 0;
     border-radius: 3px;
     color: white;
@@ -56,12 +56,12 @@ export default React.memo((props: SidebarProps) => (
 
         <div>
             {props.playing &&
-                <Button onClick={props.toggleMenu} type="toggle">Toggle menu</Button>
+                <Button onClick={props.toggleMenu} background="toggle">Toggle menu</Button>
             }
 
             {props.playing ?
-                <Button onClick={() => props.controller.stop()} type="stop">Stop game</Button> :
-                <Button onClick={() => props.controller.start()} type="start">Start game</Button>
+                <Button onClick={() => props.controller.stop()} background="stop">Stop game</Button> :
+                <Button onClick={() => props.controller.start()} background="start">Start game</Button>
             }
         </div>
     </Sidebar>

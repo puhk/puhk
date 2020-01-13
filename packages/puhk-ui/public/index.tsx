@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
-import { host, join, NetworkController, Renderer, Background } from '@nojball/client';
+import { host, join, NetworkController, Renderer, Background } from '@puhk/puhk-core';
 
 import Game from '../src/components/game';
 const grassImage = require('./images/grass.png') as string;

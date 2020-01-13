@@ -1,6 +1,6 @@
 import React, { createRef } from 'react';
 import styled from 'styled-components';
-import { getPlayerById, Entities } from '@nojball/client';
+import { getPlayerById, Entities } from '@puhk/puhk-core';
 import { ControllerProps } from '../component-props';
 
 export interface MessageListProps extends ControllerProps {

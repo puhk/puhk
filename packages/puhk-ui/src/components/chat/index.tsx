@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Entities } from '@nojball/client';
+import { Entities } from '@puhk/puhk-core';
 
 import Input from './input';
 import MessageList from './message-list';

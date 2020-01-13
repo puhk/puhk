@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { autobind } from 'core-decorators';
-import { NetworkController, Renderer, State } from '@nojball/client';
+import { NetworkController, Renderer, State } from '@puhk/puhk-core';
 
 import Chat from './chat';
 import Menu from './menu';

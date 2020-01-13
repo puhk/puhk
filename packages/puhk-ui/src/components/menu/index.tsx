@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Events, defaultStadiums } from '@nojball/client';
+import { Events, defaultStadiums } from '@puhk/puhk-core';
 import { StateControllerProps } from '../component-props';
 
 export interface MenuState {

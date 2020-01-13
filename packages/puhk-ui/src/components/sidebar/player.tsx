@@ -1,7 +1,7 @@
 import React from 'react';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 import styled from 'styled-components';
-import { Events, Entities, NetworkController } from '@nojball/client';
+import { Events, Entities, NetworkController } from '@puhk/puhk-core';
 
 import colors from '../../colors';
 import { ControllerProps } from '../component-props';

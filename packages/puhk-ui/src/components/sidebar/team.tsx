@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Events, Entities, NetworkController } from '@nojball/client';
+import { Events, Entities, NetworkController } from '@puhk/puhk-core';
 
 import Player from './player';
 import ColorBlock from '../../elements/color-block';

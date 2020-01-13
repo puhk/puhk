@@ -1,4 +1,4 @@
-import { NetworkController, State } from '@nojball/client';
+import { NetworkController, State } from '@puhk/puhk-core';
 
 export interface StateProps {
     gameState: State;

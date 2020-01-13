@@ -1,6 +1,6 @@
 import React, { createRef } from 'react';
 import styled from 'styled-components';
-import { NetworkController, Renderer } from '@nojball/client';
+import { NetworkController, Renderer } from '@puhk/puhk-core';
 import ResizeObserver from 'resize-observer-polyfill';
 import Color from 'color';
 import colors from '../colors';

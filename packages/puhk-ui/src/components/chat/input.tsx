@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Events } from '@nojball/client';
+import { Events } from '@puhk/puhk-core';
 import { autobind } from 'core-decorators';
 import { ControllerProps } from '../component-props';
 

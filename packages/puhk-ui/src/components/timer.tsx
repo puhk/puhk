@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
-import { scoresEqual } from '@nojball/client';
+import { scoresEqual } from '@puhk/puhk-core';
 import { ControllerProps } from './component-props';
 
 export interface TimerProps extends ControllerProps {

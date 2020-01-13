@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Color from 'color';
-import { Entities } from '@nojball/client';
+import { Entities } from '@puhk/puhk-core';
 
 import Timer from './timer';
 import ColorBlock from '../elements/color-block';
