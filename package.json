@@ -1,23 +1,38 @@
 {
-  "name": "puhk",
-  "author": "Jonny Taylor <jonny.taylor5@gmail.com>",
-  "license": "MIT",
-  "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
-  "devDependencies": {
-    "@types/core-decorators": "^0.20.0",
-    "@types/html-webpack-plugin": "^3.2.1",
-    "@types/node": "^13.1.6",
-    "@types/webpack": "^4.41.2",
-    "@types/webpack-env": "^1.15.0",
-    "cross-env": "^6.0.3",
-    "html-webpack-plugin": "^3.2.0",
-    "lerna": "^3.20.2",
-    "ts-node": "^8.6.2",
-    "typescript": "^3.7.4",
-    "webpack": "^4.41.5",
-    "webpack-dev-server": "^3.10.1"
-  }
+	"name": "puhk",
+	"author": "Jonny Taylor <jonny.taylor5@gmail.com>",
+	"license": "MIT",
+	"private": true,
+	"workspaces": [
+		"packages/*"
+	],
+	"devDependencies": {
+		"@types/core-decorators": "^0.20.0",
+		"@types/html-webpack-plugin": "^3.2.1",
+		"@types/node": "^13.1.6",
+		"@types/webpack": "^4.41.2",
+		"@types/webpack-env": "^1.15.0",
+		"cross-env": "^6.0.3",
+		"html-webpack-plugin": "^3.2.0",
+		"husky": "^4.0.7",
+		"lerna": "^3.20.2",
+		"prettier": "^1.19.1",
+		"pretty-quick": "^2.0.1",
+		"ts-node": "^8.6.2",
+		"typescript": "^3.7.4",
+		"webpack": "^4.41.5",
+		"webpack-dev-server": "^3.10.1"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "pretty-quick --staged"
+		}
+	},
+	"prettier": {
+		"trailingComma": "es5",
+		"useTabs": true,
+		"singleQuote": true,
+		"printWidth": 120,
+		"jsxBracketSameLine": true
+	}
 }
