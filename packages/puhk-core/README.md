@@ -1,6 +1,6 @@
-# Nojball Game
+# Puhk Core
 
-The core of nojball - physics, network, etc
+The core of Puhk - physics, network, etc
 
 ## Installing
 
@@ -17,7 +17,7 @@ Start PeerJS server
 peerjs --port 9000 --path p2p
 ```
 
-Run nojball
+Run
 
 ```
 yarn start

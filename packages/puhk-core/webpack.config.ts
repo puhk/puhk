@@ -16,7 +16,7 @@ let config: webpack.Configuration = {
 	output: {
 		path: path.resolve('build/dist'),
 		filename: 'bundle.js',
-		library: 'nojball-game',
+		library: 'puhk',
 		libraryTarget: 'umd',
 		umdNamedDefine: true,
 	},

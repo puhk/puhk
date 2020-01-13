@@ -15,7 +15,7 @@ let config = {
 	output: {
 		path: path.resolve('dist'),
 		filename: 'bundle.js',
-		library: 'nojball-game-ui',
+		library: 'puhk-ui',
 		libraryTarget: 'umd',
 	},
 	module: {

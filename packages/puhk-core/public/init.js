@@ -1,4 +1,4 @@
-const { host, join, Renderer, Events } = window['nojball-game'];
+const { host, join, Renderer, Events } = window['puhk'];
 const renderer = new Renderer();
 
 const $mount = document.getElementById('mount');
