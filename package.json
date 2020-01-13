@@ -1,0 +1,12 @@
+{
+  "name": "puhk",
+  "author": "Jonny Taylor <jonny.taylor5@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "lerna": "^3.20.2"
+  }
+}
