@@ -8,8 +8,8 @@ const grassImage = require('./images/grass.png') as string;
 
 interface Window {
 	controller: NetworkController;
-	host: (name: string, avatar: string) => void;
-	join: (host: string, name: string, avatar: string) => void;
+	hostGame: (name: string, avatar: string, port?: number) => void;
+	joinGame: (host: string, name: string, avatar: string, port?: number) => void;
 }
 
 declare var window: Window;
@@ -29,11 +29,11 @@ const render = (controller: NetworkController) => {
 	);
 };
 
-const hostGame = (name: string, avatar: string) => {
+const hostGame = (name: string, avatar: string, port = 9000) => {
 	host({
 		host: 'localhost',
-		path: '/p2p',
 		player: { name, avatar },
+		port,
 		renderer,
 	})
 		.then(controller => {
@@ -45,12 +45,12 @@ const hostGame = (name: string, avatar: string) => {
 		});
 };
 
-const joinGame = (host: string, name: string, avatar: string) => {
+const joinGame = (host: string, name: string, avatar: string, port = 9000) => {
 	join({
 		host: 'localhost',
-		path: '/p2p',
 		player: { name, avatar },
 		roomId: host,
+		port,
 		renderer,
 	})
 		.then(controller => {
@@ -62,8 +62,8 @@ const joinGame = (host: string, name: string, avatar: string) => {
 		});
 };
 
-window.host = hostGame;
-window.join = joinGame;
+window.hostGame = hostGame;
+window.joinGame = joinGame;
 
 // Hot Module Replacement API
 if (module.hot && typeof module.hot.accept == 'function') {
