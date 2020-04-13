@@ -3,6 +3,9 @@
 	"author": "Jonny Taylor <jonny.taylor5@gmail.com>",
 	"license": "MIT",
 	"private": true,
+	"scripts": {
+		"start": "yarn workspace @puhk/puhk-core build:es6 && yarn workspace @puhk/puhk-ui start"
+	},
 	"workspaces": [
 		"packages/*"
 	],
