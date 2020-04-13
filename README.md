@@ -2,6 +2,8 @@
 
 Puhk is a 2D football/hockey hybrid multiplayer game.
 
+![screenshot](screenshot.png)
+
 ## Packages
 
 This repo is a monorepo containing the individual components of puhk:
