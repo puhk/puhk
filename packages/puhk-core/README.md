@@ -1,26 +1,19 @@
-# Puhk Core
+# puhk-core
 
 The core of Puhk - physics, network, etc
 
-## Installing
-
-```
-yarn install
-yarn global add peer
-```
-
-## Running in Development
-
-Start PeerJS server
-
-```
-peerjs --port 9000
-```
+## Development
 
 Run
 
 ```
 yarn start
+```
+
+In another tab spawn the peerjs server
+
+```
+yarn peerjs --port 9000
 ```
 
 Open `http://localhost:8080`
