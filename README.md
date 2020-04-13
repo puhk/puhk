@@ -16,11 +16,10 @@ yarn install
 yarn start
 ```
 
-Install & start PeerJS server
+In another tab spawn the peerjs server
 
 ```
-yarn global add peer
-peerjs --port 9000
+yarn peerjs --port 9000
 ```
 
 Open `http://localhost:8080`
