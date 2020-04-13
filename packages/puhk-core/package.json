@@ -19,7 +19,7 @@
 		"immutability-helper": "^2.9.0",
 		"lodash": "^4.17.3",
 		"mainloop.js": "^1.0.3",
-		"peerjs": "^1.0.0",
+		"peerjs": "^1.2.0",
 		"victor": "^1.1.0"
 	},
 	"devDependencies": {

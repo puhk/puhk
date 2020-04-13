@@ -14,7 +14,7 @@ yarn global add peer
 Start PeerJS server
 
 ```
-peerjs --port 9000 --path p2p
+peerjs --port 9000
 ```
 
 Run
@@ -27,9 +27,9 @@ Open `http://localhost:8080`
 
 In the console use the following commands to start a game
 
-```
-hostGame('name', 'avatar') - Create a new game
-moveToTeam(id, 'red') - Move player to a team (host id is -1)
-controller.start() - start game
-controller.stop() - stop game
+```javascript
+hostGame('name', 'avatar'); // Create a new game
+moveToTeam(id, 'red'); // Move player to a team (host id is -1)
+controller.start(); // start game
+controller.stop(); // stop game
 ```

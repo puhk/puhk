@@ -18,7 +18,7 @@ const render = () => {
 const hostGame = (name, avatar) => {
 	host({
 		host: 'localhost',
-		path: 'p2p',
+		port: 9000,
 		player: { name, avatar },
 		renderer,
 	}).then(res => {
@@ -30,7 +30,7 @@ const hostGame = (name, avatar) => {
 const joinGame = (host, name, avatar) => {
 	join({
 		host: 'localhost',
-		path: 'p2p',
+		port: 9000,
 		roomId: host,
 		player: { name, avatar },
 		renderer,

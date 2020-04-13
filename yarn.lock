@@ -6723,9 +6723,10 @@ peerjs-js-binarypack@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/peerjs-js-binarypack/-/peerjs-js-binarypack-1.0.1.tgz#80fa2b61c794a6b16d64253700405e476ada29be"
 
-peerjs@^1.0.0:
+peerjs@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/peerjs/-/peerjs-1.2.0.tgz#63a0ac54b3b79bba8502e31ecb5bcb4688e1bdd6"
+  integrity sha512-+ZWByKOYDDzpLefueY2drUFC5U2UVv947NswaYQb6o4twKiRcoDLdcgwfIQHjhcBWwvVUhYyhGIdSJy29+4a9Q==
   dependencies:
     "@types/node" "^10.14.17"
     "@types/webrtc" "^0.0.25"
