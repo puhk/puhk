@@ -13,6 +13,7 @@ import NetworkHost from './network/p2p/NetworkHost';
 import NetworkClient from './network/p2p/NetworkClient';
 
 import Stadium from './entities/Stadium';
+import big from './stadiums/big';
 import classic from './stadiums/classic';
 
 export interface Opts extends PeerJSOption {
@@ -34,12 +35,16 @@ const createController = <T extends NetworkController>(
 	Controller: ControllerConstructor<T>,
 	network: NetworkInterface,
 	opts: Opts
-) => {
-	const state = createStateFromStadium(Stadium.parse(classic));
+): T => {
 	const simulator = new Simulator();
+	const controller = new Controller(simulator, network, new Keyboard(), opts.renderer)
+		.addStadium(Stadium.parse(classic))
+		.addStadium(Stadium.parse(big));
+
+	const state = createStateFromStadium(controller.getStadium('Classic'));
 	simulator.makeConcrete(state);
 
-	return new Controller(simulator, network, new Keyboard(), opts.renderer);
+	return controller;
 };
 
 const createPeer = (opts: PeerJSOption): Promise<Peer> => {

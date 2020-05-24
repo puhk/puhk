@@ -6,6 +6,7 @@ import Simulator from '../state/Simulator';
 import { Event } from '../state/event';
 import { Keypress, StartGame, StopGame } from '../state/event/events';
 import toMessage from '../state/event/to-message';
+import { Stadium } from '../entities';
 
 export interface PlayerInfo {
 	name: string;
@@ -17,6 +18,8 @@ export interface LocalPlayerInfo extends PlayerInfo {
 }
 
 export abstract class NetworkController extends Controller {
+	protected stadiums: Stadium[] = [];
+
 	protected me: LocalPlayerInfo = {
 		id: -1,
 		name: '',
@@ -72,5 +75,24 @@ export abstract class NetworkController extends Controller {
 
 	public setMe(me: LocalPlayerInfo) {
 		this.me = me;
+	}
+
+	public addStadium(stadium: Stadium) {
+		this.stadiums.push(stadium);
+		return this;
+	}
+
+	public getStadiums() {
+		return this.stadiums;
+	}
+
+	public getStadium(name: String) {
+		const found = this.stadiums.find(stadium => stadium.name === name);
+
+		if (!found) {
+			throw new Error(`No stadium found with name ${name}`);
+		}
+
+		return found;
 	}
 }

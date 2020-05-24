@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Events, defaultStadiums } from '@puhk/puhk-core';
+import { Events } from '@puhk/puhk-core';
 import { StateControllerProps } from '../component-props';
 
 export interface MenuState {
@@ -61,15 +61,11 @@ export default class Menu extends React.Component<StateControllerProps> {
 	};
 
 	changeStadium = (event: React.SyntheticEvent<HTMLSelectElement>) => {
-		const stadium = defaultStadiums.find(stadium => stadium.name === event.currentTarget.value);
+		const { controller, gameState } = this.props;
 
-		if (stadium) {
-			const { controller, gameState } = this.props;
-
-			const event = new Events.ChangeStadium(gameState.frame, controller.getMe().id, { stadium });
-
-			controller.addEvent(event);
-		}
+		const stadium = controller.getStadium(event.currentTarget.value);
+		const changeStadiumEvent = new Events.ChangeStadium(gameState.frame, controller.getMe().id, { stadium });
+		controller.addEvent(changeStadiumEvent);
 	};
 
 	changeRoomName = (event: React.SyntheticEvent<HTMLInputElement>) => {
@@ -105,7 +101,7 @@ export default class Menu extends React.Component<StateControllerProps> {
 	};
 
 	render() {
-		const { gameState } = this.props;
+		const { gameState, controller } = this.props;
 
 		return (
 			<Container>
@@ -159,7 +155,7 @@ export default class Menu extends React.Component<StateControllerProps> {
 								onChange={this.changeStadium}
 								value={(gameState.stadium && gameState.stadium.name) || ''}
 								disabled={gameState.playing}>
-								{defaultStadiums.map(stadium => (
+								{controller.getStadiums().map(stadium => (
 									<option value={stadium.name} key={stadium.name}>
 										{stadium.name}
 									</option>
